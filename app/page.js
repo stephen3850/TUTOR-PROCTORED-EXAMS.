@@ -1,0 +1,607 @@
+import React from 'react';
+import Link from 'next/link';
+import {
+  Users,
+  BookOpen,
+  FileCheck,
+  Award,
+  Calendar,
+  Cpu,
+  ArrowRight,
+  ShieldCheck,
+  CheckCircle2,
+  Sparkles,
+  Target,
+  Compass,
+  Layers,
+  ChevronRight,
+} from 'lucide-react';
+import PageContainer from '@/components/layout/PageContainer';
+import SectionHeading from '@/components/ui/SectionHeading';
+import ContentCard from '@/components/ui/ContentCard';
+import Button from '@/components/ui/Button';
+import Badge from '@/components/ui/Badge';
+import FaqAccordion from '@/components/ui/FaqAccordion';
+
+export const metadata = {
+  title: 'TUTOR PROCTORED EXAMS | Professional Tutoring & Exam Preparation',
+  description:
+    'Discover professional tutoring, structured exam preparation, practice resources, professional certification guidance (PMP, CompTIA, AAPC, CPC, CCMA), and legitimate examination software technical support for US students.',
+};
+
+export default function HomePage() {
+  // 1. Examination Platforms Data with direct links
+  const examPlatforms = [
+    {
+      name: 'Respondus LockDown Browser',
+      category: 'Browser Security',
+      description: 'Custom browser environment guidance, system requirements verification, and pre-test setup checklists.',
+      href: '/exam-platforms/respondus-lockdown-browser',
+    },
+    {
+      name: 'Examplify',
+      category: 'Assessment Software',
+      description: 'ExamSoft system preparation, computer requirements checks, and offline exam download troubleshooting.',
+      href: '/exam-platforms/examplify',
+    },
+    {
+      name: 'Honorlock',
+      category: 'Chrome Extension Proctoring',
+      description: 'Chrome extension technical preparation, webcam setup guidelines, and network stability advice.',
+      href: '/exam-platforms/honorlock',
+    },
+    {
+      name: 'ProctorU / Meazure Learning',
+      category: 'Live & Automated Proctoring',
+      description: 'Live technician connection advice, room setup standards, and equipment compatibility reviews.',
+      href: '/exam-platforms/proctoru-meazure-learning',
+    },
+    {
+      name: 'Proctorio',
+      category: 'Automated Monitoring',
+      description: 'Browser permission checks, audio/video testing advice, and system diagnostic preparation.',
+      href: '/exam-platforms/proctorio',
+    },
+    {
+      name: 'Proctortrack',
+      category: 'Identity Verification',
+      description: 'Biometric profile setup requirements, system hardware guidance, and environment scans.',
+      href: '/exam-platforms/proctortrack',
+    },
+    {
+      name: 'Examity',
+      category: 'Live & Auto Testing',
+      description: 'Proctoring level specifications, authentication steps, and system performance checks.',
+      href: '/exam-platforms/examity',
+    },
+    {
+      name: 'PSI',
+      category: 'Licensing & Certification',
+      description: 'PSI Bridge browser requirements, candidate handbook review, and test environment readiness.',
+      href: '/exam-platforms/psi',
+    },
+    {
+      name: 'ATI',
+      category: 'Nursing Education (TEAS)',
+      description: 'ATI TEAS examination format review, subject tutoring, and dry-run equipment guidance.',
+      href: '/exam-platforms/ati',
+    },
+  ];
+
+  // 2. Professional Certifications Data with direct links
+  const certifications = [
+    {
+      name: 'PMP',
+      fullName: 'Project Management Professional',
+      body: 'PMI',
+      description: 'Structured domain coaching across People, Process, and Business Environment pillars with practice questions.',
+      href: '/certifications/pmp',
+    },
+    {
+      name: 'CompTIA',
+      fullName: 'Security+, A+, Network+',
+      body: 'CompTIA',
+      description: 'Foundational and intermediate IT infrastructure, cybersecurity, and networking certification preparation.',
+      href: '/certifications/comptia',
+    },
+    {
+      name: 'AAPC',
+      fullName: 'Medical Coding Prep',
+      body: 'AAPC',
+      description: 'Comprehensive ICD-10-CM, CPT, and HCPCS coding exam preparation and codebook navigation guides.',
+      href: '/certifications/aapc',
+    },
+    {
+      name: 'CPC',
+      fullName: 'Certified Professional Coder',
+      body: 'AAPC',
+      description: 'Specialized preparation for physician practice coding exams, operative reports, and guidelines.',
+      href: '/certifications/cpc',
+    },
+    {
+      name: 'CCMA',
+      fullName: 'Certified Clinical Medical Assistant',
+      body: 'NHA',
+      description: 'Clinical procedures, phlebotomy, EKG fundamentals, and medical office management exam preparation.',
+      href: '/certifications/ccma',
+    },
+  ];
+
+  // 3. Core Educational Services
+  const coreServices = [
+    {
+      title: 'One-to-One Tutoring',
+      description: 'Direct instruction with qualified subject specialists focused on identifying knowledge gaps and clarifying complex concepts.',
+      icon: Users,
+      badge: 'Personalized Learning',
+      href: '/services/one-to-one-tutoring',
+    },
+    {
+      title: 'Academic Exam Preparation',
+      description: 'Structured study plans, key concept reviews, and active recall practice for midterms, finals, and standardized tests.',
+      icon: BookOpen,
+      badge: 'Exam Readiness',
+      href: '/services/academic-exam-preparation',
+    },
+    {
+      title: 'Practice Questions & Mock Tests',
+      description: 'Authentic style practice question banks, detailed answer explanations, and timed mock exam walkthroughs.',
+      icon: FileCheck,
+      badge: 'Practice Resources',
+      href: '/services/practice-questions-mock-tests',
+    },
+    {
+      title: 'Professional Certification Prep',
+      description: 'Targeted domain review, question strategy, and practice modules for PMP, CompTIA, AAPC, CPC, and CCMA credentials.',
+      icon: Award,
+      badge: 'Career Credentials',
+      href: '/services/professional-certification-preparation',
+    },
+    {
+      title: 'Study Planning & Revision Support',
+      description: 'Customized weekly study schedules, spaced repetition roadmaps, and time management coaching for busy students.',
+      icon: Calendar,
+      badge: 'Structured Study',
+      href: '/services/study-planning',
+    },
+    {
+      title: 'Software Technical Guidance',
+      description: 'Legitimate guidance on hardware specs, OS updates, camera setup, and software troubleshooting prior to exam day.',
+      icon: Cpu,
+      badge: 'System Guidance',
+      href: '/services/examination-software-technical-guidance',
+    },
+  ];
+
+  // 4. Why Choose Us Benefits
+  const benefits = [
+    {
+      title: 'Structured Learning Support',
+      description: 'Clear, step-by-step preparation frameworks designed to make study time productive and focused.',
+      icon: Layers,
+    },
+    {
+      title: 'Personalized Study Guidance',
+      description: 'Tailored academic support aligned with your course syllabus, exam platform, or certification goals.',
+      icon: Target,
+    },
+    {
+      title: 'Clear Learning Resources',
+      description: 'Comprehensive study notes, practice questions, and technical checklists without fluff.',
+      icon: BookOpen,
+    },
+    {
+      title: 'Flexible Support Options',
+      description: 'Choose between 1-on-1 tutoring sessions, self-paced practice banks, or technical readiness checks.',
+      icon: Compass,
+    },
+    {
+      title: 'Professional Educational Approach',
+      description: 'Ground in legitimate academic tutoring methods that build long-term understanding and confidence.',
+      icon: ShieldCheck,
+    },
+    {
+      title: 'Student-Focused Experience',
+      description: 'Dedicated to helping American college students and working professionals reach their educational milestones.',
+      icon: Sparkles,
+    },
+  ];
+
+  // 5. How It Works Steps
+  const steps = [
+    {
+      step: '01',
+      title: 'Explore Our Services',
+      description: 'Review our directory of subject tutoring, certification prep, and proctoring software technical guides.',
+    },
+    {
+      step: '02',
+      title: 'Choose Your Learning Support',
+      description: 'Select the specific subject area, certification roadmap, or system compatibility review you require.',
+    },
+    {
+      step: '03',
+      title: 'Get a Study Plan',
+      description: 'Receive a structured study timeline and practice resources aligned with your target examination date.',
+    },
+    {
+      step: '04',
+      title: 'Work Toward Your Goals',
+      description: 'Engage with our study materials and tutors to build the knowledge and confidence to test independently.',
+    },
+  ];
+
+  // 6. Educational Articles & Resources
+  const articles = [
+    {
+      title: 'How to Prepare for a Proctored Examination',
+      description: 'Essential checklist covering room setup, identification verification, technical pre-checks, and mental preparation.',
+      category: 'Exam Tips',
+      slug: 'how-to-prepare-for-a-proctored-examination',
+    },
+    {
+      title: 'Respondus LockDown Browser: Student Preparation Guide',
+      description: 'Step-by-step guidance on system requirements, closing background applications, and troubleshooting webcams.',
+      category: 'Software Guide',
+      slug: 'respondus-lockdown-browser-student-guide',
+    },
+    {
+      title: 'Understanding Professional Certification Exams',
+      description: 'How knowledge domains are weighted on national exams and effective strategies for scenario-based questions.',
+      category: 'Certifications',
+      slug: 'understanding-professional-certification-exams',
+    },
+    {
+      title: 'Effective Study Planning for College Students',
+      description: 'Practical time-blocking, active recall, and spaced repetition methods for higher education success.',
+      category: 'Study Habits',
+      slug: 'effective-study-planning-college-students',
+    },
+    {
+      title: 'How to Prepare for the PMP Certification',
+      description: 'In-depth review of PMI exam syllabus changes, predictive vs. agile methodologies, and practice strategies.',
+      category: 'PMP Prep',
+      slug: 'pmp-certification-preparation-guide',
+    },
+  ];
+
+  // 7. Master FAQs Data
+  const faqs = [
+    {
+      question: 'What types of tutoring services do you provide?',
+      answer:
+        'We offer one-to-one online subject tutoring across undergraduate academic subjects, standardized test preparation, and technical guidance for software compatibility. All tutoring is focused on genuine subject understanding and skill development.',
+    },
+    {
+      question: 'How do you support exam preparation?',
+      answer:
+        'Our exam preparation includes structured study planning, domain content reviews, practice question walkthroughs, and time management strategies to ensure students can take their exams independently and confidently.',
+    },
+    {
+      question: 'What support is available for professional certifications?',
+      answer:
+        'We offer dedicated study roadmaps, practice questions, and syllabus reviews for high-demand certifications including PMP, CompTIA (Security+, A+, Network+), AAPC Medical Coding, CPC, and CCMA.',
+    },
+    {
+      question: 'What is examination software technical guidance?',
+      answer:
+        'We provide legitimate technical advice on operating system compatibility, browser permissions, webcam/microphone setup, and resolving common software conflicts for platforms like Respondus, Examplify, Honorlock, and ProctorU before test day.',
+    },
+    {
+      question: 'Do you take examinations for students or offer cheating services?',
+      answer:
+        'No. TUTOR PROCTORED EXAMS strictly adheres to academic integrity. We do NOT take exams for students, provide impersonation services, or assist in bypassing proctoring software. Our sole purpose is legitimate tutoring, preparation, and technical guidance.',
+    },
+    {
+      question: 'How do I contact your team or get started?',
+      answer:
+        'You can get started by clicking "Get Started" or "Contact Our Team" to submit an inquiry through our Contact page. An educational specialist will connect with you to discuss your learning goals.',
+    },
+  ];
+
+  return (
+    <div className="space-y-20 sm:space-y-28 pb-20">
+      {/* 1. HERO SECTION */}
+      <section className="relative bg-brand-navy text-white pt-16 pb-24 lg:pt-20 lg:pb-32 overflow-hidden">
+        <div className="absolute inset-0 z-0 opacity-20 bg-cover bg-center mix-blend-overlay" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1920&q=80')" }}></div>
+        <div className="absolute inset-0 z-0 bg-gradient-to-r from-brand-navy via-brand-navy/95 to-brand-secondaryNavy/90"></div>
+
+        <PageContainer className="relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div className="lg:col-span-8 space-y-6">
+              <Badge variant="blue" className="bg-brand-blue/20 text-brand-lightBlue border-brand-blue/30 px-3.5 py-1 text-xs">
+                Ethical Academic Support & Certification Guidance
+              </Badge>
+
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.1]">
+                YOUR SUCCESS STARTS WITH THE RIGHT SUPPORT.
+              </h1>
+
+              <p className="text-base sm:text-xl text-brand-muted/90 leading-relaxed max-w-2xl text-balance">
+                Discover professional tutoring, structured exam preparation, practice resources, and certification guidance designed to help you achieve your academic and professional goals.
+              </p>
+
+              {/* Action Buttons */}
+              <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+                <Button href="/services" variant="primary" size="lg" icon={ArrowRight}>
+                  Explore Our Services
+                </Button>
+                <Button href="/exam-platforms" variant="outline" size="lg" className="border-white/30 text-white hover:bg-white/10">
+                  Explore Exam Platforms
+                </Button>
+              </div>
+
+              {/* Trust Intro Line */}
+              <div className="pt-6 flex items-center gap-3 text-xs sm:text-sm text-brand-muted border-t border-white/10">
+                <ShieldCheck className="w-5 h-5 text-brand-blue shrink-0" />
+                <span>Ethical Academic Tutoring • Software Compatibility Guidance • US Market Focus</span>
+              </div>
+            </div>
+
+            {/* Visual Hero Feature Box */}
+            <div className="lg:col-span-4 hidden lg:block">
+              <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 text-white space-y-4 shadow-2xl">
+                <div className="flex items-center gap-3 border-b border-white/10 pb-4">
+                  <div className="w-10 h-10 rounded-lg bg-brand-blue text-white flex items-center justify-center font-bold">
+                    TPE
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-sm text-white">Ethical Learning Commitment</h4>
+                    <span className="text-xs text-brand-muted">US Educational Standard</span>
+                  </div>
+                </div>
+
+                <ul className="space-y-3 text-xs text-brand-muted">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-brand-blue shrink-0 mt-0.5" />
+                    <span>1-on-1 Subject Coaching & Concept Reviews</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-brand-blue shrink-0 mt-0.5" />
+                    <span>Proctoring Software System Checks</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-brand-blue shrink-0 mt-0.5" />
+                    <span>PMP, CompTIA, AAPC & CPC Exam Prep</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-brand-blue shrink-0 mt-0.5" />
+                    <span>Independent Student Mastery Focus</span>
+                  </li>
+                </ul>
+
+                <div className="pt-2">
+                  <Link href="/about" className="text-xs font-semibold text-brand-lightBlue hover:underline inline-flex items-center gap-1">
+                    Read our integrity pledge <ChevronRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </PageContainer>
+      </section>
+
+      {/* 2. EXAMINATION PLATFORMS SECTION */}
+      <section>
+        <PageContainer>
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+            <SectionHeading
+              badge="Platform Directory"
+              title="EXAM PLATFORMS WE SUPPORT"
+              subtitle="Explore preparation resources and guidance for widely used examination and proctoring platforms."
+            />
+            <Button href="/exam-platforms" variant="outline" size="md" icon={ArrowRight}>
+              View Platform Directory
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {examPlatforms.map((platform, idx) => (
+              <ContentCard
+                key={idx}
+                title={platform.name}
+                description={platform.description}
+                badge={platform.category}
+                icon={Cpu}
+                href={platform.href}
+                actionText="Learn More"
+              />
+            ))}
+          </div>
+
+          <div className="mt-8 p-4 rounded-xl bg-brand-lightBlue/40 border border-brand-blue/20 text-xs text-brand-muted text-center">
+            <p>
+              <strong>Disclaimer:</strong> TUTOR PROCTORED EXAMS provides independent technical guidance and study resources. We are not affiliated with or endorsed by any third-party proctoring software vendors.
+            </p>
+          </div>
+        </PageContainer>
+      </section>
+
+      {/* 3. PROFESSIONAL CERTIFICATIONS SECTION */}
+      <section className="bg-white py-16 border-y border-brand-border">
+        <PageContainer>
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+            <SectionHeading
+              badge="Career Advancement"
+              title="PREPARE FOR YOUR NEXT PROFESSIONAL MILESTONE"
+              subtitle="Specialized domain coaching, exam syllabus breakdowns, and practice question reviews for leading US credentials."
+            />
+            <Button href="/certifications" variant="outline" size="md" icon={ArrowRight}>
+              All Certifications
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {certifications.map((cert, idx) => (
+              <ContentCard
+                key={idx}
+                title={`${cert.name} — ${cert.fullName}`}
+                description={cert.description}
+                badge={cert.body}
+                icon={Award}
+                href={cert.href}
+                actionText="Explore Certification"
+              />
+            ))}
+          </div>
+        </PageContainer>
+      </section>
+
+      {/* 4. OUR SERVICES SECTION */}
+      <section>
+        <PageContainer>
+          <SectionHeading
+            badge="What We Offer"
+            title="OUR EDUCATIONAL SERVICES"
+            subtitle="Tailored academic support services focused strictly on student learning and independent test readiness."
+            centered
+            className="mb-14"
+          />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {coreServices.map((service, idx) => (
+              <ContentCard
+                key={idx}
+                title={service.title}
+                description={service.description}
+                icon={service.icon}
+                badge={service.badge}
+                href={service.href}
+                actionText="View service details"
+              />
+            ))}
+          </div>
+        </PageContainer>
+      </section>
+
+      {/* 5. WHY CHOOSE US */}
+      <section className="bg-white py-16 border-y border-brand-border">
+        <PageContainer>
+          <SectionHeading
+            badge="Our Advantages"
+            title="WHY CHOOSE TUTOR PROCTORED EXAMS"
+            subtitle="A professional, student-centered approach to examination preparation and technical readiness."
+            centered
+            className="mb-14"
+          />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {benefits.map((benefit, idx) => {
+              const IconComp = benefit.icon;
+              return (
+                <div
+                  key={idx}
+                  className="bg-brand-bg border border-brand-border rounded-xl p-6 space-y-3 transition-all duration-200 hover:shadow-card hover:bg-white"
+                >
+                  <div className="w-10 h-10 rounded-lg bg-brand-lightBlue text-brand-blue flex items-center justify-center">
+                    <IconComp className="w-5 h-5" />
+                  </div>
+                  <h3 className="text-lg font-bold text-brand-navy">{benefit.title}</h3>
+                  <p className="text-sm text-brand-muted leading-relaxed">{benefit.description}</p>
+                </div>
+              );
+            })}
+          </div>
+        </PageContainer>
+      </section>
+
+      {/* 6. HOW IT WORKS */}
+      <section>
+        <PageContainer>
+          <SectionHeading
+            badge="Simple Process"
+            title="HOW IT WORKS"
+            subtitle="A straightforward four-step approach to achieving your educational and certification goals."
+            centered
+            className="mb-14"
+          />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {steps.map((step, idx) => (
+              <div
+                key={idx}
+                className="relative bg-white border border-brand-border rounded-xl p-6 space-y-4 hover:border-brand-blue/40 transition-colors"
+              >
+                <div className="text-3xl font-extrabold text-brand-blue/30 font-mono">
+                  {step.step}
+                </div>
+                <h3 className="text-lg font-bold text-brand-navy">{step.title}</h3>
+                <p className="text-sm text-brand-muted leading-relaxed">{step.description}</p>
+              </div>
+            ))}
+          </div>
+        </PageContainer>
+      </section>
+
+      {/* 7. STUDY RESOURCES AND ARTICLES */}
+      <section className="bg-white py-16 border-y border-brand-border">
+        <PageContainer>
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+            <SectionHeading
+              badge="Resource Hub"
+              title="STUDY RESOURCES & ARTICLES"
+              subtitle="Educational insights and practical preparation guides written by academic specialists."
+            />
+            <Button href="/blog" variant="outline" size="md" icon={ArrowRight}>
+              Visit Resource Center
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {articles.map((article, idx) => (
+              <ContentCard
+                key={idx}
+                title={article.title}
+                description={article.description}
+                badge={article.category}
+                icon={BookOpen}
+                href={`/blog/${article.slug}`}
+                actionText="Read full article"
+              />
+            ))}
+          </div>
+        </PageContainer>
+      </section>
+
+      {/* 8. FAQ SECTION */}
+      <section>
+        <PageContainer>
+          <SectionHeading
+            badge="Got Questions?"
+            title="FREQUENTLY ASKED QUESTIONS"
+            subtitle="Clear answers about our tutoring services, certification coaching, software guidance, and ethical standards."
+            centered
+            className="mb-12"
+          />
+
+          <FaqAccordion items={faqs} />
+        </PageContainer>
+      </section>
+
+      {/* 9. FINAL CALL TO ACTION */}
+      <section className="bg-brand-navy text-white py-16 sm:py-20 rounded-2xl mx-4 sm:mx-6 lg:mx-8">
+        <PageContainer>
+          <div className="max-w-3xl mx-auto text-center space-y-6">
+            <Badge variant="blue" className="bg-brand-blue/20 text-brand-lightBlue border-brand-blue/30 px-3 py-1">
+              Start Your Preparation Today
+            </Badge>
+
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight">
+              READY TO TAKE THE NEXT STEP?
+            </h2>
+
+            <p className="text-base sm:text-lg text-brand-muted/90 leading-relaxed max-w-xl mx-auto text-balance">
+              Find the educational support and preparation resources that match your goals.
+            </p>
+
+            <div className="pt-4 flex items-center justify-center">
+              <Button href="/contact" variant="primary" size="lg" icon={ArrowRight}>
+                Contact Our Team
+              </Button>
+            </div>
+          </div>
+        </PageContainer>
+      </section>
+    </div>
+  );
+}
