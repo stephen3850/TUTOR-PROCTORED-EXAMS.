@@ -304,7 +304,7 @@ export default async function ServiceDetailPage({ params }) {
             Ready to Begin Your {service.title} Journey?
           </h2>
           <p className="text-brand-muted text-sm max-w-xl mx-auto leading-relaxed">
-            Connect with our US-based educational team to discuss your course syllabus, upcoming exams, or target professional certification.
+            Connect with our educational team to discuss your course syllabus, upcoming exams, or target professional certification.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
             <Button href="/contact" variant="primary" size="lg" icon={ArrowRight}>

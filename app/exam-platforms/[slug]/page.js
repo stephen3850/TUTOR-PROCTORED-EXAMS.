@@ -313,7 +313,7 @@ export default async function PlatformDetailPage({ params }) {
             Need 1-on-1 Tutoring for Your {platform.shortName} Exam?
           </h2>
           <p className="text-brand-muted text-sm max-w-xl mx-auto leading-relaxed">
-            Our US-based educational specialists provide personalized subject coaching, mock test reviews, and system readiness assistance so you can take your exam with confidence.
+            Our educational specialists provide personalized subject coaching, mock test reviews, and system readiness assistance so you can take your exam with confidence.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
             <Button href="/contact" variant="primary" size="lg" icon={ArrowRight}>

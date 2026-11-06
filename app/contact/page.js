@@ -190,7 +190,7 @@ export default function ContactPage() {
             <div className="pt-2 flex flex-wrap gap-4 text-xs text-brand-muted">
               <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-brand-blue" /> 100% Confidential Inquiry</span>
               <span className="flex items-center gap-1.5"><Clock className="w-4 h-4 text-brand-blue" /> 24-Hour Response Time</span>
-              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-brand-blue" /> US Educational Specialists</span>
+              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-brand-blue" /> Educational Specialists</span>
             </div>
           </div>
         </div>
@@ -206,7 +206,7 @@ export default function ContactPage() {
                 </Badge>
                 <h2 className="text-2xl font-bold text-white">Contact Information</h2>
                 <p className="text-xs sm:text-sm text-brand-muted leading-relaxed">
-                  Our educational support team serves college students and working professionals across the United States.
+                  Our educational support team serves college students and working professionals worldwide.
                 </p>
               </div>
 
@@ -239,7 +239,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <span className="text-xs uppercase tracking-wider text-brand-muted font-bold block">Service Location</span>
-                    <span className="text-xs text-brand-muted font-medium">United States (Virtual & Online Service Nationwide)</span>
+                    <span className="text-xs text-brand-muted font-medium">Worldwide (Virtual & Online Service Globally)</span>
                   </div>
                 </div>
 

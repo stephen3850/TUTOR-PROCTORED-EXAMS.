@@ -26,7 +26,7 @@ import FaqAccordion from '@/components/ui/FaqAccordion';
 export const metadata = {
   title: 'TUTOR PROCTORED EXAMS | Professional Tutoring & Exam Preparation',
   description:
-    'Discover professional tutoring, structured exam preparation, practice resources, professional certification guidance (PMP, CompTIA, AAPC, CPC, CCMA), and legitimate examination software technical support for US students.',
+    'Discover professional tutoring, structured exam preparation, practice resources, professional certification guidance (PMP, CompTIA, AAPC, CPC, CCMA), and legitimate examination software technical support for students and professionals worldwide.',
 };
 
 export default function HomePage() {
@@ -202,7 +202,7 @@ export default function HomePage() {
     },
     {
       title: 'Student-Focused Experience',
-      description: 'Dedicated to helping American college students and working professionals reach their educational milestones.',
+      description: 'Dedicated to helping college students and working professionals worldwide reach their educational milestones.',
       icon: Sparkles,
     },
   ];
@@ -343,7 +343,7 @@ export default function HomePage() {
               {/* Trust Intro Line */}
               <div className="pt-6 flex items-center gap-3 text-xs sm:text-sm text-white font-semibold border-t border-white/30 drop-shadow-md">
                 <ShieldCheck className="w-5 h-5 text-[#356AE6] shrink-0" />
-                <span>Ethical Academic Tutoring • Software Compatibility Guidance • US Market Focus</span>
+                <span>Ethical Academic Tutoring • Software Compatibility Guidance • Global Reach</span>
               </div>
             </div>
 
@@ -356,7 +356,7 @@ export default function HomePage() {
                   </div>
                   <div>
                     <h4 className="font-bold text-sm text-white">Ethical Learning Commitment</h4>
-                    <span className="text-xs text-slate-300">US Educational Standard</span>
+                    <span className="text-xs text-slate-300">Global Educational Support</span>
                   </div>
                 </div>
 
@@ -433,7 +433,7 @@ export default function HomePage() {
             <SectionHeading
               badge="Career Advancement"
               title="PREPARE FOR YOUR NEXT PROFESSIONAL MILESTONE"
-              subtitle="Specialized domain coaching, exam syllabus breakdowns, and practice question reviews for leading US credentials."
+              subtitle="Specialized domain coaching, exam syllabus breakdowns, and practice question reviews for leading professional credentials."
             />
             <Button href="/certifications" variant="outline" size="md" icon={ArrowRight}>
               All Certifications

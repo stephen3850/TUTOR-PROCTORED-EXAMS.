@@ -141,7 +141,7 @@ export default function Header() {
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-[#356AE6] shrink-0" aria-hidden="true" />
             <span className="truncate font-medium text-slate-200 text-[11px] sm:text-xs">
-              Ethical Educational Support & Proctoring Software Technical Guidance for US Students
+              Ethical Educational Support & Proctoring Software Technical Guidance for Students Worldwide
             </span>
           </div>
           <div className="hidden md:flex items-center gap-4 text-slate-400 text-[11px]">

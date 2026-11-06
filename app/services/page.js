@@ -69,7 +69,7 @@ export default function ServicesHubPage() {
 
             <div className="pt-4 flex flex-wrap gap-4 text-xs text-brand-muted border-t border-white/10">
               <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-brand-blue" /> 100% Ethical Academic Standard</span>
-              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-brand-blue" /> US-Based Specialist Tutors</span>
+              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-brand-blue" /> Qualified Specialist Tutors</span>
               <span className="flex items-center gap-1.5"><Sparkles className="w-4 h-4 text-brand-blue" /> Individualized Study Guidance</span>
             </div>
           </div>

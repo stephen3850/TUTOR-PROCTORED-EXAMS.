@@ -133,7 +133,7 @@ export default function PrivacyPolicyPage() {
           <div className="p-4 rounded-xl bg-brand-bg border border-brand-border text-xs font-mono space-y-1">
             <p><strong>Entity:</strong> TUTOR PROCTORED EXAMS</p>
             <p><strong>Email:</strong> {SITE_CONFIG.contactEmail}</p>
-            <p><strong>Operating Region:</strong> United States (Nationwide Online Service)</p>
+            <p><strong>Operating Region:</strong> Global / Worldwide (Online Educational Service)</p>
           </div>
         </section>
       </div>

@@ -204,7 +204,7 @@ export default function AboutPage() {
               </div>
               <h2 className="text-2xl font-bold text-brand-navy">OUR VISION</h2>
               <p className="text-brand-muted text-sm leading-relaxed">
-                Our vision is to build a widely trusted, premier educational support brand across the United States, recognized for helping learners overcome academic challenges, master certification domains, and achieve their career aspirations through genuine learning.
+                Our vision is to build a widely trusted, premier educational support brand worldwide, recognized for helping learners overcome academic challenges, master certification domains, and achieve their career aspirations through genuine learning.
               </p>
             </div>
             <div className="pt-2 text-xs font-semibold text-brand-blue flex items-center gap-1">

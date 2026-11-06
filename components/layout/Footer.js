@@ -23,7 +23,7 @@ export default function Footer() {
             </Link>
 
             <p className="text-brand-muted text-sm leading-relaxed max-w-sm">
-              The premier US educational support platform delivering ethical 1-on-1 tutoring, examination prep, practice resources, and legitimate proctoring software technical guidance.
+              An educational support platform delivering ethical 1-on-1 tutoring, examination prep, practice resources, and legitimate proctoring software technical guidance to students and professionals worldwide.
             </p>
 
             <div className="pt-2 flex flex-col space-y-2 text-xs text-brand-muted">
@@ -33,7 +33,7 @@ export default function Footer() {
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-brand-blue" />
-                <span>Serving US Students & Professionals</span>
+                <span>Serving Students & Professionals Worldwide</span>
               </div>
             </div>
           </div>
@@ -155,7 +155,7 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-brand-muted gap-4">
-          <p>© {currentYear} TUTOR PROCTORED EXAMS. All rights reserved. United States.</p>
+          <p>© {currentYear} TUTOR PROCTORED EXAMS. All rights reserved. Global Educational Services.</p>
           <div className="flex items-center gap-6">
             <Link href="/contact" className="hover:text-white transition-colors">
               Contact Support
