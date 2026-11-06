@@ -64,10 +64,15 @@ const NAV_ITEMS = [
     hasSubmenu: true,
     subItems: [
       { label: 'PMP Certification Prep', href: '/certifications/pmp' },
+      { label: 'CAPM Associate in PM', href: '/certifications/capm' },
       { label: 'CompTIA (Security+, A+, Net+)', href: '/certifications/comptia' },
+      { label: 'SHRM-CP / SHRM-SCP HR', href: '/certifications/shrm' },
+      { label: 'Real Estate License Prep', href: '/certifications/real-estate' },
       { label: 'AAPC Medical Coding', href: '/certifications/aapc' },
       { label: 'CPC Certified Coder', href: '/certifications/cpc' },
       { label: 'CCMA Clinical Assistant', href: '/certifications/ccma' },
+      { label: 'CNA Nursing Assistant', href: '/certifications/cna' },
+      { label: 'CPhT Pharmacy Technician', href: '/certifications/cpht' },
     ],
   },
   {
