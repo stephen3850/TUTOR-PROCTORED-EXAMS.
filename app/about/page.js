@@ -140,7 +140,7 @@ export default function AboutPage() {
             </Badge>
 
             <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight drop-shadow-[0_4px_8px_rgba(0,0,0,0.9)]">
-              Helping You Learn, Prepare and Succeed.
+              We Help You Learn, Prepare And Pass your exams
             </h1>
 
             <p className="text-base sm:text-lg text-slate-100 leading-relaxed max-w-2xl font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
