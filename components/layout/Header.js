@@ -10,13 +10,7 @@ import {
   ChevronRight,
   Menu,
   X,
-  ShieldCheck,
-  BookOpen,
-  Cpu,
-  Award,
-  Users,
 } from 'lucide-react';
-import PageContainer from './PageContainer';
 import { SITE_CONFIG } from '@/lib/utils';
 
 const NAV_ITEMS = [
@@ -136,36 +130,37 @@ export default function Header() {
   return (
     <header className="sticky top-2 z-50 w-full px-2 sm:px-4 lg:px-6 transition-all duration-300">
       {/* Outer Floating Capsule Navbar Container */}
-      <div className="max-w-7xl mx-auto bg-white/95 backdrop-blur-md rounded-2xl lg:rounded-full border border-slate-200/90 shadow-[0_10px_30px_-5px_rgba(15,23,42,0.08)] px-3 py-2 sm:px-5 flex items-center justify-between transition-all duration-300">
+      <div className="max-w-7xl mx-auto bg-white/95 backdrop-blur-md rounded-full border border-slate-200/90 shadow-[0_4px_20px_-2px_rgba(15,23,42,0.08)] px-3.5 py-1.5 sm:px-5 flex items-center justify-between gap-2 transition-all duration-300">
+
         {/* BRAND LOGO AREA */}
         <Link
           href="/"
-          className="flex items-center gap-2.5 sm:gap-3 group focus:outline-none focus:ring-2 focus:ring-blue-600 rounded-xl p-1"
+          className="flex items-center gap-2.5 group focus:outline-none focus:ring-2 focus:ring-blue-600 rounded-lg p-0.5 shrink-0"
           aria-label="TUTOR PROCTORED EXAMS Home Page"
         >
-          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#0F172A] flex items-center justify-center text-white shadow-md group-hover:bg-[#2563EB] transition-colors duration-200 shrink-0">
-            <GraduationCap className="w-6 h-6 text-white" aria-hidden="true" />
+          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#0F172A] flex items-center justify-center text-white shadow-sm group-hover:bg-[#2563EB] transition-colors duration-200 shrink-0">
+            <GraduationCap className="w-5 h-5 text-white" aria-hidden="true" />
           </div>
 
-          <div className="hidden sm:block h-8 w-[1.5px] bg-slate-200 mx-0.5 shrink-0" />
+          <div className="hidden sm:block h-6 w-[1px] bg-slate-200 mx-0.5 shrink-0" />
 
-          <div className="flex flex-col">
-            <div className="flex items-center gap-1.5 leading-none">
-              <span className="font-black text-sm sm:text-base lg:text-lg text-[#0F172A] tracking-tight">
+          <div className="flex flex-col justify-center">
+            <div className="flex items-center gap-1 leading-none">
+              <span className="font-extrabold text-xs sm:text-sm text-[#0F172A] tracking-tight whitespace-nowrap">
                 TUTOR PROCTORED
               </span>
-              <span className="font-black text-sm sm:text-base lg:text-lg text-[#2563EB] tracking-tight">
+              <span className="font-extrabold text-xs sm:text-sm text-[#2563EB] tracking-tight whitespace-nowrap">
                 EXAMS
               </span>
             </div>
-            <span className="text-[9px] uppercase tracking-wider text-slate-400 font-bold block mt-1">
+            <span className="text-[8px] uppercase tracking-wider text-slate-400 font-semibold block leading-none mt-0.5">
               ACADEMIC & CERTIFICATION SUPPORT
             </span>
           </div>
         </Link>
 
         {/* DESKTOP NAVIGATION ITEMS */}
-        <nav className="hidden lg:flex items-center gap-1 xl:gap-2" aria-label="Main Navigation">
+        <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1.5" aria-label="Main Navigation">
           {NAV_ITEMS.map((item) => {
             const isActive =
               pathname === item.href ||
@@ -180,44 +175,44 @@ export default function Header() {
                 onMouseLeave={() => setActiveDropdown(null)}
               >
                 {isActive ? (
-                  // Active Page Blue Capsule (Matching Image)
-                  <div className="relative py-1">
+                  // Active Page Compact Blue Capsule
+                  <div className="relative py-0.5">
                     <Link
                       href={item.href}
-                      className="bg-[#1D4ED8] text-white px-4 py-2 rounded-full font-bold text-xs xl:text-sm flex items-center gap-1.5 shadow-md shadow-blue-500/20 hover:bg-[#1E40AF] transition-colors"
+                      className="bg-[#1D4ED8] text-white px-3 py-1.5 rounded-full font-bold text-xs flex items-center gap-1 shadow-sm hover:bg-[#1E40AF] transition-colors whitespace-nowrap"
                       aria-current="page"
                     >
-                      {IconComp && <IconComp className="w-4 h-4 text-white shrink-0" />}
+                      {IconComp && <IconComp className="w-3.5 h-3.5 text-white shrink-0" />}
                       <span>{item.label}</span>
                       {item.hasSubmenu && (
-                        <ChevronDown className="w-3.5 h-3.5 text-white/90 font-bold" />
+                        <ChevronDown className="w-3 h-3 text-white/90 font-bold shrink-0" />
                       )}
                     </Link>
                     {/* Active Underline Indicator Bar */}
-                    <div className="w-5 h-1 bg-[#1D4ED8] rounded-full mx-auto mt-1" />
+                    <div className="w-4 h-0.5 bg-[#1D4ED8] rounded-full mx-auto mt-0.5" />
                   </div>
                 ) : (
-                  // Standard Nav Item
+                  // Standard Compact Nav Item
                   <Link
                     href={item.href}
-                    className="text-[#0F172A] hover:text-[#2563EB] font-bold text-xs xl:text-sm px-3 py-2 rounded-full transition-colors flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    className="text-[#0F172A] hover:text-[#2563EB] font-bold text-xs px-2.5 py-1.5 rounded-full transition-colors flex items-center gap-0.5 focus:outline-none focus:ring-1 focus:ring-blue-600 whitespace-nowrap"
                   >
                     <span>{item.label}</span>
                     {item.hasSubmenu && (
-                      <ChevronDown className="w-3.5 h-3.5 text-[#2563EB] font-bold transition-transform duration-200 group-hover:rotate-180 shrink-0" />
+                      <ChevronDown className="w-3 h-3 text-[#2563EB] font-bold transition-transform duration-200 group-hover:rotate-180 shrink-0" />
                     )}
                   </Link>
                 )}
 
                 {/* Submenu Dropdown Card */}
                 {item.hasSubmenu && (
-                  <div className="absolute top-full left-0 pt-2 hidden group-hover:block z-50 animate-in fade-in slide-in-from-top-2">
-                    <div className="w-64 bg-white border border-slate-200/90 rounded-2xl p-3 shadow-xl space-y-1">
+                  <div className="absolute top-full left-0 pt-1.5 hidden group-hover:block z-50 animate-in fade-in slide-in-from-top-1">
+                    <div className="w-56 bg-white border border-slate-200/90 rounded-xl p-2 shadow-lg space-y-0.5">
                       {item.subItems.map((sub, idx) => (
                         <Link
                           key={idx}
                           href={sub.href}
-                          className="block text-xs font-semibold text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50 px-3 py-2.5 rounded-xl transition-colors"
+                          className="block text-xs font-semibold text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50 px-2.5 py-2 rounded-lg transition-colors"
                         >
                           {sub.label}
                         </Link>
@@ -230,34 +225,32 @@ export default function Header() {
           })}
         </nav>
 
-        {/* RIGHT ACTION BUTTON: GET STARTED (Matching Image) */}
-        <div className="hidden sm:flex items-center gap-3">
+        {/* RIGHT ACTION BUTTON: GET STARTED */}
+        <div className="hidden sm:flex items-center shrink-0">
           <Link
             href="/contact"
-            className="bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] text-white pl-5 pr-2 py-2 rounded-full font-black text-xs sm:text-sm shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:scale-[1.02] active:scale-95 transition-all duration-200 flex items-center gap-2.5"
+            className="bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] text-white px-4 py-1.5 rounded-full font-bold text-xs shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap"
           >
             <span>Get Started</span>
-            <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-white shrink-0">
-              <ChevronRight className="w-4 h-4 font-bold stroke-[3]" />
-            </div>
+            <ChevronRight className="w-3.5 h-3.5 text-white stroke-[2.5]" />
           </Link>
         </div>
 
         {/* MOBILE MENU HAMBURGER TOGGLE */}
         <button
           type="button"
-          className="lg:hidden p-2 rounded-xl text-[#0F172A] hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-600 min-h-[44px] min-w-[44px] flex items-center justify-center"
+          className="lg:hidden p-1.5 rounded-lg text-[#0F172A] hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-600 shrink-0"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label={mobileMenuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
           aria-expanded={mobileMenuOpen}
         >
-          {mobileMenuOpen ? <X className="w-6 h-6 text-[#0F172A]" /> : <Menu className="w-6 h-6 text-[#0F172A]" />}
+          {mobileMenuOpen ? <X className="w-5 h-5 text-[#0F172A]" /> : <Menu className="w-5 h-5 text-[#0F172A]" />}
         </button>
       </div>
 
       {/* MOBILE NAVIGATION DRAWER */}
       {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-x-3 top-20 bg-white border border-slate-200 rounded-3xl shadow-2xl p-6 space-y-4 max-h-[80vh] overflow-y-auto z-50 animate-in fade-in slide-in-from-top-3">
+        <div className="lg:hidden fixed inset-x-3 top-16 bg-white border border-slate-200 rounded-2xl shadow-xl p-4 space-y-3 max-h-[80vh] overflow-y-auto z-50 animate-in fade-in slide-in-from-top-2">
           <nav className="flex flex-col space-y-1" aria-label="Mobile Navigation">
             {NAV_ITEMS.map((item) => {
               const isActive =
@@ -268,31 +261,28 @@ export default function Header() {
                 <div key={item.label} className="space-y-1">
                   <Link
                     href={item.href}
-                    className={`text-sm font-bold py-3 px-4 rounded-2xl transition-colors flex items-center justify-between min-h-[44px] ${
+                    className={`text-xs font-bold py-2.5 px-3 rounded-xl transition-colors flex items-center justify-between min-h-[38px] ${
                       isActive
                         ? 'bg-[#1D4ED8] text-white'
                         : 'text-[#0F172A] hover:bg-slate-100 hover:text-[#2563EB]'
                     }`}
                   >
                     <span>{item.label}</span>
-                    {item.hasSubmenu && <ChevronDown className="w-4 h-4 text-current" />}
+                    {item.hasSubmenu && <ChevronDown className="w-3.5 h-3.5 text-current" />}
                   </Link>
                 </div>
               );
             })}
           </nav>
 
-          <div className="pt-4 border-t border-slate-200 flex flex-col gap-3">
+          <div className="pt-3 border-t border-slate-200 flex flex-col gap-2">
             <Link
               href="/contact"
-              className="bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] text-white py-3.5 px-6 rounded-full font-black text-sm shadow-md text-center flex items-center justify-center gap-2"
+              className="bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] text-white py-2.5 px-4 rounded-full font-bold text-xs shadow-sm text-center flex items-center justify-center gap-1.5"
             >
               <span>Get Started</span>
-              <ChevronRight className="w-4 h-4 stroke-[3]" />
+              <ChevronRight className="w-3.5 h-3.5 stroke-[2.5]" />
             </Link>
-            <p className="text-[11px] text-center text-slate-500 font-medium">
-              Ethical Academic & Certification Support
-            </p>
           </div>
         </div>
       )}
