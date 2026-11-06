@@ -541,19 +541,29 @@ export default function HomePage() {
             className="mb-8"
           />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {steps.map((step, idx) => (
-              <div
-                key={idx}
-                className="relative bg-white border border-brand-border rounded-xl p-6 space-y-4 hover:border-brand-blue/40 transition-colors"
-              >
-                <div className="text-3xl font-extrabold text-brand-blue/30 font-mono">
-                  {step.step}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-8">
+            <div className="lg:col-span-5 relative h-64 sm:h-80 rounded-2xl overflow-hidden border border-brand-border shadow-md">
+              <img
+                src="/how.jpg"
+                alt="How TUTOR PROCTORED EXAMS Works"
+                className="w-full h-full object-cover"
+              />
+            </div>
+
+            <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {steps.map((step, idx) => (
+                <div
+                  key={idx}
+                  className="relative bg-white border border-brand-border rounded-xl p-5 space-y-2 hover:border-brand-blue/40 transition-colors shadow-sm"
+                >
+                  <div className="text-2xl font-extrabold text-brand-blue/30 font-mono">
+                    {step.step}
+                  </div>
+                  <h3 className="text-base font-bold text-brand-navy">{step.title}</h3>
+                  <p className="text-xs text-brand-muted leading-relaxed">{step.description}</p>
                 </div>
-                <h3 className="text-lg font-bold text-brand-navy">{step.title}</h3>
-                <p className="text-sm text-brand-muted leading-relaxed">{step.description}</p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </PageContainer>
       </section>
