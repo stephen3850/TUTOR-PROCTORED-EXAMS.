@@ -111,7 +111,7 @@ export default function AboutPage() {
   ];
 
   return (
-    <div className="space-y-16 sm:space-y-20 py-10 pb-20">
+    <div className="space-y-10 sm:space-y-14 pt-2 pb-16">
       <JsonLd data={jsonLdData} />
 
       <PageContainer>
@@ -186,7 +186,7 @@ export default function AboutPage() {
               </div>
 
               <p className="text-base sm:text-xl font-bold text-[#0F172A] leading-relaxed">
-                <span className="text-[#2563EB] font-black">TUTOR PROCTORED EXAMS</span> is an educational support brand serving students and professionals worldwide. We provide personalized tutoring, structured examination preparation, certification guidance and legitimate technical support for examination software.
+                <span className="text-[#2563EB] font-black">TUTOR PROCTORED EXAMS</span> helps students with online examinations, online classes, proctored exams preparation and assignments. <span className="text-red-600 font-extrabold">Be a professional with our online help.</span>
               </p>
 
               {/* 2x2 Key Features Grid */}

@@ -80,7 +80,7 @@ export default function ServicesHubPage() {
   };
 
   return (
-    <div className="space-y-16 py-10 pb-20">
+    <div className="space-y-10 pt-2 pb-16">
       <PageContainer>
         <Breadcrumb items={[{ label: 'Our Services' }]} />
 

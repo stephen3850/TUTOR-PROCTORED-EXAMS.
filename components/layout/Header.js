@@ -23,7 +23,7 @@ import {
   MessageCircle,
 } from 'lucide-react';
 import PageContainer from './PageContainer';
-import { SITE_CONFIG } from '@/lib/utils';
+import { SITE_CONFIG, BLOGS_ENABLED } from '@/lib/utils';
 
 // COMPACT DROPDOWN - 12 SERVICES (SERVICE NAMES ONLY WITH SMALL BLUE ICONS)
 const ALL_12_SERVICES = [
@@ -381,27 +381,29 @@ export default function Header() {
                   <Link href="/study-resources" className="block text-xs font-semibold text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50 px-3 py-2 rounded-lg transition-colors">
                     Learning Guides & Library
                   </Link>
-                  <Link href="/blog" className="block text-xs font-semibold text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50 px-3 py-2 rounded-lg transition-colors">
-                    Exam Preparation Tips
+                  <Link href="/faq" className="block text-xs font-semibold text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50 px-3 py-2 rounded-lg transition-colors">
+                    Exam Preparation FAQ
                   </Link>
-                  <Link href="/blog" className="block text-xs font-semibold text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50 px-3 py-2 rounded-lg transition-colors">
-                    System Setup Checklists
+                  <Link href="/services/software-technical-guidance" className="block text-xs font-semibold text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50 px-3 py-2 rounded-lg transition-colors">
+                    System Setup Guidance
                   </Link>
                 </div>
               </div>
             </div>
 
-            {/* BLOG */}
-            <Link
-              href="/blog"
-              className={`font-bold text-xs xl:text-sm px-3 py-2 rounded-lg transition-colors whitespace-nowrap ${
-                pathname.startsWith('/blog')
-                  ? 'text-[#2563EB] bg-blue-50/80 font-extrabold'
-                  : 'text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50'
-              }`}
-            >
-              Blog
-            </Link>
+            {/* BLOG - CONDITIONALLY RENDERED BASED ON FEATURE FLAG */}
+            {BLOGS_ENABLED && (
+              <Link
+                href="/blog"
+                className={`font-bold text-xs xl:text-sm px-3 py-2 rounded-lg transition-colors whitespace-nowrap ${
+                  pathname.startsWith('/blog')
+                    ? 'text-[#2563EB] bg-blue-50/80 font-extrabold'
+                    : 'text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50'
+                }`}
+              >
+                Blog
+              </Link>
+            )}
 
             {/* FAQ */}
             <Link
@@ -495,9 +497,11 @@ export default function Header() {
               Study Resources
             </Link>
 
-            <Link href="/blog" className="text-sm font-bold py-2.5 px-3 rounded-xl hover:bg-slate-50 text-[#0F172A]">
-              Blog
-            </Link>
+            {BLOGS_ENABLED && (
+              <Link href="/blog" className="text-sm font-bold py-2.5 px-3 rounded-xl hover:bg-slate-50 text-[#0F172A]">
+                Blog
+              </Link>
+            )}
 
             <Link href="/faq" className="text-sm font-bold py-2.5 px-3 rounded-xl hover:bg-slate-50 text-[#0F172A]">
               FAQ

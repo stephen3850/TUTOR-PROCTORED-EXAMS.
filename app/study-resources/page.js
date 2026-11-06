@@ -19,6 +19,7 @@ import ContentCard from '@/components/ui/ContentCard';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
 import { BLOG_ARTICLES } from '@/lib/data/blogData';
+import { BLOGS_ENABLED } from '@/lib/utils';
 
 export const metadata = {
   title: 'Study Resources & Learning Guides | TUTOR PROCTORED EXAMS',
@@ -125,10 +126,11 @@ export default function StudyResourcesPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {categories.map((cat, idx) => {
               const CatIcon = cat.icon;
+              const targetHref = BLOGS_ENABLED ? `/blog?category=${cat.slug}` : '/services';
               return (
                 <Link
                   key={idx}
-                  href={`/blog?category=${cat.slug}`}
+                  href={targetHref}
                   className="group bg-white border border-brand-border rounded-xl p-6 space-y-3 hover:border-brand-blue hover:shadow-cardHover transition-all flex flex-col justify-between"
                 >
                   <div className="space-y-3">
@@ -145,7 +147,7 @@ export default function StudyResourcesPage() {
                   </div>
 
                   <div className="pt-3 border-t border-brand-border/60 flex items-center text-xs font-semibold text-brand-blue group-hover:translate-x-0.5 transition-transform">
-                    <span>View category articles</span>
+                    <span>Explore resources</span>
                     <ArrowRight className="w-3.5 h-3.5 ml-1 transition-transform group-hover:translate-x-1" />
                   </div>
                 </Link>
@@ -154,33 +156,35 @@ export default function StudyResourcesPage() {
           </div>
         </div>
 
-        {/* Featured Guides Grid */}
-        <div className="space-y-8 mt-16">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-            <SectionHeading
-              badge="Latest Guides"
-              title="Featured Preparation Articles"
-              subtitle="Practical articles designed to help you prepare effectively for your next examination."
-            />
-            <Button href="/blog" variant="outline" size="md" icon={ArrowRight}>
-              View All Articles
-            </Button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {recentArticles.map((art) => (
-              <ContentCard
-                key={art.slug}
-                title={art.title}
-                description={art.excerpt}
-                badge={art.category}
-                icon={BookOpen}
-                href={`/blog/${art.slug}`}
-                actionText="Read full guide"
+        {/* Featured Guides Grid - CONDITIONALLY RENDERED */}
+        {BLOGS_ENABLED && (
+          <div className="space-y-8 mt-16">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+              <SectionHeading
+                badge="Latest Guides"
+                title="Featured Preparation Articles"
+                subtitle="Practical articles designed to help you prepare effectively for your next examination."
               />
-            ))}
+              <Button href="/blog" variant="outline" size="md" icon={ArrowRight}>
+                View All Articles
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {recentArticles.map((art) => (
+                <ContentCard
+                  key={art.slug}
+                  title={art.title}
+                  description={art.excerpt}
+                  badge={art.category}
+                  icon={BookOpen}
+                  href={`/blog/${art.slug}`}
+                  actionText="Read full guide"
+                />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Conversion CTA */}
         <div className="mt-14 bg-brand-navy text-white rounded-2xl p-8 sm:p-10 text-center space-y-4">

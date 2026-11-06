@@ -130,7 +130,7 @@ export default async function PlatformDetailPage({ params }) {
   };
 
   return (
-    <div className="space-y-12 py-10 pb-20">
+    <div className="space-y-10 pt-2 pb-16">
       <JsonLd data={jsonLdData} />
 
       <PageContainer>

@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 
 export default function Breadcrumb({ items = [], className = '' }) {
   return (
-    <nav aria-label="Breadcrumb" className={cn('py-3', className)}>
+    <nav aria-label="Breadcrumb" className={cn('py-1', className)}>
       <ol className="flex items-center flex-wrap gap-1.5 text-xs sm:text-sm text-brand-muted">
         <li>
           <Link
