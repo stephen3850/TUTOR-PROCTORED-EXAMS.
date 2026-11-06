@@ -505,7 +505,7 @@ export default function HomePage() {
           <SectionHeading
             badge="Our Advantages"
             title="WHY CHOOSE TUTOR PROCTORED EXAMS"
-            subtitle="A professional, student-centered approach to examination preparation and technical readiness."
+            subtitle="We do the best we can to help you pass your exams and be a qualified professional."
             centered
             className="mb-8"
           />
