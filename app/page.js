@@ -320,7 +320,7 @@ export default function HomePage() {
               </Badge>
 
               <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.1] drop-shadow-[0_4px_10px_rgba(0,0,0,0.95)]">
-                YOUR SUCCESS STARTS WITH THE RIGHT SUPPORT.
+                Your Academic and Exams Success Starts With The Right Approach
               </h1>
 
               <p className="text-base sm:text-xl text-slate-100 leading-relaxed max-w-2xl text-balance drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)] font-semibold">
