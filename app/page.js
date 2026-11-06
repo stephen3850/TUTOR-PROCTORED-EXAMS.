@@ -347,41 +347,57 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Visual Hero Feature Box */}
+            {/* Visual Hero Feature Box (Matching Reference Image) */}
             <div className="lg:col-span-4 hidden lg:block">
-              <div className="bg-[#0F172A]/85 backdrop-blur-md border border-white/30 rounded-2xl p-6 text-white space-y-4 shadow-2xl">
-                <div className="flex items-center gap-3 border-b border-white/20 pb-4">
-                  <div className="w-10 h-10 rounded-lg bg-[#2563EB] text-white flex items-center justify-center font-bold">
+              <div className="bg-slate-900/60 backdrop-blur-xl border border-white/20 rounded-3xl p-6 text-white space-y-5 shadow-[0_20px_50px_rgba(0,0,0,0.4)] relative overflow-hidden">
+                <div className="flex items-center gap-3.5 border-b border-white/15 pb-4">
+                  <div className="w-12 h-12 rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 flex items-center justify-center font-black text-sm text-white shadow-inner shrink-0">
                     TPE
                   </div>
                   <div>
-                    <h4 className="font-bold text-sm text-white">Ethical Learning Commitment</h4>
-                    <span className="text-xs text-slate-300">Global Educational Support</span>
+                    <h4 className="font-extrabold text-base text-white leading-tight drop-shadow-sm">
+                      Ethical Learning Commitment
+                    </h4>
+                    <span className="text-xs text-slate-300 font-medium block mt-0.5">
+                      Global Educational Support
+                    </span>
                   </div>
                 </div>
 
-                <ul className="space-y-3 text-xs text-slate-100 font-medium">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#356AE6] shrink-0 mt-0.5" />
-                    <span>1-on-1 Subject Coaching & Concept Reviews</span>
+                <ul className="space-y-3.5 text-xs sm:text-sm font-bold text-white">
+                  <li className="flex items-center gap-3">
+                    <div className="w-5 h-5 rounded-full border border-white/50 bg-white/10 flex items-center justify-center shrink-0">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+                    </div>
+                    <span className="drop-shadow-sm">1-on-1 Subject Coaching & Concept Reviews</span>
                   </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#356AE6] shrink-0 mt-0.5" />
-                    <span>Proctoring Software System Checks</span>
+                  <li className="flex items-center gap-3">
+                    <div className="w-5 h-5 rounded-full border border-white/50 bg-white/10 flex items-center justify-center shrink-0">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+                    </div>
+                    <span className="drop-shadow-sm">Proctoring Software System Checks</span>
                   </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#356AE6] shrink-0 mt-0.5" />
-                    <span>PMP, CompTIA, AAPC & CPC Exam Prep</span>
+                  <li className="flex items-center gap-3">
+                    <div className="w-5 h-5 rounded-full border border-white/50 bg-white/10 flex items-center justify-center shrink-0">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+                    </div>
+                    <span className="drop-shadow-sm">PMP, CompTIA, AAPC & CPC Exam Prep</span>
                   </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#356AE6] shrink-0 mt-0.5" />
-                    <span>Independent Student Mastery Focus</span>
+                  <li className="flex items-center gap-3">
+                    <div className="w-5 h-5 rounded-full border border-white/50 bg-white/10 flex items-center justify-center shrink-0">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+                    </div>
+                    <span className="drop-shadow-sm">Independent Student Mastery Focus</span>
                   </li>
                 </ul>
 
                 <div className="pt-2">
-                  <Link href="/about" className="text-xs font-semibold text-brand-lightBlue hover:underline inline-flex items-center gap-1">
-                    Read our integrity pledge <ChevronRight className="w-3.5 h-3.5" />
+                  <Link
+                    href="/about"
+                    className="text-xs font-extrabold text-white underline underline-offset-4 inline-flex items-center gap-1.5 hover:text-blue-300 transition-colors"
+                  >
+                    <span>Read our integrity pledge</span>
+                    <ChevronRight className="w-3.5 h-3.5 stroke-[3]" />
                   </Link>
                 </div>
               </div>
