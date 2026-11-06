@@ -1,6 +1,21 @@
 import React from 'react';
 import Link from 'next/link';
-import { Users, BookOpen, FileCheck, Award, Calendar, Cpu, ArrowRight, ShieldCheck, CheckCircle2, Sparkles } from 'lucide-react';
+import {
+  Users,
+  BookOpen,
+  FileCheck,
+  Award,
+  Calendar,
+  Cpu,
+  ArrowRight,
+  ShieldCheck,
+  CheckCircle2,
+  Sparkles,
+  GraduationCap,
+  HelpCircle,
+  Clock,
+  Layers,
+} from 'lucide-react';
 import PageContainer from '@/components/layout/PageContainer';
 import SectionHeading from '@/components/ui/SectionHeading';
 import Breadcrumb from '@/components/ui/Breadcrumb';
@@ -12,29 +27,56 @@ import { SERVICES_DATA } from '@/lib/data/servicesData';
 export const metadata = {
   title: 'Our Educational Support Services | TUTOR PROCTORED EXAMS',
   description:
-    'Explore personalized tutoring, structured examination preparation, practice question banks, professional certification prep, study planning, and proctoring software technical guidance.',
+    'Explore 1-on-1 tutoring, academic exam prep, practice tests, certification prep, study planning, technical guidance, online course help, GED, HESI, and TEAS support.',
   keywords: [
     'educational support services',
-    'one-to-one tutoring',
+    'one-on-one tutoring',
     'academic exam preparation',
     'practice questions mock tests',
     'professional certification preparation',
     'study planning revision support',
     'examination software technical guidance',
+    'GED prep',
+    'HESI A2 tutoring',
+    'ATI TEAS prep',
   ],
 };
 
 export default function ServicesHubPage() {
-  const serviceList = Object.values(SERVICES_DATA);
+  // Filter primary unique services (excluding aliases)
+  const primarySlugs = [
+    'one-on-one-tutoring',
+    'academic-exam-preparation',
+    'practice-questions-mock-tests',
+    'professional-certification-prep',
+    'study-planning-revision-support',
+    'software-technical-guidance',
+    'online-course-help',
+    'online-exam-help',
+    'proctored-certification-exams',
+    'ged',
+    'hesi',
+    'teas',
+  ];
+
+  const serviceList = primarySlugs
+    .map((slug) => SERVICES_DATA[slug])
+    .filter(Boolean);
 
   // Icon map matching service slugs
   const iconMap = {
-    'one-to-one-tutoring': Users,
+    'one-on-one-tutoring': Users,
     'academic-exam-preparation': BookOpen,
     'practice-questions-mock-tests': FileCheck,
-    'professional-certification-preparation': Award,
-    'study-planning': Calendar,
-    'examination-software-technical-guidance': Cpu,
+    'professional-certification-prep': Award,
+    'study-planning-revision-support': Calendar,
+    'software-technical-guidance': Cpu,
+    'online-course-help': GraduationCap,
+    'online-exam-help': HelpCircle,
+    'proctored-certification-exams': ShieldCheck,
+    ged: Layers,
+    hesi: Clock,
+    teas: Sparkles,
   };
 
   return (
@@ -44,9 +86,18 @@ export default function ServicesHubPage() {
 
         {/* Hero Section */}
         <div className="relative bg-brand-navy text-white rounded-2xl p-8 sm:p-12 overflow-hidden my-6">
-          <div className="absolute inset-0 z-0 opacity-25 bg-cover bg-center mix-blend-overlay" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80')" }}></div>
+          <div
+            className="absolute inset-0 z-0 opacity-25 bg-cover bg-center mix-blend-overlay"
+            style={{
+              backgroundImage:
+                "url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80')",
+            }}
+          ></div>
           <div className="relative z-10 max-w-3xl space-y-4">
-            <Badge variant="blue" className="bg-brand-blue/20 text-brand-lightBlue border-brand-blue/30 px-3 py-1">
+            <Badge
+              variant="blue"
+              className="bg-brand-blue/20 text-brand-lightBlue border-brand-blue/30 px-3 py-1"
+            >
               Academic & Technical Support
             </Badge>
 
@@ -55,7 +106,7 @@ export default function ServicesHubPage() {
             </h1>
 
             <p className="text-base sm:text-lg text-brand-muted/90 leading-relaxed text-balance">
-              Explore personalized tutoring, structured examination preparation, and professional certification study support designed to help you build knowledge, improve your skills, and pursue your academic and professional goals.
+              Explore 12 specialized educational services covering 1-on-1 tutoring, exam readiness, certification coaching, proctoring technical guidance, GED, HESI, and TEAS prep.
             </p>
 
             <div className="pt-4 flex flex-wrap items-center gap-4">
@@ -68,19 +119,25 @@ export default function ServicesHubPage() {
             </div>
 
             <div className="pt-4 flex flex-wrap gap-4 text-xs text-brand-muted border-t border-white/10">
-              <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-brand-blue" /> 100% Ethical Academic Standard</span>
-              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-brand-blue" /> Qualified Specialist Tutors</span>
-              <span className="flex items-center gap-1.5"><Sparkles className="w-4 h-4 text-brand-blue" /> Individualized Study Guidance</span>
+              <span className="flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4 text-brand-blue" /> 100% Ethical Academic Standard
+              </span>
+              <span className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 text-brand-blue" /> Qualified Specialist Tutors
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Sparkles className="w-4 h-4 text-brand-blue" /> Individualized Study Guidance
+              </span>
             </div>
           </div>
         </div>
 
-        {/* 6 Services Grid */}
+        {/* 12 Services Directory Grid */}
         <div className="space-y-8 mt-12">
           <SectionHeading
             badge="Service Directory"
             title="Tailored Services for Independent Success"
-            subtitle="Select a service below to explore detailed offerings, target groups, study methodologies, and related certification roadmaps."
+            subtitle="Select a service below to explore detailed offerings, study methodologies, and related certification roadmaps."
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
