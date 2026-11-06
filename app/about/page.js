@@ -6,13 +6,11 @@ import {
   Eye,
   HeartHandshake,
   Award,
-  BookOpen,
   Users,
   Sparkles,
   CheckCircle2,
   ArrowRight,
   Lock,
-  Compass,
   GraduationCap,
 } from 'lucide-react';
 import PageContainer from '@/components/layout/PageContainer';
@@ -24,23 +22,23 @@ import JsonLd from '@/components/seo/JsonLd';
 import { SITE_CONFIG } from '@/lib/utils';
 
 export const metadata = {
-  title: 'About Us & Academic Integrity Commitment | TUTOR PROCTORED EXAMS',
+  title: 'About Us | TUTOR PROCTORED EXAMS',
   description:
-    'TUTOR PROCTORED EXAMS is an educational support brand focused on helping learners prepare effectively through ethical 1-on-1 tutoring, exam preparation, and software technical guidance.',
+    'TUTOR PROCTORED EXAMS is an educational support brand serving students and professionals worldwide with personalized tutoring, exam preparation, and software technical guidance.',
   keywords: [
     'about TUTOR PROCTORED EXAMS',
-    'ethical academic tutoring',
+    'educational support',
+    'academic tutoring',
+    'exam preparation',
     'academic integrity policy',
-    'exam preparation coaching',
-    'US education support',
   ],
   alternates: {
     canonical: `${SITE_CONFIG.domain}/about`,
   },
   openGraph: {
-    title: 'About Us & Academic Integrity Commitment | TUTOR PROCTORED EXAMS',
+    title: 'About Us | TUTOR PROCTORED EXAMS',
     description:
-      'TUTOR PROCTORED EXAMS is an educational support brand focused on helping learners prepare effectively through ethical 1-on-1 tutoring.',
+      'Personalized tutoring, examination preparation and professional learning support to help you reach your goals.',
     url: `${SITE_CONFIG.domain}/about`,
     type: 'article',
   },
@@ -57,39 +55,34 @@ export default function AboutPage() {
       'Academic Tutoring',
       'Exam Preparation',
       'Professional Certifications',
-      'Proctoring Software Technical Compatibility',
+      'Proctoring Software Technical Guidance',
     ],
   };
 
   const coreValues = [
     {
       title: 'Integrity',
-      description: 'We strictly uphold ethical educational standards, encouraging genuine subject mastery and independent student test performance.',
+      description: 'We promote honest learning and independent examination performance.',
       icon: ShieldCheck,
     },
     {
-      title: 'Student-Focused Support',
-      description: 'Every lesson plan and study schedule is tailored around the individual learner’s unique pace, background, and academic goals.',
+      title: 'Personalized Support',
+      description: "We adapt our guidance to each learner's needs and goals.",
       icon: HeartHandshake,
     },
     {
       title: 'Quality Education',
-      description: 'We deliver clear, well-structured instruction, high-yield practice materials, and verified domain insights.',
+      description: 'We provide clear instruction and useful learning resources.',
       icon: Award,
     },
     {
       title: 'Professionalism',
-      description: 'Our specialists communicate with clarity, respect, and punctuality, maintaining a supportive academic environment.',
+      description: 'We value respect, reliability and effective communication.',
       icon: GraduationCap,
     },
     {
-      title: 'Accessibility',
-      description: 'We strive to make high-quality tutoring and technical readiness resources straightforward and easy to access.',
-      icon: Users,
-    },
-    {
       title: 'Continuous Improvement',
-      description: 'We foster habits of active recall, self-evaluation, and structured revision to support lifelong learning success.',
+      description: 'We encourage consistent learning and lifelong development.',
       icon: Sparkles,
     },
   ];
@@ -97,141 +90,136 @@ export default function AboutPage() {
   const approachSteps = [
     {
       step: '01',
-      title: 'Understand the Learner’s Goals',
-      description: 'We review your specific course syllabus, target examination platform, or professional certification roadmap.',
+      title: 'Understand Your Goals',
+      description: 'Identify your course, examination or certification objectives.',
     },
     {
       step: '02',
       title: 'Identify Learning Needs',
-      description: 'We evaluate current knowledge gaps, time constraints, and software compatibility requirements.',
+      description: 'Understand your knowledge gaps and preparation requirements.',
     },
     {
       step: '03',
-      title: 'Recommend Suitable Educational Support',
-      description: 'We match you with personalized 1-on-1 subject tutoring, practice banks, or technical system checks.',
+      title: 'Provide Guidance',
+      description: 'Recommend suitable tutoring, study resources and legitimate technical support.',
     },
     {
       step: '04',
-      title: 'Encourage Structured Preparation',
-      description: 'We build daily study schedules, conduct practice question walkthroughs, and refine test pacing.',
-    },
-    {
-      step: '05',
-      title: 'Support Continuous Improvement',
-      description: 'We monitor progress and build long-term confidence so learners can take their exams independently.',
+      title: 'Build Confidence',
+      description: 'Help you prepare effectively and complete your examinations independently.',
     },
   ];
 
   return (
-    <div className="space-y-16 sm:space-y-24 py-10 pb-20">
+    <div className="space-y-16 sm:space-y-20 py-10 pb-20">
       <JsonLd data={jsonLdData} />
 
       <PageContainer>
         <Breadcrumb items={[{ label: 'About Us' }]} />
 
-        {/* 1. HERO SECTION */}
-        <div className="relative bg-brand-navy text-white rounded-2xl p-8 sm:p-14 overflow-hidden my-6">
+        {/* 1. HERO SECTION WITH CLEARLY VISIBLE HIGH-QUALITY ACADEMIC PHOTOGRAPH */}
+        <div className="relative text-white rounded-2xl p-8 sm:p-14 overflow-hidden my-6 bg-[#0F172A]">
+          {/* Clearly Visible University Library & Academic Space Background Photograph */}
           <div
-            className="absolute inset-0 z-0 opacity-20 bg-cover bg-center mix-blend-overlay"
-            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1920&q=80')" }}
+            className="absolute inset-0 z-0 bg-cover bg-center opacity-75"
+            style={{
+              backgroundImage:
+                "url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1920&q=80')",
+            }}
           ></div>
+
+          {/* Subtle Side Overlay For High Text Readability */}
+          <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#0F172A]/90 via-[#0F172A]/70 to-transparent"></div>
+
           <div className="relative z-10 max-w-3xl space-y-4">
-            <Badge variant="blue" className="bg-brand-blue/20 text-brand-lightBlue border-brand-blue/30 px-3 py-1 text-xs">
-              Who We Are
+            <Badge
+              variant="blue"
+              className="bg-[#2563EB] text-white border-blue-400 px-3.5 py-1 text-xs shadow-md font-bold"
+            >
+              ABOUT US
             </Badge>
 
-            <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
-              SUPPORTING YOUR JOURNEY TOWARD ACADEMIC AND PROFESSIONAL SUCCESS
+            <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight drop-shadow-[0_4px_8px_rgba(0,0,0,0.9)]">
+              Helping You Learn, Prepare and Succeed.
             </h1>
 
-            <p className="text-base sm:text-lg text-brand-muted/90 leading-relaxed text-balance">
-              TUTOR PROCTORED EXAMS is an educational support brand focused on helping learners prepare effectively, strengthen their knowledge, and pursue their academic and professional goals.
+            <p className="text-base sm:text-lg text-slate-100 leading-relaxed max-w-2xl font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
+              Personalized tutoring, examination preparation and professional learning support to help you reach your goals.
             </p>
 
             <div className="pt-4 flex flex-wrap gap-4">
-              <Button href="/services" variant="primary" size="lg" icon={ArrowRight}>
+              <Button href="/services" variant="primary" size="lg" icon={ArrowRight} className="bg-[#2563EB] hover:bg-[#1D4ED8] shadow-xl">
                 Explore Our Services
               </Button>
-              <Button href="/contact" variant="outline" size="lg" className="border-white/30 text-white hover:bg-white/10">
-                Contact Our Team
-              </Button>
             </div>
           </div>
         </div>
 
-        {/* 2. OUR STORY */}
-        <div className="bg-white border border-brand-border rounded-2xl p-8 sm:p-12 space-y-6 shadow-sm my-10">
-          <SectionHeading
-            badge="Brand Purpose"
-            title="Our Story & Dedicated Mission"
-            subtitle="Creating a reliable academic support destination for college students and working professionals worldwide."
-          />
+        {/* 2. WHO WE ARE */}
+        <div className="bg-white border border-brand-border rounded-2xl p-8 sm:p-10 space-y-4 shadow-sm my-8">
+          <Badge variant="blue" className="bg-brand-blue/10 text-brand-blue border-brand-blue/20">
+            Who We Are
+          </Badge>
 
-          <div className="prose prose-slate max-w-none text-brand-muted text-sm sm:text-base leading-relaxed space-y-4">
-            <p>
-              Navigating university examinations and professional certification tests requires more than just reading textbooks. Students frequently encounter challenging course topics, rigid exam formats, unfamiliar proctoring software requirements, and tight study schedules.
-            </p>
-            <p>
-              <strong>TUTOR PROCTORED EXAMS</strong> was created to meet this challenge with clarity and integrity. We position our brand around accessible educational support, personalized 1-on-1 tutoring, structured exam preparation, professional certification guidance, practical study resources, and responsible, ethical learning.
-            </p>
-            <p>
-              We believe that when students receive tailored explanations, clear revision schedules, and proactive technical guidance regarding examination software compatibility, they can perform at their highest potential independently.
-            </p>
-          </div>
+          <p className="text-base sm:text-lg text-brand-navy font-semibold leading-relaxed max-w-4xl">
+            TUTOR PROCTORED EXAMS is an educational support brand serving students and professionals worldwide. We provide personalized tutoring, structured examination preparation, certification guidance and legitimate technical support for examination software.
+          </p>
         </div>
 
-        {/* 3. OUR MISSION & OUR VISION */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 my-10">
-          <div className="bg-white border border-brand-border rounded-2xl p-8 space-y-4 shadow-sm flex flex-col justify-between">
+        {/* 3. OUR MISSION AND VISION */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 my-8">
+          <div className="bg-white border border-brand-border rounded-2xl p-8 space-y-3 shadow-sm flex flex-col justify-between">
             <div className="space-y-3">
-              <div className="w-10 h-10 rounded-lg bg-brand-lightBlue text-brand-blue flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-brand-lightBlue text-brand-blue flex items-center justify-center">
                 <Target className="w-5 h-5" />
               </div>
-              <h2 className="text-2xl font-bold text-brand-navy">OUR MISSION</h2>
-              <p className="text-brand-muted text-sm leading-relaxed">
-                Our mission is to make high-quality educational guidance, structured learning support, and examination preparation resources accessible and genuinely useful to every student and professional we serve.
+              <h2 className="text-2xl font-bold text-brand-navy">Our Mission</h2>
+              <p className="text-brand-muted text-sm sm:text-base leading-relaxed">
+                To make quality educational guidance and examination preparation accessible, practical and effective for every learner we serve.
               </p>
             </div>
             <div className="pt-2 text-xs font-semibold text-brand-blue flex items-center gap-1">
-              <CheckCircle2 className="w-4 h-4" /> Accessible • Structured • Ethical
+              <CheckCircle2 className="w-4 h-4" /> Accessible • Practical • Effective
             </div>
           </div>
 
-          <div className="bg-white border border-brand-border rounded-2xl p-8 space-y-4 shadow-sm flex flex-col justify-between">
+          <div className="bg-white border border-brand-border rounded-2xl p-8 space-y-3 shadow-sm flex flex-col justify-between">
             <div className="space-y-3">
-              <div className="w-10 h-10 rounded-lg bg-brand-lightBlue text-brand-blue flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-brand-lightBlue text-brand-blue flex items-center justify-center">
                 <Eye className="w-5 h-5" />
               </div>
-              <h2 className="text-2xl font-bold text-brand-navy">OUR VISION</h2>
-              <p className="text-brand-muted text-sm leading-relaxed">
-                Our vision is to build a widely trusted, premier educational support brand worldwide, recognized for helping learners overcome academic challenges, master certification domains, and achieve their career aspirations through genuine learning.
+              <h2 className="text-2xl font-bold text-brand-navy">Our Vision</h2>
+              <p className="text-brand-muted text-sm sm:text-base leading-relaxed">
+                To become a trusted global educational support brand, helping learners build knowledge, confidence and achieve their academic and professional goals.
               </p>
             </div>
             <div className="pt-2 text-xs font-semibold text-brand-blue flex items-center gap-1">
-              <CheckCircle2 className="w-4 h-4" /> Student-Centered Growth
+              <CheckCircle2 className="w-4 h-4" /> Global Educational Trust
             </div>
           </div>
         </div>
 
-        {/* 4. OUR CORE VALUES */}
-        <div className="space-y-8 my-12">
+        {/* 4. OUR CORE VALUES (5 VALUES) */}
+        <div className="space-y-8 my-10">
           <SectionHeading
-            badge="Guided Principles"
-            title="OUR CORE VALUES"
-            subtitle="The foundational principles that guide every tutoring session, study guide, and student interaction."
-            centered
+            badge="Core Principles"
+            title="Our Core Values"
+            subtitle="The foundational principles that guide every tutoring session and study resource."
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             {coreValues.map((val, idx) => {
               const ValIcon = val.icon;
               return (
-                <div key={idx} className="bg-white border border-brand-border rounded-xl p-6 space-y-3 hover:border-brand-blue/40 transition-colors shadow-sm">
-                  <div className="w-10 h-10 rounded-lg bg-brand-lightBlue text-brand-blue flex items-center justify-center">
-                    <ValIcon className="w-5 h-5" />
+                <div
+                  key={idx}
+                  className="bg-white border border-brand-border rounded-xl p-5 space-y-2 hover:border-brand-blue/40 transition-colors shadow-sm"
+                >
+                  <div className="w-9 h-9 rounded-lg bg-brand-lightBlue text-brand-blue flex items-center justify-center">
+                    <ValIcon className="w-4 h-4" />
                   </div>
-                  <h3 className="text-lg font-bold text-brand-navy">{val.title}</h3>
-                  <p className="text-xs sm:text-sm text-brand-muted leading-relaxed">{val.description}</p>
+                  <h3 className="text-base font-bold text-brand-navy">{val.title}</h3>
+                  <p className="text-xs text-brand-muted leading-relaxed">{val.description}</p>
                 </div>
               );
             })}
@@ -239,16 +227,16 @@ export default function AboutPage() {
         </div>
 
         {/* 5. OUR APPROACH */}
-        <div className="bg-white border border-brand-border rounded-2xl p-8 sm:p-12 space-y-8 my-12 shadow-sm">
+        <div className="bg-white border border-brand-border rounded-2xl p-8 sm:p-10 space-y-6 my-10 shadow-sm">
           <SectionHeading
-            badge="Methodology"
-            title="OUR EDUCATIONAL APPROACH"
-            subtitle="A structured 5-step process designed to foster genuine subject mastery."
+            badge="Process"
+            title="How We Support Your Learning"
+            subtitle="A clear four-step process to foster genuine subject mastery."
           />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-2">
             {approachSteps.map((app, idx) => (
-              <div key={idx} className="p-5 rounded-xl border border-brand-border bg-brand-bg space-y-3">
+              <div key={idx} className="p-5 rounded-xl border border-brand-border bg-brand-bg space-y-2">
                 <div className="text-2xl font-extrabold text-brand-blue/40 font-mono">{app.step}</div>
                 <h3 className="text-base font-bold text-brand-navy">{app.title}</h3>
                 <p className="text-xs text-brand-muted leading-relaxed">{app.description}</p>
@@ -257,46 +245,49 @@ export default function AboutPage() {
           </div>
         </div>
 
-        {/* 6. ACADEMIC INTEGRITY SECTION */}
-        <div className="bg-brand-navy text-white rounded-2xl p-8 sm:p-12 space-y-6 shadow-xl my-12">
+        {/* 6. OUR COMMITMENT TO ACADEMIC INTEGRITY */}
+        <div className="bg-brand-navy text-white rounded-2xl p-8 sm:p-10 space-y-4 shadow-xl my-10">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-brand-blue/20 text-brand-lightBlue flex items-center justify-center">
+            <div className="w-9 h-9 rounded-full bg-brand-blue/20 text-brand-lightBlue flex items-center justify-center">
               <Lock className="w-5 h-5" />
             </div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-white">Our Academic Integrity Commitment</h2>
+            <h2 className="text-2xl font-bold text-white">Our Commitment to Academic Integrity</h2>
           </div>
 
-          <p className="text-brand-muted text-sm sm:text-base leading-relaxed text-balance">
-            TUTOR PROCTORED EXAMS strictly supports genuine learning and independent examination completion. We explicitly do NOT offer impersonation, proxy examination-taking, cheating, unauthorized examination assistance, or proctoring bypass services.
+          <p className="text-slate-200 text-sm sm:text-base leading-relaxed">
+            We believe in genuine learning and honest achievement. We provide educational guidance, tutoring, practice resources and legitimate technical support.
           </p>
 
-          <p className="text-brand-muted text-sm leading-relaxed">
-            Our role is strictly educational: providing concept explanations, study schedules, practice problem walkthroughs, and legitimate technical system requirement checks so students can take their own examinations with full preparation and confidence.
+          <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
+            We do not provide proxy examination-taking, impersonation, cheating, unauthorized examination assistance or proctoring bypass services. Every learner is responsible for completing their own examinations.
           </p>
 
           <div className="pt-2">
-            <Link href="/disclaimer" className="text-xs font-semibold text-brand-lightBlue hover:underline inline-flex items-center gap-1">
-              Read our full legal disclaimer <ArrowRight className="w-3.5 h-3.5" />
+            <Link
+              href="/disclaimer"
+              className="text-xs font-semibold text-brand-lightBlue hover:underline inline-flex items-center gap-1"
+            >
+              Read our full integrity commitment <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </div>
 
-        {/* 7. CALL TO ACTION */}
-        <div className="bg-gradient-to-r from-brand-navy to-brand-secondaryNavy text-white rounded-2xl p-8 sm:p-12 text-center space-y-6">
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-            LET’S WORK TOWARD YOUR LEARNING GOALS
+        {/* 7. FINAL CALL TO ACTION */}
+        <div className="bg-brand-navy text-white rounded-2xl p-8 sm:p-10 text-center space-y-4">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            Ready to Take the Next Step?
           </h2>
 
-          <p className="text-base sm:text-lg text-brand-muted/90 max-w-xl mx-auto leading-relaxed">
-            Find the personalized tutoring, structured study plan, or technical guidance that matches your goals.
+          <p className="text-slate-200 text-sm max-w-lg mx-auto leading-relaxed">
+            Let us help you prepare, strengthen your knowledge and move closer to your goals.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button href="/services" variant="primary" size="lg" icon={ArrowRight}>
               Explore Our Services
             </Button>
             <Button href="/contact" variant="outline" size="lg" className="border-white/30 text-white hover:bg-white/10">
-              Contact Our Team
+              Contact Us
             </Button>
           </div>
         </div>
