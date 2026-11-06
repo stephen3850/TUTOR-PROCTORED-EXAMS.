@@ -319,11 +319,11 @@ export default function HomePage() {
                 Ethical Academic Support & Certification Guidance
               </Badge>
 
-              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.1] drop-shadow-[0_4px_10px_rgba(0,0,0,0.95)]">
+              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-[1.15] drop-shadow-[0_4px_10px_rgba(0,0,0,0.95)]">
                 Your Academic and Exams Success Starts With The Right Approach
               </h1>
 
-              <p className="text-base sm:text-xl text-slate-100 leading-relaxed max-w-2xl text-balance drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)] font-semibold">
+              <p className="text-sm sm:text-base lg:text-lg text-slate-100 leading-relaxed max-w-2xl text-balance drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)] font-medium">
                 Discover professional tutoring, structured exam preparation, practice resources, and certification guidance designed to help you pass your exams.
               </p>
 
