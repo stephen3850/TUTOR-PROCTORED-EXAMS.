@@ -131,7 +131,7 @@ export default function ContactPage() {
   const contactFaqs = [
     {
       question: 'How can I enquire about tutoring or prep services?',
-      answer: 'Simply fill out the inquiry form on this page selecting your service of interest, or send an email to support@tutorproctoredexams.com. Our team will review your goals and respond within 1 business day.',
+      answer: 'Simply fill out the inquiry form on this page selecting your service of interest, or send an email to info@tutorproctoredexams.com. Our team will review your goals and respond within 1 business day.',
     },
     {
       question: 'How do I choose the right service for my needs?',

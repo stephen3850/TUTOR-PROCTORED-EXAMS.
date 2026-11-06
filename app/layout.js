@@ -10,6 +10,7 @@ import { SITE_CONFIG } from '@/lib/utils';
 
 const inter = Inter({
   subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800'],
   variable: '--font-inter',
   display: 'swap',
 });
@@ -73,8 +74,8 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={inter.variable}>
-      <body className="flex flex-col min-h-screen bg-brand-bg text-brand-text antialiased">
+    <html lang="en" className={`${inter.variable} ${inter.className}`}>
+      <body className="flex flex-col min-h-screen bg-brand-bg text-brand-text font-sans antialiased">
         <GoogleAnalytics />
         <GoogleTagManager />
         <Header />
