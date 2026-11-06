@@ -85,6 +85,14 @@ export default async function PlatformDetailPage({ params }) {
   // Maximum 3 key features
   const keyFeatures = (platform.features || []).slice(0, 3);
 
+  // Map background images per platform
+  const bgImages = {
+    'respondus-lockdown-browser': '/lockdown.png',
+    examplify: '/examplify.jpg',
+    honorlock: '/honorlock.jpg',
+  };
+  const platformBg = bgImages[platform.slug];
+
   // Structured Data JSON-LD
   const jsonLdData = {
     '@context': 'https://schema.org',
@@ -141,40 +149,87 @@ export default async function PlatformDetailPage({ params }) {
           ]}
         />
 
-        {/* 1. PAGE TITLE, VENDOR & SHORT DESCRIPTION */}
-        <div className="bg-white border border-brand-border rounded-2xl p-8 sm:p-10 space-y-6 shadow-sm my-6">
-          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-brand-border pb-6">
-            <div className="space-y-2">
-              <div className="flex items-center gap-3">
-                <Badge variant="blue">{platform.category}</Badge>
-                <span className="text-xs text-brand-muted font-bold">Vendor: {platform.vendor}</span>
-              </div>
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-brand-navy tracking-tight">
-                {platform.name}
-              </h1>
-            </div>
-            <Button href="/contact?service=Examination%20Software%20Technical%20Guidance" variant="primary" size="md" icon={ArrowRight}>
-              Request Technical Assistance
-            </Button>
-          </div>
+        {/* 1. PAGE TITLE, VENDOR & SHORT DESCRIPTION (WITH BACKGROUND IMAGE WHEN AVAILABLE) */}
+        {platformBg ? (
+          <div className="relative text-white rounded-2xl p-8 sm:p-10 space-y-6 shadow-xl my-6 bg-[#0F172A] overflow-hidden">
+            {/* Background Image: lockdown.png / examplify.jpg / honorlock.jpg */}
+            <div
+              className="absolute inset-0 z-0 bg-cover bg-center opacity-80"
+              style={{ backgroundImage: `url('${platformBg}')` }}
+            ></div>
 
-          <p className="text-base sm:text-lg text-brand-muted leading-relaxed max-w-4xl">
-            {platform.overview}
-          </p>
+            {/* Dark Gradient Overlay for Crisp Readability */}
+            <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#0F172A]/90 via-[#0F172A]/70 to-[#0F172A]/40"></div>
 
-          {/* 2. KEY FEATURES (MAXIMUM 3 SHORT BULLETS) */}
-          <div className="space-y-3 pt-2">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-brand-navy">Key Features</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {keyFeatures.map((feature, idx) => (
-                <div key={idx} className="p-4 rounded-xl bg-brand-bg border border-brand-border flex items-start gap-2.5">
-                  <CheckCircle2 className="w-5 h-5 text-brand-blue shrink-0 mt-0.5" />
-                  <span className="text-xs text-brand-text font-medium leading-relaxed">{feature}</span>
+            <div className="relative z-10 space-y-6">
+              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/20 pb-6">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3">
+                    <Badge variant="blue" className="bg-[#2563EB] text-white border-blue-400 font-bold">{platform.category}</Badge>
+                    <span className="text-xs text-slate-200 font-bold">Vendor: {platform.vendor}</span>
+                  </div>
+                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight drop-shadow-[0_4px_8px_rgba(0,0,0,0.9)]">
+                    {platform.name}
+                  </h1>
                 </div>
-              ))}
+                <Button href="/contact?service=Examination%20Software%20Technical%20Guidance" variant="primary" size="md" icon={ArrowRight} className="bg-[#2563EB] hover:bg-[#1D4ED8]">
+                  Request Technical Assistance
+                </Button>
+              </div>
+
+              <p className="text-base sm:text-lg text-slate-100 leading-relaxed max-w-4xl font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
+                {platform.overview}
+              </p>
+
+              {/* 2. KEY FEATURES (MAXIMUM 3 SHORT BULLETS) */}
+              <div className="space-y-3 pt-2">
+                <h3 className="text-sm font-bold uppercase tracking-wider text-white drop-shadow-sm">Key Features</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {keyFeatures.map((feature, idx) => (
+                    <div key={idx} className="p-4 rounded-xl bg-slate-900/80 backdrop-blur-md border border-white/20 flex items-start gap-2.5 shadow-md">
+                      <CheckCircle2 className="w-5 h-5 text-[#356AE6] shrink-0 mt-0.5" />
+                      <span className="text-xs text-white font-semibold leading-relaxed">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        ) : (
+          <div className="bg-white border border-brand-border rounded-2xl p-8 sm:p-10 space-y-6 shadow-sm my-6">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-brand-border pb-6">
+              <div className="space-y-2">
+                <div className="flex items-center gap-3">
+                  <Badge variant="blue">{platform.category}</Badge>
+                  <span className="text-xs text-brand-muted font-bold">Vendor: {platform.vendor}</span>
+                </div>
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-brand-navy tracking-tight">
+                  {platform.name}
+                </h1>
+              </div>
+              <Button href="/contact?service=Examination%20Software%20Technical%20Guidance" variant="primary" size="md" icon={ArrowRight}>
+                Request Technical Assistance
+              </Button>
+            </div>
+
+            <p className="text-base sm:text-lg text-brand-muted leading-relaxed max-w-4xl">
+              {platform.overview}
+            </p>
+
+            {/* KEY FEATURES */}
+            <div className="space-y-3 pt-2">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-brand-navy">Key Features</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {keyFeatures.map((feature, idx) => (
+                  <div key={idx} className="p-4 rounded-xl bg-brand-bg border border-brand-border flex items-start gap-2.5">
+                    <CheckCircle2 className="w-5 h-5 text-brand-blue shrink-0 mt-0.5" />
+                    <span className="text-xs text-brand-text font-medium leading-relaxed">{feature}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* 3. SYSTEM REQUIREMENTS SUMMARY */}
         <div className="bg-white border border-brand-border rounded-2xl p-8 sm:p-10 space-y-4 shadow-sm">
@@ -217,59 +272,59 @@ export default async function PlatformDetailPage({ params }) {
           </div>
         </div>
 
-        {/* 4. CONSISTENT CONTACT SUPPORT SECTION FOR ALL 9 PLATFORMS */}
-        <div className="bg-brand-navy text-white rounded-2xl p-8 sm:p-12 space-y-6 shadow-xl text-center">
-          <div className="max-w-2xl mx-auto space-y-3">
-            <Badge variant="blue" className="bg-brand-blue/20 text-brand-lightBlue border-brand-blue/30 px-3 py-1 text-xs">
+        {/* 4. CONSISTENT CONTACT SUPPORT SECTION FOR ALL 9 PLATFORMS (CLEAR VIBRANT GREEN BACKGROUND) */}
+        <div className="bg-[#05B851] text-white rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl text-center max-w-4xl mx-auto">
+          <div className="max-w-2xl mx-auto space-y-2">
+            <span className="inline-block bg-white/20 text-white border border-white/30 px-3 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider">
               Technical Guidance & Support
-            </Badge>
+            </span>
 
-            <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+            <h2 className="text-xl sm:text-3xl font-black text-white tracking-tight">
               Need Help With This Examination Platform?
             </h2>
 
-            <p className="text-sm sm:text-base text-brand-muted/90 leading-relaxed">
+            <p className="text-xs sm:text-sm text-white/95 leading-relaxed font-medium">
               Need assistance with examination software, technical requirements, installation or exam preparation? Contact TUTOR PROCTORED EXAMS for professional guidance and support.
             </p>
           </div>
 
           {/* Functional Contact Buttons */}
-          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4 max-w-2xl mx-auto">
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3 max-w-2xl mx-auto">
             {/* BUTTON 1: CHAT WITH US ON WHATSAPP */}
             <a
               href="https://wa.me/254711882470"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm flex items-center justify-center gap-2.5 shadow-lg transition-all"
+              className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-white text-emerald-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md hover:bg-emerald-50 transition-all"
             >
-              <MessageCircle className="w-5 h-5 fill-white text-emerald-600 shrink-0" />
+              <MessageCircle className="w-4 h-4 fill-emerald-950 text-white shrink-0" />
               <span>Chat with Us on WhatsApp</span>
             </a>
 
             {/* BUTTON 2: EMAIL US */}
             <a
               href="mailto:info@tutorproctoredexams.com"
-              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-brand-blue hover:bg-brand-secondaryNavy text-white font-bold text-sm flex items-center justify-center gap-2.5 shadow-lg transition-all"
+              className="w-full sm:w-auto px-5 py-2.5 rounded-xl border-2 border-white/90 bg-emerald-800/80 text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md hover:bg-white hover:text-emerald-950 transition-all"
             >
-              <Mail className="w-5 h-5 shrink-0" />
+              <Mail className="w-4 h-4 shrink-0" />
               <span>Email Us</span>
             </a>
 
             {/* BUTTON 3: REQUEST TECHNICAL ASSISTANCE FORM LINK */}
-            <Button href="/contact?service=Examination%20Software%20Technical%20Guidance" variant="light" size="lg" icon={ArrowRight}>
-              Request Technical Assistance
+            <Button href="/contact?service=Examination%20Software%20Technical%20Guidance" variant="outline" size="md" icon={ArrowRight} className="border-white/40 text-white hover:bg-white/10">
+              Request Assistance
             </Button>
           </div>
 
           {/* Direct Contact Info Display */}
-          <div className="pt-4 flex flex-wrap items-center justify-center gap-6 text-xs text-brand-muted border-t border-white/10 max-w-xl mx-auto">
+          <div className="pt-3 flex flex-wrap items-center justify-center gap-4 text-xs text-white/90 border-t border-white/20 max-w-xl mx-auto font-medium">
             <span><strong>WhatsApp:</strong> +254 711 882470</span>
             <span>•</span>
             <span><strong>Email:</strong> info@tutorproctoredexams.com</span>
           </div>
 
           {/* Vendor Disclaimer */}
-          <div className="pt-4 text-[11px] text-brand-muted/70 max-w-3xl mx-auto border-t border-white/10">
+          <div className="pt-2 text-[11px] text-white/80 max-w-3xl mx-auto border-t border-white/20 font-medium">
             <strong>Disclaimer:</strong> TUTOR PROCTORED EXAMS is an independent educational service. We are not affiliated with, endorsed by, or sponsored by {platform.vendor} or {platform.name}. All product names and trademarks belong to their respective owners.
           </div>
         </div>

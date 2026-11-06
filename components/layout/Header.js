@@ -121,31 +121,31 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white border-b border-slate-200/90 transition-shadow duration-300 shadow-sm">
-      {/* Top Announcement Bar */}
-      <div className="bg-[#0F172A] text-white text-xs py-2 px-4 border-b border-slate-800">
+      {/* Top Announcement Bar (Vibrant Crimson Red) */}
+      <div className="bg-[#DC2626] text-white text-xs py-2 px-4 border-b border-red-800 font-semibold shadow-sm">
         <PageContainer className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-[#356AE6] shrink-0" aria-hidden="true" />
-            <span className="truncate font-medium text-slate-200 text-[11px] sm:text-xs">
+            <ShieldCheck className="w-4 h-4 text-white shrink-0" aria-hidden="true" />
+            <span className="truncate font-bold text-white text-[11px] sm:text-xs">
               Ethical Educational Support & Proctoring Software Technical Guidance for Students Worldwide
             </span>
           </div>
-          <div className="hidden md:flex items-center gap-3.5 text-slate-300 text-[11px] font-medium">
+          <div className="hidden md:flex items-center gap-3.5 text-white text-[11px] font-bold">
             <span>{SITE_CONFIG.hours}</span>
-            <span className="text-slate-700">|</span>
+            <span className="text-red-300">|</span>
             <a
               href="https://wa.me/254711882470"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-emerald-400 hover:text-emerald-300 font-bold transition-colors inline-flex items-center gap-1.5"
+              className="text-emerald-200 hover:text-white font-extrabold transition-colors inline-flex items-center gap-1.5 underline underline-offset-2"
             >
-              <MessageCircle className="w-3.5 h-3.5 text-emerald-400 fill-emerald-400/20" />
+              <MessageCircle className="w-3.5 h-3.5 text-emerald-200 fill-emerald-200/20" />
               <span>Contact Our Team</span>
             </a>
-            <span className="text-slate-700">|</span>
+            <span className="text-red-300">|</span>
             <Link
               href="/disclaimer"
-              className="text-white hover:text-blue-400 transition-colors font-medium"
+              className="text-white hover:text-red-100 transition-colors font-bold"
             >
               Academic Disclaimer
             </Link>
