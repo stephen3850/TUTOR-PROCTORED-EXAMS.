@@ -9,12 +9,11 @@ import {
   Laptop,
   HardDrive,
   Cpu,
-  HelpCircle,
   ArrowRight,
-  BookOpen,
   UserCheck,
   Wrench,
-  ArrowLeft,
+  Mail,
+  MessageCircle,
 } from 'lucide-react';
 import PageContainer from '@/components/layout/PageContainer';
 import SectionHeading from '@/components/ui/SectionHeading';
@@ -82,6 +81,8 @@ export default async function PlatformDetailPage({ params }) {
     notFound();
   }
 
+  const isRespondus = platform.slug === 'respondus-lockdown-browser';
+
   // Related platforms list excluding current
   const relatedPlatforms = Object.values(PLATFORMS_DATA)
     .filter((p) => p.slug !== platform.slug)
@@ -93,7 +94,7 @@ export default async function PlatformDetailPage({ params }) {
     '@graph': [
       {
         '@type': 'TechArticle',
-        headline: `${platform.name} System Requirements & Preparation Guide`,
+        headline: `${platform.name} System Requirements & Technical Assistance`,
         description: platform.overview,
         author: {
           '@type': 'Organization',
@@ -104,17 +105,6 @@ export default async function PlatformDetailPage({ params }) {
           name: SITE_CONFIG.name,
           url: SITE_CONFIG.domain,
         },
-      },
-      {
-        '@type': 'FAQPage',
-        mainEntity: platform.faqs.map((faq) => ({
-          '@type': 'Question',
-          name: faq.question,
-          acceptedAnswer: {
-            '@type': 'Answer',
-            text: faq.answer,
-          },
-        })),
       },
       {
         '@type': 'BreadcrumbList',
@@ -142,6 +132,162 @@ export default async function PlatformDetailPage({ params }) {
     ],
   };
 
+  // CUSTOM SIMPLIFIED RESPONDUS LOCKDOWN BROWSER PAGE TEMPLATE
+  if (isRespondus) {
+    const respondusFeatures = [
+      'Blocks access to web browsers, messaging apps, and screen-sharing utilities during tests.',
+      'Prevents task switching, right-click context menus, and copy-paste shortcuts.',
+      'Integrates directly with Canvas, Blackboard, Brightspace, and Moodle learning management systems.',
+    ];
+
+    return (
+      <div className="space-y-12 py-10 pb-20">
+        <JsonLd data={jsonLdData} />
+
+        <PageContainer>
+          <Breadcrumb
+            items={[
+              { label: 'Exam Platforms', href: '/exam-platforms' },
+              { label: platform.name },
+            ]}
+          />
+
+          {/* 1. PAGE TITLE, VENDOR & SHORT DESCRIPTION */}
+          <div className="bg-white border border-brand-border rounded-2xl p-8 sm:p-10 space-y-6 shadow-sm my-6">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-brand-border pb-6">
+              <div className="space-y-2">
+                <div className="flex items-center gap-3">
+                  <Badge variant="blue">{platform.category}</Badge>
+                  <span className="text-xs text-brand-muted font-bold">Vendor: {platform.vendor}</span>
+                </div>
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-brand-navy tracking-tight">
+                  {platform.name}
+                </h1>
+              </div>
+              <Button href="/contact?service=Examination%20Software%20Technical%20Guidance" variant="primary" size="md" icon={ArrowRight}>
+                Request Technical Assistance
+              </Button>
+            </div>
+
+            <p className="text-base sm:text-lg text-brand-muted leading-relaxed max-w-4xl">
+              Respondus LockDown Browser is a custom web browser that secures testing environments within Learning Management Systems (LMS) such as Canvas, Blackboard, Brightspace, and Moodle. When an exam requires LockDown Browser, students are prevented from copying, printing, visiting other websites, or accessing secondary applications during the test session.
+            </p>
+
+            {/* 2. KEY FEATURES (MAX 3 SHORT BULLETS) */}
+            <div className="space-y-3 pt-2">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-brand-navy">Key Features</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {respondusFeatures.map((feat, idx) => (
+                  <div key={idx} className="p-4 rounded-xl bg-brand-bg border border-brand-border flex items-start gap-2.5">
+                    <CheckCircle2 className="w-5 h-5 text-brand-blue shrink-0 mt-0.5" />
+                    <span className="text-xs text-brand-text font-medium leading-relaxed">{feat}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* 3. SYSTEM REQUIREMENTS SUMMARY */}
+          <div className="bg-white border border-brand-border rounded-2xl p-8 sm:p-10 space-y-4 shadow-sm">
+            <SectionHeading
+              badge="System Requirements"
+              title="System Requirements Summary"
+              subtitle="Brief summary of supported operating systems and basic computer hardware requirements."
+            />
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+              <div className="p-4 rounded-xl bg-brand-bg border border-brand-border space-y-1">
+                <span className="text-xs text-brand-navy font-bold block flex items-center gap-1">
+                  <Monitor className="w-4 h-4 text-brand-blue" /> Windows
+                </span>
+                <span className="text-xs text-brand-muted">Windows 11 or 10 (version 1607+)</span>
+              </div>
+
+              <div className="p-4 rounded-xl bg-brand-bg border border-brand-border space-y-1">
+                <span className="text-xs text-brand-navy font-bold block flex items-center gap-1">
+                  <Laptop className="w-4 h-4 text-brand-blue" /> macOS
+                </span>
+                <span className="text-xs text-brand-muted">macOS 10.15 (Catalina) to 14+</span>
+              </div>
+
+              <div className="p-4 rounded-xl bg-brand-bg border border-brand-border space-y-1">
+                <span className="text-xs text-brand-navy font-bold block flex items-center gap-1">
+                  <HardDrive className="w-4 h-4 text-brand-blue" /> Chromebook / iPad
+                </span>
+                <span className="text-xs text-brand-muted">Allowed if enabled by institution</span>
+              </div>
+
+              <div className="p-4 rounded-xl bg-brand-bg border border-brand-border space-y-1">
+                <span className="text-xs text-brand-navy font-bold block flex items-center gap-1">
+                  <Cpu className="w-4 h-4 text-brand-blue" /> Hardware
+                </span>
+                <span className="text-xs text-brand-muted">4 GB RAM, webcam & microphone</span>
+              </div>
+            </div>
+          </div>
+
+          {/* 4. NEED TECHNICAL ASSISTANCE? CONTACT SECTION */}
+          <div className="bg-brand-navy text-white rounded-2xl p-8 sm:p-12 space-y-6 shadow-xl text-center">
+            <div className="max-w-2xl mx-auto space-y-3">
+              <Badge variant="blue" className="bg-brand-blue/20 text-brand-lightBlue border-brand-blue/30 px-3 py-1 text-xs">
+                Technical Guidance
+              </Badge>
+
+              <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+                Need Technical Assistance?
+              </h2>
+
+              <p className="text-sm sm:text-base text-brand-muted/90 leading-relaxed">
+                Having trouble with Respondus LockDown Browser? Contact our team for technical guidance and support.
+              </p>
+            </div>
+
+            {/* Functional Contact Buttons */}
+            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4 max-w-2xl mx-auto">
+              {/* WhatsApp Support Button */}
+              <a
+                href="https://wa.me/254711882470"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm flex items-center justify-center gap-2.5 shadow-lg transition-all"
+              >
+                <MessageCircle className="w-5 h-5 fill-white text-emerald-600 shrink-0" />
+                <span>Chat with Us on WhatsApp</span>
+              </a>
+
+              {/* Email Support Button */}
+              <a
+                href="mailto:info@tutorproctoredexams.com"
+                className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-brand-blue hover:bg-brand-secondaryNavy text-white font-bold text-sm flex items-center justify-center gap-2.5 shadow-lg transition-all"
+              >
+                <Mail className="w-5 h-5 shrink-0" />
+                <span>Email Us</span>
+              </a>
+
+              {/* Request Technical Assistance Page Link Button */}
+              <Button href="/contact?service=Examination%20Software%20Technical%20Guidance" variant="light" size="lg" icon={ArrowRight}>
+                Request Technical Assistance
+              </Button>
+            </div>
+
+            {/* Direct Contact Details Display */}
+            <div className="pt-4 flex flex-wrap items-center justify-center gap-6 text-xs text-brand-muted border-t border-white/10 max-w-xl mx-auto">
+              <span><strong>WhatsApp:</strong> +254 711 882470</span>
+              <span>•</span>
+              <span><strong>Email:</strong> info@tutorproctoredexams.com</span>
+            </div>
+
+            {/* Vendor Disclaimer */}
+            <div className="pt-4 text-[11px] text-brand-muted/70 max-w-3xl mx-auto border-t border-white/10">
+              <strong>Disclaimer:</strong> TUTOR PROCTORED EXAMS is an independent educational service. We are not affiliated with, endorsed by, or sponsored by Respondus Inc. or Respondus LockDown Browser. All trademarks are the property of their respective owners.
+            </div>
+          </div>
+        </PageContainer>
+      </div>
+    );
+  }
+
+  // STANDARD TEMPLATE FOR OTHER EXAMINATION PLATFORMS
   return (
     <div className="space-y-12 py-10 pb-20">
       <JsonLd data={jsonLdData} />
