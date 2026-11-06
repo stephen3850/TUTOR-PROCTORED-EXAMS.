@@ -301,44 +301,44 @@ export default function HomePage() {
 
   return (
     <div className="space-y-20 sm:space-y-28 pb-20">
-      {/* 1. HERO SECTION WITH 100% FULLY VISIBLE IMAGE 1 BACKGROUND */}
-      <section className="relative text-white pt-16 pb-24 lg:pt-20 lg:pb-32 overflow-hidden bg-slate-900">
-        {/* 100% Fully Visible Hero Background Image */}
+      {/* 1. HERO SECTION WITH PROPORTIONATELY REDUCED ELEGANT BACKGROUND IMAGE */}
+      <section className="relative bg-[#14213D] text-white pt-16 pb-24 lg:pt-20 lg:pb-32 overflow-hidden">
+        {/* Subtly Positioned & Scaled Background Image (Positioned Right, Balanced Opacity) */}
         <div
-          className="absolute inset-0 z-0 bg-cover bg-center opacity-100"
+          className="absolute inset-y-0 right-0 w-full lg:w-3/5 z-0 bg-cover bg-right bg-no-repeat opacity-35"
           style={{ backgroundImage: "url('/image%201.jpg')" }}
         ></div>
 
-        {/* Ultra-Light Soft Tint Gradient so Image is 100% Clear & Text is Readable */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-r from-slate-950/80 via-slate-950/50 to-slate-950/20"></div>
+        {/* Smooth Dark Navy Gradient Transition across Hero */}
+        <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#14213D] via-[#14213D]/90 to-[#14213D]/40"></div>
 
         <PageContainer className="relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-8 space-y-6">
-              <Badge variant="blue" className="bg-brand-blue/90 text-white border-brand-blue px-3.5 py-1 text-xs shadow-md">
+              <Badge variant="blue" className="bg-brand-blue/20 text-brand-lightBlue border-brand-blue/30 px-3.5 py-1 text-xs">
                 Ethical Academic Support & Certification Guidance
               </Badge>
 
-              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.1] drop-shadow-[0_4px_8px_rgba(0,0,0,0.9)]">
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.1]">
                 YOUR SUCCESS STARTS WITH THE RIGHT SUPPORT.
               </h1>
 
-              <p className="text-base sm:text-xl text-white leading-relaxed max-w-2xl text-balance drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] font-semibold">
+              <p className="text-base sm:text-xl text-brand-muted/90 leading-relaxed max-w-2xl text-balance font-medium">
                 Discover professional tutoring, structured exam preparation, practice resources, and certification guidance designed to help you achieve your academic and professional goals.
               </p>
 
               {/* Action Buttons */}
               <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-                <Button href="/services" variant="primary" size="lg" icon={ArrowRight} className="shadow-xl">
+                <Button href="/services" variant="primary" size="lg" icon={ArrowRight}>
                   Explore Our Services
                 </Button>
-                <Button href="/exam-platforms" variant="outline" size="lg" className="border-white/50 text-white bg-slate-900/60 backdrop-blur-md hover:bg-white/20">
+                <Button href="/exam-platforms" variant="outline" size="lg" className="border-white/30 text-white hover:bg-white/10">
                   Explore Exam Platforms
                 </Button>
               </div>
 
               {/* Trust Intro Line */}
-              <div className="pt-6 flex items-center gap-3 text-xs sm:text-sm text-white font-medium border-t border-white/30 drop-shadow-sm">
+              <div className="pt-6 flex items-center gap-3 text-xs sm:text-sm text-brand-muted border-t border-white/10">
                 <ShieldCheck className="w-5 h-5 text-brand-blue shrink-0" />
                 <span>Ethical Academic Tutoring • Software Compatibility Guidance • US Market Focus</span>
               </div>
@@ -346,18 +346,18 @@ export default function HomePage() {
 
             {/* Visual Hero Feature Box */}
             <div className="lg:col-span-4 hidden lg:block">
-              <div className="bg-slate-900/90 backdrop-blur-md border border-white/30 rounded-2xl p-6 text-white space-y-4 shadow-2xl">
-                <div className="flex items-center gap-3 border-b border-white/20 pb-4">
+              <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 text-white space-y-4 shadow-2xl">
+                <div className="flex items-center gap-3 border-b border-white/10 pb-4">
                   <div className="w-10 h-10 rounded-lg bg-brand-blue text-white flex items-center justify-center font-bold">
                     TPE
                   </div>
                   <div>
                     <h4 className="font-bold text-sm text-white">Ethical Learning Commitment</h4>
-                    <span className="text-xs text-slate-300">US Educational Standard</span>
+                    <span className="text-xs text-brand-muted">US Educational Standard</span>
                   </div>
                 </div>
 
-                <ul className="space-y-3 text-xs text-slate-100 font-medium">
+                <ul className="space-y-3 text-xs text-brand-muted">
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-brand-blue shrink-0 mt-0.5" />
                     <span>1-on-1 Subject Coaching & Concept Reviews</span>
