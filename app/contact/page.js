@@ -172,25 +172,25 @@ export default function ContactPage() {
       <PageContainer>
         <Breadcrumb items={[{ label: 'Contact Us' }]} />
 
-        {/* 1. CONTACT HERO */}
-        <div className="relative bg-brand-navy text-white rounded-2xl p-8 sm:p-12 overflow-hidden my-6">
-          <div className="relative z-10 max-w-3xl space-y-4">
-            <Badge variant="blue" className="bg-brand-blue/20 text-brand-lightBlue border-brand-blue/30 px-3 py-1 text-xs">
+        {/* 1. CONTACT HERO (CLEAR VIBRANT GREEN BACKGROUND) */}
+        <div className="relative bg-[#05B851] text-white rounded-2xl p-6 sm:p-10 overflow-hidden my-6 shadow-xl">
+          <div className="relative z-10 max-w-3xl space-y-3">
+            <span className="inline-block bg-white/20 text-white border border-white/30 px-3 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider">
               Get in Touch
-            </Badge>
+            </span>
 
-            <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">
               WE'RE HERE TO HELP YOU MOVE FORWARD
             </h1>
 
-            <p className="text-base sm:text-lg text-brand-muted/90 leading-relaxed text-balance">
+            <p className="text-sm sm:text-base text-emerald-100/90 leading-relaxed font-medium max-w-2xl">
               Have questions about tutoring, examination preparation, or professional certification support? Get in touch with our team.
             </p>
 
-            <div className="pt-2 flex flex-wrap gap-4 text-xs text-brand-muted">
-              <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-brand-blue" /> 100% Confidential Inquiry</span>
-              <span className="flex items-center gap-1.5"><Clock className="w-4 h-4 text-brand-blue" /> 24-Hour Response Time</span>
-              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-brand-blue" /> Educational Specialists</span>
+            <div className="pt-2 flex flex-wrap gap-4 text-xs text-white font-semibold">
+              <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-white" /> 100% Confidential Inquiry</span>
+              <span className="flex items-center gap-1.5"><Clock className="w-4 h-4 text-white" /> 24-Hour Response Time</span>
+              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-white" /> Educational Specialists</span>
             </div>
           </div>
         </div>
