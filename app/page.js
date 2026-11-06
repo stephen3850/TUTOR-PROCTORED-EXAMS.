@@ -304,8 +304,8 @@ export default function HomePage() {
       {/* 1. HERO SECTION WITH IMAGE 1 BACKGROUND */}
       <section className="relative bg-brand-navy text-white pt-16 pb-24 lg:pt-20 lg:pb-32 overflow-hidden">
         <div
-          className="absolute inset-0 z-0 opacity-30 bg-cover bg-center mix-blend-overlay"
-          style={{ backgroundImage: "url('/hero-bg.jpg')" }}
+          className="absolute inset-0 z-0 opacity-35 bg-cover bg-center mix-blend-overlay"
+          style={{ backgroundImage: "url('/image%201.jpg')" }}
         ></div>
         <div className="absolute inset-0 z-0 bg-gradient-to-r from-brand-navy via-brand-navy/95 to-brand-secondaryNavy/90"></div>
 
