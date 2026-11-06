@@ -499,33 +499,62 @@ export default function HomePage() {
         </PageContainer>
       </section>
 
-      {/* 5. WHY CHOOSE US */}
-      <section className="bg-white py-8 sm:py-10 border-y border-brand-border">
-        <PageContainer>
-          <SectionHeading
-            badge="Our Advantages"
-            title="WHY CHOOSE TUTOR PROCTORED EXAMS"
-            subtitle="We do the best we can to help you pass your exams and be a qualified professional."
-            centered
-            className="mb-8"
-          />
+      {/* 5. WHY CHOOSE US (Matching Reference Image) */}
+      <section className="relative bg-[#05B851] text-white py-12 sm:py-16 rounded-3xl mx-4 sm:mx-6 lg:mx-8 overflow-hidden shadow-2xl my-8">
+        {/* World Map Graphic Background Overlay */}
+        <div
+          className="absolute inset-0 z-0 bg-cover bg-center opacity-30 mix-blend-overlay"
+          style={{ backgroundImage: "url('/www.jpg')" }}
+        ></div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {benefits.map((benefit, idx) => {
-              const IconComp = benefit.icon;
-              return (
-                <div
-                  key={idx}
-                  className="bg-brand-bg border border-brand-border rounded-xl p-6 space-y-3 transition-all duration-200 hover:shadow-card hover:bg-white"
-                >
-                  <div className="w-10 h-10 rounded-lg bg-brand-lightBlue text-brand-blue flex items-center justify-center">
-                    <IconComp className="w-5 h-5" />
-                  </div>
-                  <h3 className="text-lg font-bold text-brand-navy">{benefit.title}</h3>
-                  <p className="text-sm text-brand-muted leading-relaxed">{benefit.description}</p>
+        <PageContainer className="relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            {/* Left Column: World Map Illustration */}
+            <div className="lg:col-span-5 hidden lg:block">
+              <div className="relative w-full h-64 sm:h-80 rounded-2xl overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 p-4 shadow-inner flex items-center justify-center">
+                <img
+                  src="/www.jpg"
+                  alt="Global Academic Network Map"
+                  className="w-full h-full object-contain filter brightness-110"
+                />
+              </div>
+            </div>
+
+            {/* Right Column: Text & 3 Key Metrics */}
+            <div className="lg:col-span-7 space-y-6 text-white">
+              <div className="inline-block border border-white/40 bg-white/15 backdrop-blur-md px-3.5 py-1 rounded-md text-xs font-black uppercase tracking-widest text-white">
+                WHY CHOOSE US
+              </div>
+
+              <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
+                Thousands of Students Trust Our Experts for Their Academic Success
+              </h2>
+
+              <p className="text-sm sm:text-base text-white/95 leading-relaxed font-medium max-w-2xl">
+                Our dedicated team of specialists provides reliable 24/7 support for online exams, assignments, quizzes, and coursework to help you achieve the grades you deserve.
+              </p>
+
+              {/* 3 Metrics Row */}
+              <div className="grid grid-cols-3 gap-6 pt-4 border-t border-white/20">
+                <div className="space-y-1">
+                  <div className="w-8 h-1 bg-orange-400 rounded-full mb-2" />
+                  <div className="text-3xl sm:text-4xl font-black text-white">89%</div>
+                  <div className="text-xs sm:text-sm font-bold text-white/90">Success Rate</div>
                 </div>
-              );
-            })}
+
+                <div className="space-y-1">
+                  <div className="w-8 h-1 bg-orange-400 rounded-full mb-2" />
+                  <div className="text-3xl sm:text-4xl font-black text-white">150+</div>
+                  <div className="text-xs sm:text-sm font-bold text-white/90">Subjects Covered</div>
+                </div>
+
+                <div className="space-y-1">
+                  <div className="w-8 h-1 bg-orange-400 rounded-full mb-2" />
+                  <div className="text-3xl sm:text-4xl font-black text-white">50+</div>
+                  <div className="text-xs sm:text-sm font-bold text-white/90">Experts</div>
+                </div>
+              </div>
+            </div>
           </div>
         </PageContainer>
       </section>

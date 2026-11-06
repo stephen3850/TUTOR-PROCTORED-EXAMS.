@@ -304,50 +304,56 @@ export default function AboutPage() {
           </div>
         </div>
 
-        {/* 6. OUR COMMITMENT TO ACADEMIC INTEGRITY */}
-        <div className="bg-brand-navy text-white rounded-2xl p-8 sm:p-10 space-y-4 shadow-xl my-10">
+        {/* 6. OUR COMMITMENT TO ACADEMIC INTEGRITY (LIGHT RED / CRIMSON BACKGROUND) */}
+        <div className="bg-[#991B1B] text-white rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl my-10 border border-red-500/30">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-brand-blue/20 text-brand-lightBlue flex items-center justify-center">
+            <div className="w-9 h-9 rounded-full bg-white/20 text-white flex items-center justify-center shrink-0">
               <Lock className="w-5 h-5" />
             </div>
-            <h2 className="text-2xl font-bold text-white">Our Commitment to Academic Integrity</h2>
+            <h2 className="text-xl sm:text-2xl font-extrabold text-white">Our Commitment to Academic Integrity</h2>
           </div>
 
-          <p className="text-slate-200 text-sm sm:text-base leading-relaxed">
+          <p className="text-rose-100 text-xs sm:text-sm leading-relaxed font-medium">
             We believe in genuine learning and honest achievement. We provide educational guidance, tutoring, practice resources and legitimate technical support.
           </p>
 
-          <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
+          <p className="text-rose-100/90 text-xs sm:text-sm leading-relaxed font-medium">
             We do not provide proxy examination-taking, impersonation, cheating, unauthorized examination assistance or proctoring bypass services. Every learner is responsible for completing their own examinations.
           </p>
 
           <div className="pt-2">
             <Link
               href="/disclaimer"
-              className="text-xs font-semibold text-brand-lightBlue hover:underline inline-flex items-center gap-1"
+              className="text-xs font-bold text-white underline underline-offset-4 hover:text-rose-200 inline-flex items-center gap-1 transition-colors"
             >
-              Read our full integrity commitment <ArrowRight className="w-3.5 h-3.5" />
+              <span>Read our full integrity commitment</span>
+              <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
             </Link>
           </div>
         </div>
 
-        {/* 7. FINAL CALL TO ACTION */}
-        <div className="bg-brand-navy text-white rounded-2xl p-8 sm:p-10 text-center space-y-4">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+        {/* 7. FINAL CALL TO ACTION (VIBRANT CLEAR GREEN BACKGROUND) */}
+        <div className="bg-[#05B851] text-white rounded-2xl p-6 sm:p-8 text-center space-y-3 shadow-xl max-w-2xl mx-auto my-10">
+          <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
             Ready to Take the Next Step?
           </h2>
 
-          <p className="text-slate-200 text-sm max-w-lg mx-auto leading-relaxed">
+          <p className="text-xs sm:text-sm text-white/95 max-w-md mx-auto leading-relaxed font-medium">
             Let us help you prepare, strengthen your knowledge and move closer to your goals.
           </p>
 
-          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button href="/services" variant="primary" size="lg" icon={ArrowRight}>
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Button href="/services" variant="primary" size="md" icon={ArrowRight} className="bg-white text-emerald-950 font-black hover:bg-emerald-50">
               Explore Our Services
             </Button>
-            <Button href="/contact" variant="outline" size="lg" className="border-white/30 text-white hover:bg-white/10">
-              Contact Us
-            </Button>
+            <a
+              href="https://wa.me/254711882470"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-5 py-2.5 rounded-xl border-2 border-white/90 bg-emerald-800/80 text-white font-extrabold text-xs sm:text-sm hover:bg-white hover:text-emerald-950 transition-all shadow-md inline-flex items-center justify-center gap-2"
+            >
+              <span>Contact Us</span>
+            </a>
           </div>
         </div>
       </PageContainer>

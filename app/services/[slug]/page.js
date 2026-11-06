@@ -169,9 +169,15 @@ export default async function ServiceDetailPage({ params }) {
             </p>
 
             <div className="pt-2 flex flex-wrap items-center gap-4">
-              <Button href="/contact" variant="primary" size="lg" icon={ArrowRight}>
-                Discuss Your Learning Goals
-              </Button>
+              <a
+                href="https://wa.me/254711882470"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-[#2563EB] hover:bg-[#1D4ED8] text-white px-6 py-3 rounded-xl font-extrabold text-sm shadow-lg flex items-center gap-2 transition-all inline-flex"
+              >
+                <span>Contact Us</span>
+                <ArrowRight className="w-4 h-4 text-white stroke-[2.5]" />
+              </a>
             </div>
           </div>
         </div>
@@ -298,19 +304,25 @@ export default async function ServiceDetailPage({ params }) {
           </div>
         </div>
 
-        {/* 7. CONVERSION CTA */}
-        <div className="bg-brand-navy text-white rounded-2xl p-8 sm:p-10 space-y-6 text-center">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
+        {/* 7. CONVERSION CTA (CLEAR VIBRANT GREEN BACKGROUND) */}
+        <div className="bg-[#05B851] text-white rounded-2xl p-6 sm:p-8 space-y-4 text-center shadow-xl max-w-3xl mx-auto">
+          <h2 className="text-xl sm:text-3xl font-black text-white">
             Ready to Begin Your {service.title} Journey?
           </h2>
-          <p className="text-brand-muted text-sm max-w-xl mx-auto leading-relaxed">
+          <p className="text-white/95 text-xs sm:text-sm max-w-xl mx-auto leading-relaxed font-medium">
             Connect with our educational team to discuss your course syllabus, upcoming exams, or target professional certification.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
-            <Button href="/contact" variant="primary" size="lg" icon={ArrowRight}>
-              Contact Our Team
-            </Button>
-            <Button href="/services" variant="outline" size="lg" className="border-white/30 text-white hover:bg-white/10">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+            <a
+              href="https://wa.me/254711882470"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white text-emerald-950 px-6 py-3 rounded-xl font-extrabold text-xs sm:text-sm shadow-lg flex items-center gap-2 transition-all inline-flex hover:bg-emerald-50"
+            >
+              <span>Contact Us</span>
+              <ArrowRight className="w-4 h-4 text-emerald-950 stroke-[2.5]" />
+            </a>
+            <Button href="/services" variant="outline" size="md" className="border-white/40 text-white hover:bg-white/10">
               View All Services
             </Button>
           </div>

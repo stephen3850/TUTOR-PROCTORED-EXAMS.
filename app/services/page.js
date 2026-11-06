@@ -163,16 +163,22 @@ export default function ServicesHubPage() {
           </p>
         </div>
 
-        {/* Conversion CTA */}
-        <div className="mt-12 bg-brand-navy text-white rounded-xl p-8 text-center space-y-4">
-          <h3 className="text-2xl font-bold text-white">Need Guidance Choosing the Right Service?</h3>
-          <p className="text-brand-muted text-sm max-w-xl mx-auto">
+        {/* Conversion CTA (CLEAR GREEN BACKGROUND) */}
+        <div className="mt-12 bg-[#05B851] text-white rounded-2xl p-6 sm:p-8 text-center space-y-3 shadow-xl max-w-3xl mx-auto">
+          <h3 className="text-xl sm:text-2xl font-black text-white">Need Guidance Choosing the Right Service?</h3>
+          <p className="text-white/95 text-xs sm:text-sm max-w-xl mx-auto font-medium">
             Our educational specialists are available to discuss your course syllabus, examination platform, or target certification to recommend the best learning support package.
           </p>
-          <div>
-            <Button href="/contact" variant="primary" size="md">
-              Discuss Your Learning Goals
-            </Button>
+          <div className="pt-2">
+            <a
+              href="https://wa.me/254711882470"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white text-emerald-950 font-extrabold text-xs sm:text-sm px-6 py-3 rounded-xl shadow-md hover:bg-emerald-50 transition-all inline-flex items-center gap-2"
+            >
+              <span>Discuss Your Learning Goals</span>
+              <ArrowRight className="w-4 h-4 text-emerald-950 stroke-[2.5]" />
+            </a>
           </div>
         </div>
       </PageContainer>
