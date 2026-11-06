@@ -20,86 +20,81 @@ import {
   Layers,
   Clock,
   Sparkles,
-  ArrowRight,
 } from 'lucide-react';
 import PageContainer from './PageContainer';
 import { SITE_CONFIG } from '@/lib/utils';
 
-// MEGA DROPDOWN - COLUMN 1: Academic Support (6 Services)
-const ACADEMIC_SUPPORT_SERVICES = [
+// COMPACT VERTICAL DROPDOWN - ALL 12 SERVICES
+const ALL_12_SERVICES = [
   {
     title: '1-on-1 Online Tutoring',
-    desc: 'Personalized subject instruction & concept coaching',
+    desc: 'Personalized subject instruction and concept coaching.',
     href: '/services/one-on-one-tutoring',
     icon: Users,
   },
   {
     title: 'Academic Exam Preparation',
-    desc: 'Syllabus audit, topic review & midterm/final prep',
+    desc: 'Syllabus review, topic revision and exam preparation.',
     href: '/services/academic-exam-preparation',
     icon: BookOpen,
   },
   {
     title: 'Practice Questions & Mock Tests',
-    desc: 'Curated question banks & rationale breakdowns',
+    desc: 'Practice questions, mock exams and explanations.',
     href: '/services/practice-questions-mock-tests',
     icon: FileCheck,
   },
   {
     title: 'Professional Certification Prep',
-    desc: 'Domain coaching for PMP, CompTIA, AAPC & CCMA',
+    desc: 'PMP, CompTIA, AAPC and CCMA preparation.',
     href: '/services/professional-certification-prep',
     icon: Award,
   },
   {
     title: 'Study Planning & Revision Support',
-    desc: 'Time-blocked study plans & spaced repetition',
+    desc: 'Personalized study plans and revision schedules.',
     href: '/services/study-planning-revision-support',
     icon: Calendar,
   },
   {
     title: 'Software Technical Guidance',
-    desc: 'System requirements & proctoring pre-checks',
+    desc: 'Software installation, technical guidance and troubleshooting.',
     href: '/services/software-technical-guidance',
     icon: Cpu,
   },
-];
-
-// MEGA DROPDOWN - COLUMN 2: Online Learning & Exam Services (6 Services)
-const ONLINE_LEARNING_SERVICES = [
   {
     title: 'Online Course/Class Help',
-    desc: 'Weekly module guidance & assignment preparation',
+    desc: 'Weekly module guidance and assignment preparation.',
     href: '/services/online-course-help',
     icon: GraduationCap,
   },
   {
     title: 'Online Exam Help',
-    desc: 'High-yield problem walkthroughs & test strategies',
+    desc: 'Exam preparation, problem walkthroughs and test strategies.',
     href: '/services/online-exam-help',
     icon: HelpCircle,
   },
   {
     title: 'Proctored/Certifications Exam',
-    desc: 'Domain coaching & proctoring technical pre-checks',
+    desc: 'Technical guidance and proctoring readiness.',
     href: '/services/proctored-certification-exams',
     icon: ShieldCheck,
   },
   {
     title: 'GED Exam Preparation',
-    desc: 'Coaching in Math, Science, RLA & Social Studies',
+    desc: 'Mathematics, Science, RLA and Social Studies.',
     href: '/services/ged',
     icon: Layers,
   },
   {
     title: 'HESI A2 Exam Preparation',
-    desc: 'Anatomy, nursing math & HESI subtest tutoring',
+    desc: 'Anatomy, nursing mathematics and HESI preparation.',
     href: '/services/hesi',
     icon: Clock,
   },
   {
     title: 'ATI TEAS Exam Preparation',
-    desc: 'Comprehensive TEAS 7 subtest review & mock tests',
+    desc: 'TEAS 7 subject review and mock tests.',
     href: '/services/teas',
     icon: Sparkles,
   },
@@ -107,13 +102,11 @@ const ONLINE_LEARNING_SERVICES = [
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeMenu, setActiveMenu] = useState(null);
   const pathname = usePathname();
 
-  // Close mobile drawer & active dropdown on route change
+  // Close mobile drawer on route change
   useEffect(() => {
     setMobileMenuOpen(false);
-    setActiveMenu(null);
   }, [pathname]);
 
   // Handle escape key and body scroll lock
@@ -121,7 +114,6 @@ export default function Header() {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
         setMobileMenuOpen(false);
-        setActiveMenu(null);
       }
     };
 
@@ -208,11 +200,7 @@ export default function Header() {
             </Link>
 
             {/* ABOUT US DROPDOWN */}
-            <div
-              className="relative group"
-              onMouseEnter={() => setActiveMenu('about')}
-              onMouseLeave={() => setActiveMenu(null)}
-            >
+            <div className="relative group">
               <Link
                 href="/about"
                 className={`font-bold text-xs xl:text-sm px-3 py-2 rounded-lg transition-colors flex items-center gap-1 whitespace-nowrap ${
@@ -240,12 +228,8 @@ export default function Header() {
               </div>
             </div>
 
-            {/* OUR SERVICES - MEGA DROPDOWN */}
-            <div
-              className="relative group static"
-              onMouseEnter={() => setActiveMenu('services')}
-              onMouseLeave={() => setActiveMenu(null)}
-            >
+            {/* OUR SERVICES - COMPACT VERTICAL DROPDOWN (12 SERVICES) */}
+            <div className="relative group">
               <Link
                 href="/services"
                 className={`font-bold text-xs xl:text-sm px-3 py-2 rounded-lg transition-colors flex items-center gap-1 whitespace-nowrap ${
@@ -258,112 +242,37 @@ export default function Header() {
                 <ChevronDown className="w-3.5 h-3.5 text-[#2563EB] font-bold transition-transform duration-200 group-hover:rotate-180 shrink-0" />
               </Link>
 
-              {/* OUR SERVICES MEGA DROPDOWN CONTAINER */}
-              <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 hidden group-hover:block z-50 w-[95vw] max-w-6xl animate-in fade-in slide-in-from-top-2">
-                <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-2xl grid grid-cols-1 lg:grid-cols-12 gap-8">
-
-                  {/* COLUMN 1: Academic Support */}
-                  <div className="lg:col-span-4 space-y-4">
-                    <div className="border-b border-slate-100 pb-2">
-                      <span className="text-[11px] uppercase tracking-wider text-[#2563EB] font-extrabold block">
-                        Academic Support
-                      </span>
-                    </div>
-                    <div className="space-y-1">
-                      {ACADEMIC_SUPPORT_SERVICES.map((serv, idx) => {
-                        const ServIcon = serv.icon;
-                        return (
-                          <Link
-                            key={idx}
-                            href={serv.href}
-                            className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors group/item"
-                          >
-                            <div className="w-8 h-8 rounded-lg bg-[#2563EB] flex items-center justify-center text-white shrink-0 mt-0.5 group-hover/item:scale-105 transition-transform">
-                              <ServIcon className="w-4 h-4 text-white" />
-                            </div>
-                            <div>
-                              <h4 className="text-xs font-bold text-[#0F172A] group-hover/item:text-[#2563EB] transition-colors leading-snug">
-                                {serv.title}
-                              </h4>
-                              <p className="text-[11px] text-slate-500 leading-tight line-clamp-1">
-                                {serv.desc}
-                              </p>
-                            </div>
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* COLUMN 2: Online Learning & Exam Services */}
-                  <div className="lg:col-span-4 space-y-4">
-                    <div className="border-b border-slate-100 pb-2">
-                      <span className="text-[11px] uppercase tracking-wider text-[#2563EB] font-extrabold block">
-                        Online Learning & Exam Services
-                      </span>
-                    </div>
-                    <div className="space-y-1">
-                      {ONLINE_LEARNING_SERVICES.map((serv, idx) => {
-                        const ServIcon = serv.icon;
-                        return (
-                          <Link
-                            key={idx}
-                            href={serv.href}
-                            className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors group/item"
-                          >
-                            <div className="w-8 h-8 rounded-lg bg-[#2563EB] flex items-center justify-center text-white shrink-0 mt-0.5 group-hover/item:scale-105 transition-transform">
-                              <ServIcon className="w-4 h-4 text-white" />
-                            </div>
-                            <div>
-                              <h4 className="text-xs font-bold text-[#0F172A] group-hover/item:text-[#2563EB] transition-colors leading-snug">
-                                {serv.title}
-                              </h4>
-                              <p className="text-[11px] text-slate-500 leading-tight line-clamp-1">
-                                {serv.desc}
-                              </p>
-                            </div>
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* COLUMN 3: Right Promotional Section */}
-                  <div className="lg:col-span-4 bg-gradient-to-br from-[#2563EB] to-[#14213D] text-white rounded-xl p-6 flex flex-col justify-between space-y-4 relative overflow-hidden shadow-md">
-                    <div className="absolute inset-0 opacity-15 bg-cover bg-center mix-blend-overlay" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80')" }}></div>
-                    <div className="relative z-10 space-y-2">
-                      <span className="text-[10px] uppercase tracking-widest bg-white/20 px-2.5 py-0.5 rounded-full font-bold text-white inline-block">
-                        Student Success
-                      </span>
-                      <h3 className="text-2xl font-black text-white leading-tight">
-                        Learn. Prepare. Excel.
-                      </h3>
-                      <p className="text-xs text-slate-200 font-medium leading-relaxed">
-                        Your success is our priority! Explore our 12 specialized educational support services designed to build independent mastery.
-                      </p>
-                    </div>
-
-                    <div className="relative z-10 pt-2">
+              {/* COMPACT DROPDOWN CONTAINER (360px-380px, MAX-HEIGHT 480px, SCROLLABLE) */}
+              <div className="absolute top-full left-0 pt-2 hidden group-hover:block z-50 animate-in fade-in slide-in-from-top-1">
+                <div className="w-[370px] max-h-[480px] overflow-y-auto bg-white border border-slate-200 rounded-2xl p-2 shadow-2xl space-y-1">
+                  {ALL_12_SERVICES.map((serv, idx) => {
+                    const ServIcon = serv.icon;
+                    return (
                       <Link
-                        href="/services"
-                        className="bg-[#FACC15] hover:bg-yellow-400 text-[#0F172A] font-black text-xs px-4 py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all inline-flex items-center gap-2"
+                        key={idx}
+                        href={serv.href}
+                        className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-blue-50/80 transition-colors group/item"
                       >
-                        <span>Explore Our Services</span>
-                        <ArrowRight className="w-3.5 h-3.5 stroke-[3]" />
+                        <div className="w-7 h-7 rounded-lg bg-[#2563EB] flex items-center justify-center text-white shrink-0 mt-0.5 group-hover/item:scale-105 transition-transform">
+                          <ServIcon className="w-3.5 h-3.5 text-white" />
+                        </div>
+                        <div>
+                          <h4 className="text-xs font-bold text-[#0F172A] group-hover/item:text-[#2563EB] transition-colors leading-snug">
+                            {serv.title}
+                          </h4>
+                          <p className="text-[11px] text-slate-500 leading-tight mt-0.5">
+                            {serv.desc}
+                          </p>
+                        </div>
                       </Link>
-                    </div>
-                  </div>
-
+                    );
+                  })}
                 </div>
               </div>
             </div>
 
             {/* EXAM PLATFORMS DROPDOWN */}
-            <div
-              className="relative group"
-              onMouseEnter={() => setActiveMenu('platforms')}
-              onMouseLeave={() => setActiveMenu(null)}
-            >
+            <div className="relative group">
               <Link
                 href="/exam-platforms"
                 className={`font-bold text-xs xl:text-sm px-3 py-2 rounded-lg transition-colors flex items-center gap-1 whitespace-nowrap ${
@@ -410,11 +319,7 @@ export default function Header() {
             </div>
 
             {/* CERTIFICATIONS DROPDOWN */}
-            <div
-              className="relative group"
-              onMouseEnter={() => setActiveMenu('certs')}
-              onMouseLeave={() => setActiveMenu(null)}
-            >
+            <div className="relative group">
               <Link
                 href="/certifications"
                 className={`font-bold text-xs xl:text-sm px-3 py-2 rounded-lg transition-colors flex items-center gap-1 whitespace-nowrap ${
@@ -464,11 +369,7 @@ export default function Header() {
             </div>
 
             {/* STUDY RESOURCES */}
-            <div
-              className="relative group"
-              onMouseEnter={() => setActiveMenu('resources')}
-              onMouseLeave={() => setActiveMenu(null)}
-            >
+            <div className="relative group">
               <Link
                 href="/study-resources"
                 className={`font-bold text-xs xl:text-sm px-3 py-2 rounded-lg transition-colors flex items-center gap-1 whitespace-nowrap ${
@@ -557,7 +458,7 @@ export default function Header() {
         </PageContainer>
       </div>
 
-      {/* MOBILE NAVIGATION DRAWER & EXPANDABLE ACCORDION */}
+      {/* MOBILE NAVIGATION DRAWER & COMPACT EXPANDABLE LIST */}
       {mobileMenuOpen && (
         <div className="lg:hidden bg-white border-b border-slate-200 shadow-xl p-6 space-y-4 max-h-[85vh] overflow-y-auto z-50 animate-in fade-in slide-in-from-top-2">
           <nav className="flex flex-col space-y-1" aria-label="Mobile Navigation">
@@ -569,30 +470,14 @@ export default function Header() {
               About Us
             </Link>
 
-            {/* MOBILE OUR SERVICES ACCORDION */}
+            {/* MOBILE OUR SERVICES COMPACT EXPANDABLE LIST */}
             <div className="space-y-1 border-y border-slate-100 py-2">
               <div className="text-xs font-black uppercase tracking-wider text-[#2563EB] px-3 py-1">
                 Our Services (12 Offerings)
               </div>
 
-              {/* Academic Support Subgroup */}
               <div className="pl-2 space-y-0.5">
-                <span className="text-[10px] uppercase font-bold text-slate-400 block px-2 pt-1">Academic Support</span>
-                {ACADEMIC_SUPPORT_SERVICES.map((serv, idx) => (
-                  <Link
-                    key={idx}
-                    href={serv.href}
-                    className="block text-xs font-semibold py-2 px-3 rounded-lg text-[#0F172A] hover:bg-blue-50 hover:text-[#2563EB]"
-                  >
-                    {serv.title}
-                  </Link>
-                ))}
-              </div>
-
-              {/* Online Learning & Exam Services Subgroup */}
-              <div className="pl-2 space-y-0.5 pt-2">
-                <span className="text-[10px] uppercase font-bold text-slate-400 block px-2 pt-1">Online Learning & Exam Services</span>
-                {ONLINE_LEARNING_SERVICES.map((serv, idx) => (
+                {ALL_12_SERVICES.map((serv, idx) => (
                   <Link
                     key={idx}
                     href={serv.href}
