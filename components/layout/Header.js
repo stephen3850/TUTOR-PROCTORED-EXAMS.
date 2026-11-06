@@ -24,77 +24,65 @@ import {
 import PageContainer from './PageContainer';
 import { SITE_CONFIG } from '@/lib/utils';
 
-// COMPACT VERTICAL DROPDOWN - ALL 12 SERVICES
+// COMPACT DROPDOWN - 12 SERVICES (SERVICE NAMES ONLY WITH SMALL BLUE ICONS)
 const ALL_12_SERVICES = [
   {
     title: '1-on-1 Online Tutoring',
-    desc: 'Personalized subject instruction and concept coaching.',
     href: '/services/one-on-one-tutoring',
     icon: Users,
   },
   {
     title: 'Academic Exam Preparation',
-    desc: 'Syllabus review, topic revision and exam preparation.',
     href: '/services/academic-exam-preparation',
     icon: BookOpen,
   },
   {
     title: 'Practice Questions & Mock Tests',
-    desc: 'Practice questions, mock exams and explanations.',
     href: '/services/practice-questions-mock-tests',
     icon: FileCheck,
   },
   {
     title: 'Professional Certification Prep',
-    desc: 'PMP, CompTIA, AAPC and CCMA preparation.',
     href: '/services/professional-certification-prep',
     icon: Award,
   },
   {
     title: 'Study Planning & Revision Support',
-    desc: 'Personalized study plans and revision schedules.',
     href: '/services/study-planning-revision-support',
     icon: Calendar,
   },
   {
     title: 'Software Technical Guidance',
-    desc: 'Software installation, technical guidance and troubleshooting.',
     href: '/services/software-technical-guidance',
     icon: Cpu,
   },
   {
     title: 'Online Course/Class Help',
-    desc: 'Weekly module guidance and assignment preparation.',
     href: '/services/online-course-help',
     icon: GraduationCap,
   },
   {
     title: 'Online Exam Help',
-    desc: 'Exam preparation, problem walkthroughs and test strategies.',
     href: '/services/online-exam-help',
     icon: HelpCircle,
   },
   {
     title: 'Proctored/Certifications Exam',
-    desc: 'Technical guidance and proctoring readiness.',
     href: '/services/proctored-certification-exams',
     icon: ShieldCheck,
   },
   {
     title: 'GED Exam Preparation',
-    desc: 'Mathematics, Science, RLA and Social Studies.',
     href: '/services/ged',
     icon: Layers,
   },
   {
     title: 'HESI A2 Exam Preparation',
-    desc: 'Anatomy, nursing mathematics and HESI preparation.',
     href: '/services/hesi',
     icon: Clock,
   },
   {
     title: 'ATI TEAS Exam Preparation',
-    desc: 'TEAS 7 subject review and mock tests.',
     href: '/services/teas',
     icon: Sparkles,
   },
@@ -228,7 +216,7 @@ export default function Header() {
               </div>
             </div>
 
-            {/* OUR SERVICES - COMPACT VERTICAL DROPDOWN (12 SERVICES) */}
+            {/* OUR SERVICES - COMPACT DROPDOWN (SERVICE NAMES ONLY) */}
             <div className="relative group">
               <Link
                 href="/services"
@@ -242,28 +230,23 @@ export default function Header() {
                 <ChevronDown className="w-3.5 h-3.5 text-[#2563EB] font-bold transition-transform duration-200 group-hover:rotate-180 shrink-0" />
               </Link>
 
-              {/* COMPACT DROPDOWN CONTAINER (360px-380px, MAX-HEIGHT 480px, SCROLLABLE) */}
+              {/* COMPACT DROPDOWN CONTAINER (300px WIDE, MAX-HEIGHT 460px, NO DESCRIPTIONS) */}
               <div className="absolute top-full left-0 pt-2 hidden group-hover:block z-50 animate-in fade-in slide-in-from-top-1">
-                <div className="w-[370px] max-h-[480px] overflow-y-auto bg-white border border-slate-200 rounded-2xl p-2 shadow-2xl space-y-1">
+                <div className="w-[310px] max-h-[460px] overflow-y-auto bg-white border border-slate-200 rounded-xl p-1.5 shadow-2xl space-y-0.5">
                   {ALL_12_SERVICES.map((serv, idx) => {
                     const ServIcon = serv.icon;
                     return (
                       <Link
                         key={idx}
                         href={serv.href}
-                        className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-blue-50/80 transition-colors group/item"
+                        className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-blue-50/80 hover:text-[#2563EB] transition-colors group/item"
                       >
-                        <div className="w-7 h-7 rounded-lg bg-[#2563EB] flex items-center justify-center text-white shrink-0 mt-0.5 group-hover/item:scale-105 transition-transform">
+                        <div className="w-6 h-6 rounded-md bg-[#2563EB] flex items-center justify-center text-white shrink-0 group-hover/item:scale-105 transition-transform">
                           <ServIcon className="w-3.5 h-3.5 text-white" />
                         </div>
-                        <div>
-                          <h4 className="text-xs font-bold text-[#0F172A] group-hover/item:text-[#2563EB] transition-colors leading-snug">
-                            {serv.title}
-                          </h4>
-                          <p className="text-[11px] text-slate-500 leading-tight mt-0.5">
-                            {serv.desc}
-                          </p>
-                        </div>
+                        <span className="text-xs font-bold text-[#0F172A] group-hover/item:text-[#2563EB] transition-colors whitespace-nowrap">
+                          {serv.title}
+                        </span>
                       </Link>
                     );
                   })}
