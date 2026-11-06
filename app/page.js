@@ -301,12 +301,12 @@ export default function HomePage() {
 
   return (
     <div className="space-y-20 sm:space-y-28 pb-20">
-      {/* 1. HERO SECTION WITH FULLY VISIBLE HIGH-CLARITY IMAGE 1 BACKGROUND */}
+      {/* 1. HERO SECTION WITH STUDENTS.JPG BACKGROUND */}
       <section className="relative text-white pt-16 pb-24 lg:pt-20 lg:pb-32 overflow-hidden bg-[#0F172A]">
-        {/* Fully Visible Background Image */}
+        {/* Fully Visible Background Image: students .jpg */}
         <div
           className="absolute inset-0 z-0 bg-cover bg-center opacity-85"
-          style={{ backgroundImage: "url('/image%201.jpg')" }}
+          style={{ backgroundImage: "url('/students.jpg')" }}
         ></div>
 
         {/* Soft Dark Side Shade For Crisp Text Legibility */}
