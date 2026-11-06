@@ -478,7 +478,7 @@ export default function HomePage() {
           <SectionHeading
             badge="What We Offer"
             title="OUR EDUCATIONAL SERVICES"
-            subtitle="Tailored academic support services focused strictly on student learning and independent test readiness."
+            subtitle="We as proctored online exams professionals support students to the best level we can to ensure they fully qualify for a job."
             centered
             className="mb-8"
           />
@@ -584,25 +584,29 @@ export default function HomePage() {
       </section>
 
       {/* 9. FINAL CALL TO ACTION */}
-      <section className="bg-brand-navy text-white py-10 sm:py-12 rounded-2xl mx-4 sm:mx-6 lg:mx-8">
+      <section className="bg-emerald-700 text-white py-6 sm:py-8 rounded-2xl mx-4 sm:mx-6 lg:mx-8 shadow-xl">
         <PageContainer>
-          <div className="max-w-3xl mx-auto text-center space-y-6">
-            <Badge variant="blue" className="bg-brand-blue/20 text-brand-lightBlue border-brand-blue/30 px-3 py-1">
+          <div className="max-w-xl mx-auto text-center space-y-3">
+            <span className="inline-block bg-emerald-800/80 text-emerald-100 border border-emerald-400/40 px-3 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider">
               Start Your Preparation Today
-            </Badge>
+            </span>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
               READY TO TAKE THE NEXT STEP?
             </h2>
 
-            <p className="text-base sm:text-lg text-brand-muted/90 leading-relaxed max-w-xl mx-auto text-balance">
+            <p className="text-xs sm:text-sm text-emerald-100/90 leading-relaxed max-w-md mx-auto font-medium">
               Find the educational support and preparation resources that match your goals.
             </p>
 
-            <div className="pt-4 flex items-center justify-center">
-              <Button href="/contact" variant="primary" size="lg" icon={ArrowRight}>
-                Contact Our Team
-              </Button>
+            <div className="pt-2 flex items-center justify-center">
+              <Link
+                href="/contact"
+                className="bg-white text-emerald-950 font-black text-xs sm:text-sm px-5 py-2.5 rounded-xl shadow-md hover:bg-emerald-50 transition-all flex items-center gap-2"
+              >
+                <span>Contact Our Team</span>
+                <ArrowRight className="w-3.5 h-3.5 text-emerald-950 stroke-[3]" />
+              </Link>
             </div>
           </div>
         </PageContainer>

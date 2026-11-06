@@ -155,15 +155,74 @@ export default function AboutPage() {
           </div>
         </div>
 
-        {/* 2. WHO WE ARE */}
-        <div className="bg-white border border-brand-border rounded-2xl p-8 sm:p-10 space-y-4 shadow-sm my-8">
-          <Badge variant="blue" className="bg-brand-blue/10 text-brand-blue border-brand-blue/20">
-            Who We Are
-          </Badge>
+        {/* 2. WHO WE ARE (Matching Reference Image) */}
+        <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-10 shadow-sm my-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
 
-          <p className="text-base sm:text-lg text-brand-navy font-semibold leading-relaxed max-w-4xl">
-            TUTOR PROCTORED EXAMS is an educational support brand serving students and professionals worldwide. We provide personalized tutoring, structured examination preparation, certification guidance and legitimate technical support for examination software.
-          </p>
+            {/* Left Image Card Column */}
+            <div className="lg:col-span-5 relative h-80 sm:h-96 rounded-3xl overflow-hidden shadow-lg group">
+              <img
+                src="/students.jpg"
+                alt="Students Studying Together"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              {/* Floating Bottom Badge */}
+              <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-md border border-slate-200 p-3.5 rounded-2xl shadow-xl flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-[#2563EB] flex items-center justify-center text-white shrink-0 shadow-md">
+                  <GraduationCap className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h4 className="font-extrabold text-sm text-[#0F172A] leading-tight">Academic Excellence</h4>
+                  <span className="text-[11px] text-slate-500 font-medium">Global Educational Support</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Content Column */}
+            <div className="lg:col-span-7 space-y-6">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-bold bg-blue-50 text-[#2563EB] border border-blue-100">
+                <div className="w-2 h-2 rounded-full bg-[#2563EB]" />
+                <span>WHO WE ARE</span>
+              </div>
+
+              <p className="text-base sm:text-xl font-bold text-[#0F172A] leading-relaxed">
+                <span className="text-[#2563EB] font-black">TUTOR PROCTORED EXAMS</span> is an educational support brand serving students and professionals worldwide. We provide personalized tutoring, structured examination preparation, certification guidance and legitimate technical support for examination software.
+              </p>
+
+              {/* 2x2 Key Features Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/80 border border-slate-100">
+                  <div className="w-8 h-8 rounded-full bg-blue-100 text-[#2563EB] flex items-center justify-center shrink-0">
+                    <Users className="w-4 h-4 text-[#2563EB]" />
+                  </div>
+                  <span className="text-xs font-bold text-[#0F172A]">Personalized 1-on-1 Tutoring</span>
+                </div>
+
+                <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/80 border border-slate-100">
+                  <div className="w-8 h-8 rounded-full bg-blue-100 text-[#2563EB] flex items-center justify-center shrink-0">
+                    <ShieldCheck className="w-4 h-4 text-[#2563EB]" />
+                  </div>
+                  <span className="text-xs font-bold text-[#0F172A]">Software System Checks</span>
+                </div>
+
+                <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/80 border border-slate-100">
+                  <div className="w-8 h-8 rounded-full bg-blue-100 text-[#2563EB] flex items-center justify-center shrink-0">
+                    <Award className="w-4 h-4 text-[#2563EB]" />
+                  </div>
+                  <span className="text-xs font-bold text-[#0F172A]">PMP, CompTIA & Exam Prep</span>
+                </div>
+
+                <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/80 border border-slate-100">
+                  <div className="w-8 h-8 rounded-full bg-blue-100 text-[#2563EB] flex items-center justify-center shrink-0">
+                    <CheckCircle2 className="w-4 h-4 text-[#2563EB]" />
+                  </div>
+                  <span className="text-xs font-bold text-[#0F172A]">Independent Student Mastery</span>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
         </div>
 
         {/* 3. OUR MISSION AND VISION */}
