@@ -4,14 +4,11 @@ import { notFound } from 'next/navigation';
 import {
   ShieldCheck,
   CheckCircle2,
-  AlertCircle,
   Monitor,
   Laptop,
   HardDrive,
   Cpu,
   ArrowRight,
-  UserCheck,
-  Wrench,
   Mail,
   MessageCircle,
 } from 'lucide-react';
@@ -20,7 +17,6 @@ import SectionHeading from '@/components/ui/SectionHeading';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
-import FaqAccordion from '@/components/ui/FaqAccordion';
 import JsonLd from '@/components/seo/JsonLd';
 import { PLATFORMS_DATA } from '@/lib/data/platformsData';
 import { SITE_CONFIG } from '@/lib/utils';
@@ -41,7 +37,7 @@ export async function generateMetadata({ params }) {
   }
 
   const title = `${platform.name} Prep Guide & System Requirements | TUTOR PROCTORED EXAMS`;
-  const description = `Legitimate preparation guide, system requirements, OS compatibility, troubleshooting tips, and study resources for ${platform.name}.`;
+  const description = `Legitimate preparation guide, system requirements, OS compatibility, and technical assistance for ${platform.name}.`;
   const canonicalUrl = `${SITE_CONFIG.domain}/exam-platforms/${platform.slug}`;
 
   return {
@@ -81,12 +77,13 @@ export default async function PlatformDetailPage({ params }) {
     notFound();
   }
 
-  const isRespondus = platform.slug === 'respondus-lockdown-browser';
-
   // Related platforms list excluding current
   const relatedPlatforms = Object.values(PLATFORMS_DATA)
     .filter((p) => p.slug !== platform.slug)
     .slice(0, 3);
+
+  // Maximum 3 key features
+  const keyFeatures = (platform.features || []).slice(0, 3);
 
   // Structured Data JSON-LD
   const jsonLdData = {
@@ -132,162 +129,6 @@ export default async function PlatformDetailPage({ params }) {
     ],
   };
 
-  // CUSTOM SIMPLIFIED RESPONDUS LOCKDOWN BROWSER PAGE TEMPLATE
-  if (isRespondus) {
-    const respondusFeatures = [
-      'Blocks access to web browsers, messaging apps, and screen-sharing utilities during tests.',
-      'Prevents task switching, right-click context menus, and copy-paste shortcuts.',
-      'Integrates directly with Canvas, Blackboard, Brightspace, and Moodle learning management systems.',
-    ];
-
-    return (
-      <div className="space-y-12 py-10 pb-20">
-        <JsonLd data={jsonLdData} />
-
-        <PageContainer>
-          <Breadcrumb
-            items={[
-              { label: 'Exam Platforms', href: '/exam-platforms' },
-              { label: platform.name },
-            ]}
-          />
-
-          {/* 1. PAGE TITLE, VENDOR & SHORT DESCRIPTION */}
-          <div className="bg-white border border-brand-border rounded-2xl p-8 sm:p-10 space-y-6 shadow-sm my-6">
-            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-brand-border pb-6">
-              <div className="space-y-2">
-                <div className="flex items-center gap-3">
-                  <Badge variant="blue">{platform.category}</Badge>
-                  <span className="text-xs text-brand-muted font-bold">Vendor: {platform.vendor}</span>
-                </div>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-brand-navy tracking-tight">
-                  {platform.name}
-                </h1>
-              </div>
-              <Button href="/contact?service=Examination%20Software%20Technical%20Guidance" variant="primary" size="md" icon={ArrowRight}>
-                Request Technical Assistance
-              </Button>
-            </div>
-
-            <p className="text-base sm:text-lg text-brand-muted leading-relaxed max-w-4xl">
-              Respondus LockDown Browser is a custom web browser that secures testing environments within Learning Management Systems (LMS) such as Canvas, Blackboard, Brightspace, and Moodle. When an exam requires LockDown Browser, students are prevented from copying, printing, visiting other websites, or accessing secondary applications during the test session.
-            </p>
-
-            {/* 2. KEY FEATURES (MAX 3 SHORT BULLETS) */}
-            <div className="space-y-3 pt-2">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-brand-navy">Key Features</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {respondusFeatures.map((feat, idx) => (
-                  <div key={idx} className="p-4 rounded-xl bg-brand-bg border border-brand-border flex items-start gap-2.5">
-                    <CheckCircle2 className="w-5 h-5 text-brand-blue shrink-0 mt-0.5" />
-                    <span className="text-xs text-brand-text font-medium leading-relaxed">{feat}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* 3. SYSTEM REQUIREMENTS SUMMARY */}
-          <div className="bg-white border border-brand-border rounded-2xl p-8 sm:p-10 space-y-4 shadow-sm">
-            <SectionHeading
-              badge="System Requirements"
-              title="System Requirements Summary"
-              subtitle="Brief summary of supported operating systems and basic computer hardware requirements."
-            />
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
-              <div className="p-4 rounded-xl bg-brand-bg border border-brand-border space-y-1">
-                <span className="text-xs text-brand-navy font-bold block flex items-center gap-1">
-                  <Monitor className="w-4 h-4 text-brand-blue" /> Windows
-                </span>
-                <span className="text-xs text-brand-muted">Windows 11 or 10 (version 1607+)</span>
-              </div>
-
-              <div className="p-4 rounded-xl bg-brand-bg border border-brand-border space-y-1">
-                <span className="text-xs text-brand-navy font-bold block flex items-center gap-1">
-                  <Laptop className="w-4 h-4 text-brand-blue" /> macOS
-                </span>
-                <span className="text-xs text-brand-muted">macOS 10.15 (Catalina) to 14+</span>
-              </div>
-
-              <div className="p-4 rounded-xl bg-brand-bg border border-brand-border space-y-1">
-                <span className="text-xs text-brand-navy font-bold block flex items-center gap-1">
-                  <HardDrive className="w-4 h-4 text-brand-blue" /> Chromebook / iPad
-                </span>
-                <span className="text-xs text-brand-muted">Allowed if enabled by institution</span>
-              </div>
-
-              <div className="p-4 rounded-xl bg-brand-bg border border-brand-border space-y-1">
-                <span className="text-xs text-brand-navy font-bold block flex items-center gap-1">
-                  <Cpu className="w-4 h-4 text-brand-blue" /> Hardware
-                </span>
-                <span className="text-xs text-brand-muted">4 GB RAM, webcam & microphone</span>
-              </div>
-            </div>
-          </div>
-
-          {/* 4. NEED TECHNICAL ASSISTANCE? CONTACT SECTION */}
-          <div className="bg-brand-navy text-white rounded-2xl p-8 sm:p-12 space-y-6 shadow-xl text-center">
-            <div className="max-w-2xl mx-auto space-y-3">
-              <Badge variant="blue" className="bg-brand-blue/20 text-brand-lightBlue border-brand-blue/30 px-3 py-1 text-xs">
-                Technical Guidance
-              </Badge>
-
-              <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
-                Need Technical Assistance?
-              </h2>
-
-              <p className="text-sm sm:text-base text-brand-muted/90 leading-relaxed">
-                Having trouble with Respondus LockDown Browser? Contact our team for technical guidance and support.
-              </p>
-            </div>
-
-            {/* Functional Contact Buttons */}
-            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4 max-w-2xl mx-auto">
-              {/* WhatsApp Support Button */}
-              <a
-                href="https://wa.me/254711882470"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm flex items-center justify-center gap-2.5 shadow-lg transition-all"
-              >
-                <MessageCircle className="w-5 h-5 fill-white text-emerald-600 shrink-0" />
-                <span>Chat with Us on WhatsApp</span>
-              </a>
-
-              {/* Email Support Button */}
-              <a
-                href="mailto:info@tutorproctoredexams.com"
-                className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-brand-blue hover:bg-brand-secondaryNavy text-white font-bold text-sm flex items-center justify-center gap-2.5 shadow-lg transition-all"
-              >
-                <Mail className="w-5 h-5 shrink-0" />
-                <span>Email Us</span>
-              </a>
-
-              {/* Request Technical Assistance Page Link Button */}
-              <Button href="/contact?service=Examination%20Software%20Technical%20Guidance" variant="light" size="lg" icon={ArrowRight}>
-                Request Technical Assistance
-              </Button>
-            </div>
-
-            {/* Direct Contact Details Display */}
-            <div className="pt-4 flex flex-wrap items-center justify-center gap-6 text-xs text-brand-muted border-t border-white/10 max-w-xl mx-auto">
-              <span><strong>WhatsApp:</strong> +254 711 882470</span>
-              <span>•</span>
-              <span><strong>Email:</strong> info@tutorproctoredexams.com</span>
-            </div>
-
-            {/* Vendor Disclaimer */}
-            <div className="pt-4 text-[11px] text-brand-muted/70 max-w-3xl mx-auto border-t border-white/10">
-              <strong>Disclaimer:</strong> TUTOR PROCTORED EXAMS is an independent educational service. We are not affiliated with, endorsed by, or sponsored by Respondus Inc. or Respondus LockDown Browser. All trademarks are the property of their respective owners.
-            </div>
-          </div>
-        </PageContainer>
-      </div>
-    );
-  }
-
-  // STANDARD TEMPLATE FOR OTHER EXAMINATION PLATFORMS
   return (
     <div className="space-y-12 py-10 pb-20">
       <JsonLd data={jsonLdData} />
@@ -300,141 +141,141 @@ export default async function PlatformDetailPage({ params }) {
           ]}
         />
 
-        {/* 1. HERO & INTRODUCTION */}
+        {/* 1. PAGE TITLE, VENDOR & SHORT DESCRIPTION */}
         <div className="bg-white border border-brand-border rounded-2xl p-8 sm:p-10 space-y-6 shadow-sm my-6">
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-brand-border pb-6">
             <div className="space-y-2">
               <div className="flex items-center gap-3">
                 <Badge variant="blue">{platform.category}</Badge>
-                <span className="text-xs text-brand-muted font-medium">Vendor: {platform.vendor}</span>
+                <span className="text-xs text-brand-muted font-bold">Vendor: {platform.vendor}</span>
               </div>
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-brand-navy tracking-tight">
                 {platform.name}
               </h1>
             </div>
-            <Button href="/contact" variant="primary" size="md">
-              Get Exam Preparation Help
+            <Button href="/contact?service=Examination%20Software%20Technical%20Guidance" variant="primary" size="md" icon={ArrowRight}>
+              Request Technical Assistance
             </Button>
           </div>
 
-          <p className="text-base sm:text-lg text-brand-muted leading-relaxed max-w-4xl text-balance">
+          <p className="text-base sm:text-lg text-brand-muted leading-relaxed max-w-4xl">
             {platform.overview}
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
-            {platform.features.map((feature, idx) => (
-              <div key={idx} className="bg-brand-bg p-4 rounded-xl border border-brand-border/80 flex items-start gap-2.5">
-                <CheckCircle2 className="w-5 h-5 text-brand-blue shrink-0 mt-0.5" />
-                <span className="text-xs text-brand-text font-medium leading-snug">{feature}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* 2. SYSTEM REQUIREMENTS & HARDWARE COMPATIBILITY */}
-        <div className="bg-white border border-brand-border rounded-2xl p-8 sm:p-10 space-y-6 shadow-sm">
-          <SectionHeading
-            badge="Hardware & OS Specs"
-            title={`${platform.name} System Requirements`}
-            subtitle="Verified operating system and hardware specifications for taking exams on this platform."
-          />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-            <div className="space-y-4">
-              <div className="p-5 rounded-xl border border-brand-border bg-brand-bg space-y-2">
-                <div className="flex items-center gap-2 text-brand-navy font-bold text-sm">
-                  <Monitor className="w-4 h-4 text-brand-blue" />
-                  <span>Windows OS Requirements</span>
-                </div>
-                <p className="text-xs text-brand-muted leading-relaxed">{platform.systemRequirements.windows}</p>
-              </div>
-
-              <div className="p-5 rounded-xl border border-brand-border bg-brand-bg space-y-2">
-                <div className="flex items-center gap-2 text-brand-navy font-bold text-sm">
-                  <Laptop className="w-4 h-4 text-brand-blue" />
-                  <span>macOS Requirements</span>
-                </div>
-                <p className="text-xs text-brand-muted leading-relaxed">{platform.systemRequirements.macOS}</p>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <div className="p-5 rounded-xl border border-brand-border bg-brand-bg space-y-2">
-                <div className="flex items-center gap-2 text-brand-navy font-bold text-sm">
-                  <HardDrive className="w-4 h-4 text-brand-blue" />
-                  <span>Chromebook & iOS Support</span>
-                </div>
-                <p className="text-xs text-brand-muted leading-relaxed">
-                  <strong>Chromebook:</strong> {platform.systemRequirements.chromebook}<br />
-                  <strong>iOS/iPadOS:</strong> {platform.systemRequirements.iOS}
-                </p>
-              </div>
-
-              <div className="p-5 rounded-xl border border-brand-border bg-brand-bg space-y-2">
-                <div className="flex items-center gap-2 text-brand-navy font-bold text-sm">
-                  <Cpu className="w-4 h-4 text-brand-blue" />
-                  <span>Hardware & Peripherals</span>
-                </div>
-                <p className="text-xs text-brand-muted leading-relaxed">{platform.systemRequirements.hardware}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* 3. PREPARATION CONSIDERATIONS & TROUBLESHOOTING */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 my-10">
-          {/* Preparation Checklist */}
-          <div className="bg-white border border-brand-border rounded-2xl p-8 space-y-5">
-            <h3 className="text-xl font-bold text-brand-navy flex items-center gap-2">
-              <UserCheck className="w-5 h-5 text-brand-blue" />
-              Examination Preparation Checklist
-            </h3>
-            <ul className="space-y-3">
-              {platform.prepConsiderations.map((item, idx) => (
-                <li key={idx} className="flex items-start gap-3 text-sm text-brand-muted leading-relaxed">
-                  <div className="w-6 h-6 rounded-full bg-brand-lightBlue text-brand-blue font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
-                    {idx + 1}
-                  </div>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Technical Troubleshooting */}
-          <div className="bg-white border border-brand-border rounded-2xl p-8 space-y-5">
-            <h3 className="text-xl font-bold text-brand-navy flex items-center gap-2">
-              <Wrench className="w-5 h-5 text-brand-blue" />
-              Legitimate Technical Troubleshooting
-            </h3>
-            <div className="space-y-4">
-              {platform.troubleshooting.map((item, idx) => (
-                <div key={idx} className="p-4 rounded-xl border border-brand-border bg-brand-bg space-y-1.5">
-                  <h4 className="text-xs font-bold text-red-700 flex items-center gap-1.5">
-                    <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                    {item.issue}
-                  </h4>
-                  <p className="text-xs text-brand-muted leading-relaxed pl-5">
-                    <strong>Solution:</strong> {item.solution}
-                  </p>
+          {/* 2. KEY FEATURES (MAXIMUM 3 SHORT BULLETS) */}
+          <div className="space-y-3 pt-2">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-brand-navy">Key Features</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {keyFeatures.map((feature, idx) => (
+                <div key={idx} className="p-4 rounded-xl bg-brand-bg border border-brand-border flex items-start gap-2.5">
+                  <CheckCircle2 className="w-5 h-5 text-brand-blue shrink-0 mt-0.5" />
+                  <span className="text-xs text-brand-text font-medium leading-relaxed">{feature}</span>
                 </div>
               ))}
             </div>
           </div>
         </div>
 
-        {/* 4. FREQUENTLY ASKED QUESTIONS */}
-        <div className="bg-white border border-brand-border rounded-2xl p-8 sm:p-10 space-y-6 my-10">
+        {/* 3. SYSTEM REQUIREMENTS SUMMARY */}
+        <div className="bg-white border border-brand-border rounded-2xl p-8 sm:p-10 space-y-4 shadow-sm">
           <SectionHeading
-            badge="Common Questions"
-            title={`Frequently Asked Questions About ${platform.shortName}`}
-            subtitle="Clear answers on system setup, compatibility, and study support."
+            badge="System Requirements"
+            title={`${platform.shortName || platform.name} System Requirements Summary`}
+            subtitle="Brief summary of supported operating systems and basic hardware requirements."
           />
-          <FaqAccordion items={platform.faqs} />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+            <div className="p-4 rounded-xl bg-brand-bg border border-brand-border space-y-1">
+              <span className="text-xs text-brand-navy font-bold block flex items-center gap-1">
+                <Monitor className="w-4 h-4 text-brand-blue" /> Windows OS
+              </span>
+              <span className="text-xs text-brand-muted">{platform.systemRequirements.windows}</span>
+            </div>
+
+            <div className="p-4 rounded-xl bg-brand-bg border border-brand-border space-y-1">
+              <span className="text-xs text-brand-navy font-bold block flex items-center gap-1">
+                <Laptop className="w-4 h-4 text-brand-blue" /> macOS
+              </span>
+              <span className="text-xs text-brand-muted">{platform.systemRequirements.macOS}</span>
+            </div>
+
+            <div className="p-4 rounded-xl bg-brand-bg border border-brand-border space-y-1">
+              <span className="text-xs text-brand-navy font-bold block flex items-center gap-1">
+                <HardDrive className="w-4 h-4 text-brand-blue" /> Chromebook / iOS
+              </span>
+              <span className="text-xs text-brand-muted">
+                {platform.systemRequirements.chromebook || 'Supported depending on institutional guidelines'}
+              </span>
+            </div>
+
+            <div className="p-4 rounded-xl bg-brand-bg border border-brand-border space-y-1">
+              <span className="text-xs text-brand-navy font-bold block flex items-center gap-1">
+                <Cpu className="w-4 h-4 text-brand-blue" /> Hardware
+              </span>
+              <span className="text-xs text-brand-muted">{platform.systemRequirements.hardware}</span>
+            </div>
+          </div>
         </div>
 
-        {/* 5. RELATED PLATFORMS & NAVIGATION */}
-        <div className="space-y-6 my-12">
+        {/* 4. CONSISTENT CONTACT SUPPORT SECTION FOR ALL 9 PLATFORMS */}
+        <div className="bg-brand-navy text-white rounded-2xl p-8 sm:p-12 space-y-6 shadow-xl text-center">
+          <div className="max-w-2xl mx-auto space-y-3">
+            <Badge variant="blue" className="bg-brand-blue/20 text-brand-lightBlue border-brand-blue/30 px-3 py-1 text-xs">
+              Technical Guidance & Support
+            </Badge>
+
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+              Need Help With This Examination Platform?
+            </h2>
+
+            <p className="text-sm sm:text-base text-brand-muted/90 leading-relaxed">
+              Need assistance with examination software, technical requirements, installation or exam preparation? Contact TUTOR PROCTORED EXAMS for professional guidance and support.
+            </p>
+          </div>
+
+          {/* Functional Contact Buttons */}
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4 max-w-2xl mx-auto">
+            {/* BUTTON 1: CHAT WITH US ON WHATSAPP */}
+            <a
+              href="https://wa.me/254711882470"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm flex items-center justify-center gap-2.5 shadow-lg transition-all"
+            >
+              <MessageCircle className="w-5 h-5 fill-white text-emerald-600 shrink-0" />
+              <span>Chat with Us on WhatsApp</span>
+            </a>
+
+            {/* BUTTON 2: EMAIL US */}
+            <a
+              href="mailto:info@tutorproctoredexams.com"
+              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-brand-blue hover:bg-brand-secondaryNavy text-white font-bold text-sm flex items-center justify-center gap-2.5 shadow-lg transition-all"
+            >
+              <Mail className="w-5 h-5 shrink-0" />
+              <span>Email Us</span>
+            </a>
+
+            {/* BUTTON 3: REQUEST TECHNICAL ASSISTANCE FORM LINK */}
+            <Button href="/contact?service=Examination%20Software%20Technical%20Guidance" variant="light" size="lg" icon={ArrowRight}>
+              Request Technical Assistance
+            </Button>
+          </div>
+
+          {/* Direct Contact Info Display */}
+          <div className="pt-4 flex flex-wrap items-center justify-center gap-6 text-xs text-brand-muted border-t border-white/10 max-w-xl mx-auto">
+            <span><strong>WhatsApp:</strong> +254 711 882470</span>
+            <span>•</span>
+            <span><strong>Email:</strong> info@tutorproctoredexams.com</span>
+          </div>
+
+          {/* Vendor Disclaimer */}
+          <div className="pt-4 text-[11px] text-brand-muted/70 max-w-3xl mx-auto border-t border-white/10">
+            <strong>Disclaimer:</strong> TUTOR PROCTORED EXAMS is an independent educational service. We are not affiliated with, endorsed by, or sponsored by {platform.vendor} or {platform.name}. All product names and trademarks belong to their respective owners.
+          </div>
+        </div>
+
+        {/* 5. RELATED PLATFORMS NAVIGATION */}
+        <div className="space-y-6 my-10">
           <h3 className="text-xl font-bold text-brand-navy">Explore Other Supported Platforms</h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {relatedPlatforms.map((rel) => (
@@ -450,28 +291,6 @@ export default async function PlatformDetailPage({ params }) {
                 </h4>
               </Link>
             ))}
-          </div>
-        </div>
-
-        {/* 6. CONVERSION CTA & VENDOR DISCLAIMER */}
-        <div className="bg-brand-navy text-white rounded-2xl p-8 sm:p-10 space-y-6 text-center">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
-            Need 1-on-1 Tutoring for Your {platform.shortName} Exam?
-          </h2>
-          <p className="text-brand-muted text-sm max-w-xl mx-auto leading-relaxed">
-            Our educational specialists provide personalized subject coaching, mock test reviews, and system readiness assistance so you can take your exam with confidence.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
-            <Button href="/contact" variant="primary" size="lg" icon={ArrowRight}>
-              Schedule Consultation
-            </Button>
-            <Button href="/services" variant="outline" size="lg" className="border-white/30 text-white hover:bg-white/10">
-              Explore All Services
-            </Button>
-          </div>
-
-          <div className="pt-6 text-[11px] text-brand-muted/70 max-w-3xl mx-auto border-t border-white/10">
-            <strong>Disclaimer:</strong> TUTOR PROCTORED EXAMS is an independent educational service. We are not affiliated with, endorsed by, or sponsored by {platform.vendor} or {platform.name}. All product names and registered trademarks are the property of their respective owners.
           </div>
         </div>
       </PageContainer>
