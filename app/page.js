@@ -300,9 +300,9 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="space-y-20 sm:space-y-28 pb-20">
+    <div className="space-y-10 sm:space-y-14 pb-10">
       {/* 1. HERO SECTION WITH STUDENTS.JPG BACKGROUND */}
-      <section className="relative text-white pt-16 pb-24 lg:pt-20 lg:pb-32 overflow-hidden bg-[#0F172A]">
+      <section className="relative text-white pt-12 pb-16 lg:pt-16 lg:pb-20 overflow-hidden bg-[#0F172A]">
         {/* Fully Visible Background Image: students .jpg */}
         <div
           className="absolute inset-0 z-0 bg-cover bg-center opacity-85"
@@ -409,7 +409,7 @@ export default function HomePage() {
       {/* 2. EXAMINATION PLATFORMS SECTION */}
       <section>
         <PageContainer>
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-4">
             <SectionHeading
               badge="Platform Directory"
               title="EXAM PLATFORMS WE SUPPORT"
@@ -443,9 +443,9 @@ export default function HomePage() {
       </section>
 
       {/* 3. PROFESSIONAL CERTIFICATIONS SECTION */}
-      <section className="bg-white py-16 border-y border-brand-border">
+      <section className="bg-white py-8 sm:py-10 border-y border-brand-border">
         <PageContainer>
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-4">
             <SectionHeading
               badge="Career Advancement"
               title="PREPARE FOR YOUR NEXT PROFESSIONAL MILESTONE"
@@ -480,7 +480,7 @@ export default function HomePage() {
             title="OUR EDUCATIONAL SERVICES"
             subtitle="Tailored academic support services focused strictly on student learning and independent test readiness."
             centered
-            className="mb-14"
+            className="mb-8"
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -500,14 +500,14 @@ export default function HomePage() {
       </section>
 
       {/* 5. WHY CHOOSE US */}
-      <section className="bg-white py-16 border-y border-brand-border">
+      <section className="bg-white py-8 sm:py-10 border-y border-brand-border">
         <PageContainer>
           <SectionHeading
             badge="Our Advantages"
             title="WHY CHOOSE TUTOR PROCTORED EXAMS"
             subtitle="A professional, student-centered approach to examination preparation and technical readiness."
             centered
-            className="mb-14"
+            className="mb-8"
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -538,7 +538,7 @@ export default function HomePage() {
             title="HOW IT WORKS"
             subtitle="A straightforward four-step approach to achieving your educational and certification goals."
             centered
-            className="mb-14"
+            className="mb-8"
           />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -559,9 +559,9 @@ export default function HomePage() {
       </section>
 
       {/* 7. STUDY RESOURCES AND ARTICLES */}
-      <section className="bg-white py-16 border-y border-brand-border">
+      <section className="bg-white py-8 sm:py-10 border-y border-brand-border">
         <PageContainer>
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-4">
             <SectionHeading
               badge="Resource Hub"
               title="STUDY RESOURCES & ARTICLES"
@@ -596,7 +596,7 @@ export default function HomePage() {
             title="FREQUENTLY ASKED QUESTIONS"
             subtitle="Clear answers about our tutoring services, certification coaching, software guidance, and ethical standards."
             centered
-            className="mb-12"
+            className="mb-6"
           />
 
           <FaqAccordion items={faqs} />
@@ -604,7 +604,7 @@ export default function HomePage() {
       </section>
 
       {/* 9. FINAL CALL TO ACTION */}
-      <section className="bg-brand-navy text-white py-16 sm:py-20 rounded-2xl mx-4 sm:mx-6 lg:mx-8">
+      <section className="bg-brand-navy text-white py-10 sm:py-12 rounded-2xl mx-4 sm:mx-6 lg:mx-8">
         <PageContainer>
           <div className="max-w-3xl mx-auto text-center space-y-6">
             <Badge variant="blue" className="bg-brand-blue/20 text-brand-lightBlue border-brand-blue/30 px-3 py-1">
