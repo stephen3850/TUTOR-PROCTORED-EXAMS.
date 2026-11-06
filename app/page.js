@@ -324,7 +324,7 @@ export default function HomePage() {
               </h1>
 
               <p className="text-base sm:text-xl text-slate-100 leading-relaxed max-w-2xl text-balance drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)] font-semibold">
-                Discover professional tutoring, structured exam preparation, practice resources, and certification guidance designed to help you achieve your academic and professional goals.
+                Discover professional tutoring, structured exam preparation, practice resources, and certification guidance designed to help you pass your exams.
               </p>
 
               {/* Action Buttons */}
