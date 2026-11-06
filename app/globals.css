@@ -15,8 +15,10 @@
     --color-border: #E5EAF1;
   }
 
+  /* MANDATORY SYSTEM-WIDE SHARP EDGES (ZERO ROUNDED CORNERS) */
   *, ::before, ::after {
     box-sizing: border-box;
+    border-radius: 0px !important;
   }
 
   html {
