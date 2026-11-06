@@ -164,7 +164,7 @@ export default function AboutPage() {
           <SectionHeading
             badge="Brand Purpose"
             title="Our Story & Dedicated Mission"
-            subtitle="Creating a reliable academic support destination for US college students and working professionals."
+            subtitle="Creating a reliable academic support destination for college students and working professionals worldwide."
           />
 
           <div className="prose prose-slate max-w-none text-brand-muted text-sm sm:text-base leading-relaxed space-y-4">
