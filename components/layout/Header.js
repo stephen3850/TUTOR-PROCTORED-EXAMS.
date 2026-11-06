@@ -20,6 +20,7 @@ import {
   Layers,
   Clock,
   Sparkles,
+  MessageCircle,
 } from 'lucide-react';
 import PageContainer from './PageContainer';
 import { SITE_CONFIG } from '@/lib/utils';
@@ -129,9 +130,19 @@ export default function Header() {
               Ethical Educational Support & Proctoring Software Technical Guidance for Students Worldwide
             </span>
           </div>
-          <div className="hidden md:flex items-center gap-4 text-slate-400 text-[11px]">
+          <div className="hidden md:flex items-center gap-3.5 text-slate-300 text-[11px] font-medium">
             <span>{SITE_CONFIG.hours}</span>
-            <span>|</span>
+            <span className="text-slate-700">|</span>
+            <a
+              href="https://wa.me/254711882470"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-emerald-400 hover:text-emerald-300 font-bold transition-colors inline-flex items-center gap-1.5"
+            >
+              <MessageCircle className="w-3.5 h-3.5 text-emerald-400 fill-emerald-400/20" />
+              <span>Contact Our Team</span>
+            </a>
+            <span className="text-slate-700">|</span>
             <Link
               href="/disclaimer"
               className="text-white hover:text-blue-400 transition-colors font-medium"
