@@ -568,36 +568,6 @@ export default function HomePage() {
         </PageContainer>
       </section>
 
-      {/* 7. STUDY RESOURCES AND ARTICLES */}
-      <section className="bg-white py-8 sm:py-10 border-y border-brand-border">
-        <PageContainer>
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-4">
-            <SectionHeading
-              badge="Resource Hub"
-              title="STUDY RESOURCES & ARTICLES"
-              subtitle="Educational insights and practical preparation guides written by academic specialists."
-            />
-            <Button href="/blog" variant="outline" size="md" icon={ArrowRight}>
-              Visit Resource Center
-            </Button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {articles.map((article, idx) => (
-              <ContentCard
-                key={idx}
-                title={article.title}
-                description={article.description}
-                badge={article.category}
-                icon={BookOpen}
-                href={`/blog/${article.slug}`}
-                actionText="Read full article"
-              />
-            ))}
-          </div>
-        </PageContainer>
-      </section>
-
       {/* 8. FAQ SECTION */}
       <section>
         <PageContainer>

@@ -11,12 +11,12 @@ export default function Footer() {
     <footer className="relative bg-[#0F172A] text-white pt-16 pb-12 border-t border-slate-800 overflow-hidden">
       {/* Background Image www.jpg Across Whole Footer */}
       <div
-        className="absolute inset-0 z-0 bg-cover bg-center opacity-30"
+        className="absolute inset-0 z-0 bg-cover bg-center opacity-80"
         style={{ backgroundImage: "url('/www.jpg')" }}
       ></div>
 
-      {/* Soft Dark Shade Overlay for Text Readability */}
-      <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#0F172A]/90 via-[#0F172A]/95 to-[#0F172A]/95"></div>
+      {/* Light Overlay for Maximum Background Image Visibility & Clear Text Readability */}
+      <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#0F172A]/60 via-[#0F172A]/50 to-[#0F172A]/70"></div>
 
       <PageContainer className="relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-slate-800">
