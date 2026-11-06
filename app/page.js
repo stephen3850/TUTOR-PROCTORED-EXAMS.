@@ -301,9 +301,12 @@ export default function HomePage() {
 
   return (
     <div className="space-y-20 sm:space-y-28 pb-20">
-      {/* 1. HERO SECTION */}
+      {/* 1. HERO SECTION WITH IMAGE 1 BACKGROUND */}
       <section className="relative bg-brand-navy text-white pt-16 pb-24 lg:pt-20 lg:pb-32 overflow-hidden">
-        <div className="absolute inset-0 z-0 opacity-20 bg-cover bg-center mix-blend-overlay" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1920&q=80')" }}></div>
+        <div
+          className="absolute inset-0 z-0 opacity-30 bg-cover bg-center mix-blend-overlay"
+          style={{ backgroundImage: "url('/hero-bg.jpg')" }}
+        ></div>
         <div className="absolute inset-0 z-0 bg-gradient-to-r from-brand-navy via-brand-navy/95 to-brand-secondaryNavy/90"></div>
 
         <PageContainer className="relative z-10">
