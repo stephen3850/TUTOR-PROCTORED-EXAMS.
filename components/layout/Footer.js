@@ -8,13 +8,22 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-brand-navy text-white pt-16 pb-12 border-t border-brand-secondaryNavy">
-      <PageContainer>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-brand-secondaryNavy">
+    <footer className="relative bg-[#0F172A] text-white pt-16 pb-12 border-t border-slate-800 overflow-hidden">
+      {/* Background Image www.jpg Across Whole Footer */}
+      <div
+        className="absolute inset-0 z-0 bg-cover bg-center opacity-30"
+        style={{ backgroundImage: "url('/www.jpg')" }}
+      ></div>
+
+      {/* Soft Dark Shade Overlay for Text Readability */}
+      <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#0F172A]/90 via-[#0F172A]/95 to-[#0F172A]/95"></div>
+
+      <PageContainer className="relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-slate-800">
           {/* Brand Info Column */}
           <div className="lg:col-span-2 space-y-4">
             <Link href="/" className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-lg bg-brand-blue flex items-center justify-center text-white">
+              <div className="w-10 h-10 rounded-lg bg-brand-blue flex items-center justify-center text-white shadow-md">
                 <GraduationCap className="w-6 h-6" />
               </div>
               <span className="font-extrabold text-xl text-white tracking-tight">
@@ -22,11 +31,11 @@ export default function Footer() {
               </span>
             </Link>
 
-            <p className="text-brand-muted text-sm leading-relaxed max-w-sm">
+            <p className="text-slate-300 text-sm leading-relaxed max-w-sm">
               An educational support platform delivering ethical 1-on-1 tutoring, examination prep, practice resources, and legitimate proctoring software technical guidance to students and professionals worldwide.
             </p>
 
-            <div className="pt-2 flex flex-col space-y-2 text-xs text-brand-muted">
+            <div className="pt-2 flex flex-col space-y-2 text-xs text-slate-300 font-medium">
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-brand-blue" />
                 <span>100% Ethical Academic Standard</span>
@@ -43,14 +52,14 @@ export default function Footer() {
             <h4 className="text-sm font-bold uppercase tracking-wider text-white mb-4">
               Our Services
             </h4>
-            <ul className="space-y-2.5 text-sm text-brand-muted">
+            <ul className="space-y-2.5 text-sm text-slate-300">
               <li>
                 <Link href="/services" className="hover:text-white transition-colors">
                   All Educational Services
                 </Link>
               </li>
               <li>
-                <Link href="/services/one-to-one-tutoring" className="hover:text-white transition-colors">
+                <Link href="/services/one-on-one-tutoring" className="hover:text-white transition-colors">
                   1-on-1 Online Tutoring
                 </Link>
               </li>
@@ -60,7 +69,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/services/examination-software-technical-guidance" className="hover:text-white transition-colors">
+                <Link href="/services/software-technical-guidance" className="hover:text-white transition-colors">
                   Software System Guidance
                 </Link>
               </li>
@@ -77,7 +86,7 @@ export default function Footer() {
             <h4 className="text-sm font-bold uppercase tracking-wider text-white mb-4">
               Exam Platforms
             </h4>
-            <ul className="space-y-2.5 text-sm text-brand-muted">
+            <ul className="space-y-2.5 text-sm text-slate-300">
               <li>
                 <Link href="/exam-platforms" className="hover:text-white transition-colors">
                   Platform Directory Hub
@@ -111,7 +120,7 @@ export default function Footer() {
             <h4 className="text-sm font-bold uppercase tracking-wider text-white mb-4">
               Certifications & Help
             </h4>
-            <ul className="space-y-2.5 text-sm text-brand-muted">
+            <ul className="space-y-2.5 text-sm text-slate-300">
               <li>
                 <Link href="/certifications" className="hover:text-white transition-colors">
                   PMP Prep & CompTIA
@@ -147,14 +156,14 @@ export default function Footer() {
         </div>
 
         {/* Academic Disclaimer Notice */}
-        <div className="py-6 text-xs text-brand-muted/80 leading-relaxed border-b border-brand-secondaryNavy/60">
+        <div className="py-6 text-xs text-slate-400 leading-relaxed border-b border-slate-800">
           <p>
             <strong>Educational Disclaimer:</strong> TUTOR PROCTORED EXAMS provides legitimate 1-on-1 tutoring, study resources, test preparation strategies, and general technical compatibility guidance for examination software. We are an independent educational service and are not affiliated with, endorsed by, or sponsored by Respondus, ExamSoft/Examplify, Honorlock, ProctorU/Meazure Learning, Proctorio, Proctortrack, Examity, PSI, ATI, PMI, CompTIA, AAPC, NHA, or any third-party examination or software provider. All product and company names are trademarks™ or registered® trademarks of their respective holders.
           </p>
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-brand-muted gap-4">
+        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">
           <p>© {currentYear} TUTOR PROCTORED EXAMS. All rights reserved. Global Educational Services.</p>
           <div className="flex items-center gap-6">
             <Link href="/contact" className="hover:text-white transition-colors">
