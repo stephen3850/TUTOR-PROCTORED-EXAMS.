@@ -216,7 +216,7 @@ export default function Header() {
               </div>
             </div>
 
-            {/* OUR SERVICES - COMPACT DROPDOWN (SERVICE NAMES ONLY) */}
+            {/* OUR SERVICES - ULTRA COMPACT DROPDOWN (SMALL FONTS & SLEEK ITEM PADDING) */}
             <div className="relative group">
               <Link
                 href="/services"
@@ -230,21 +230,21 @@ export default function Header() {
                 <ChevronDown className="w-3.5 h-3.5 text-[#2563EB] font-bold transition-transform duration-200 group-hover:rotate-180 shrink-0" />
               </Link>
 
-              {/* COMPACT DROPDOWN CONTAINER (300px WIDE, MAX-HEIGHT 460px, NO DESCRIPTIONS) */}
+              {/* ULTRA COMPACT DROPDOWN CONTAINER (270px WIDE, MAX-HEIGHT 380px, SMALL FONTS) */}
               <div className="absolute top-full left-0 pt-2 hidden group-hover:block z-50 animate-in fade-in slide-in-from-top-1">
-                <div className="w-[310px] max-h-[460px] overflow-y-auto bg-white border border-slate-200 rounded-xl p-1.5 shadow-2xl space-y-0.5">
+                <div className="w-[270px] max-h-[380px] overflow-y-auto bg-white border border-slate-200 rounded-xl p-1 shadow-2xl space-y-0.5 scrollbar-none">
                   {ALL_12_SERVICES.map((serv, idx) => {
                     const ServIcon = serv.icon;
                     return (
                       <Link
                         key={idx}
                         href={serv.href}
-                        className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-blue-50/80 hover:text-[#2563EB] transition-colors group/item"
+                        className="flex items-center gap-2 p-1.5 px-2 rounded-lg hover:bg-blue-50/80 hover:text-[#2563EB] transition-colors group/item"
                       >
-                        <div className="w-6 h-6 rounded-md bg-[#2563EB] flex items-center justify-center text-white shrink-0 group-hover/item:scale-105 transition-transform">
-                          <ServIcon className="w-3.5 h-3.5 text-white" />
+                        <div className="w-5 h-5 rounded bg-[#2563EB] flex items-center justify-center text-white shrink-0 group-hover/item:scale-105 transition-transform">
+                          <ServIcon className="w-3 h-3 text-white" />
                         </div>
-                        <span className="text-xs font-bold text-[#0F172A] group-hover/item:text-[#2563EB] transition-colors whitespace-nowrap">
+                        <span className="text-[11px] font-bold text-[#0F172A] group-hover/item:text-[#2563EB] transition-colors whitespace-nowrap leading-none">
                           {serv.title}
                         </span>
                       </Link>
