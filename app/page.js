@@ -301,13 +301,16 @@ export default function HomePage() {
 
   return (
     <div className="space-y-20 sm:space-y-28 pb-20">
-      {/* 1. HERO SECTION WITH IMAGE 1 BACKGROUND */}
+      {/* 1. HERO SECTION WITH VIVID IMAGE 1 BACKGROUND */}
       <section className="relative bg-brand-navy text-white pt-16 pb-24 lg:pt-20 lg:pb-32 overflow-hidden">
+        {/* Full Visibility Hero Background Image */}
         <div
-          className="absolute inset-0 z-0 opacity-35 bg-cover bg-center mix-blend-overlay"
+          className="absolute inset-0 z-0 bg-cover bg-center opacity-70"
           style={{ backgroundImage: "url('/image%201.jpg')" }}
         ></div>
-        <div className="absolute inset-0 z-0 bg-gradient-to-r from-brand-navy via-brand-navy/95 to-brand-secondaryNavy/90"></div>
+
+        {/* Subtle Dark Gradient Overlay for High Contrast Text */}
+        <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#14213D] via-[#14213D]/80 to-[#14213D]/40"></div>
 
         <PageContainer className="relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
@@ -316,11 +319,11 @@ export default function HomePage() {
                 Ethical Academic Support & Certification Guidance
               </Badge>
 
-              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.1]">
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.1] drop-shadow-md">
                 YOUR SUCCESS STARTS WITH THE RIGHT SUPPORT.
               </h1>
 
-              <p className="text-base sm:text-xl text-brand-muted/90 leading-relaxed max-w-2xl text-balance">
+              <p className="text-base sm:text-xl text-slate-200 leading-relaxed max-w-2xl text-balance drop-shadow-sm font-medium">
                 Discover professional tutoring, structured exam preparation, practice resources, and certification guidance designed to help you achieve your academic and professional goals.
               </p>
 
@@ -335,7 +338,7 @@ export default function HomePage() {
               </div>
 
               {/* Trust Intro Line */}
-              <div className="pt-6 flex items-center gap-3 text-xs sm:text-sm text-brand-muted border-t border-white/10">
+              <div className="pt-6 flex items-center gap-3 text-xs sm:text-sm text-slate-300 border-t border-white/20">
                 <ShieldCheck className="w-5 h-5 text-brand-blue shrink-0" />
                 <span>Ethical Academic Tutoring • Software Compatibility Guidance • US Market Focus</span>
               </div>
@@ -343,7 +346,7 @@ export default function HomePage() {
 
             {/* Visual Hero Feature Box */}
             <div className="lg:col-span-4 hidden lg:block">
-              <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 text-white space-y-4 shadow-2xl">
+              <div className="bg-[#14213D]/80 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-white space-y-4 shadow-2xl">
                 <div className="flex items-center gap-3 border-b border-white/10 pb-4">
                   <div className="w-10 h-10 rounded-lg bg-brand-blue text-white flex items-center justify-center font-bold">
                     TPE
@@ -354,7 +357,7 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <ul className="space-y-3 text-xs text-brand-muted">
+                <ul className="space-y-3 text-xs text-slate-200">
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-brand-blue shrink-0 mt-0.5" />
                     <span>1-on-1 Subject Coaching & Concept Reviews</span>
