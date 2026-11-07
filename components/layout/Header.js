@@ -25,7 +25,7 @@ import {
 import PageContainer from './PageContainer';
 import { SITE_CONFIG, BLOGS_ENABLED } from '@/lib/utils';
 
-// COMPACT DROPDOWN - 12 SERVICES (SERVICE NAMES ONLY WITH SMALL BLUE ICONS)
+// COMPACT DROPDOWN - 12 SERVICES
 const ALL_12_SERVICES = [
   {
     title: '1-on-1 Online Tutoring',
@@ -87,6 +87,23 @@ const ALL_12_SERVICES = [
     href: '/services/teas',
     icon: Sparkles,
   },
+];
+
+// ALL 13 EXAM PLATFORMS & OPTIONS WITH OFFICIAL LOGOS
+const ALL_13_PLATFORMS = [
+  { name: 'Respondus LockDown Browser', href: '/exam-platforms/respondus-lockdown-browser', logo: '/logos/respondus.svg' },
+  { name: 'Examplify (ExamSoft)', href: '/exam-platforms/examplify', logo: '/logos/examplify.svg' },
+  { name: 'Honorlock', href: '/exam-platforms/honorlock', logo: '/logos/honorlock.svg' },
+  { name: 'ProctorU / Meazure Learning', href: '/exam-platforms/proctoru-meazure-learning', logo: '/logos/proctoru.svg' },
+  { name: 'Proctorio', href: '/exam-platforms/proctorio', logo: '/logos/proctorio.svg' },
+  { name: 'Proctortrack', href: '/exam-platforms/proctortrack', logo: '/logos/proctortrack.svg' },
+  { name: 'Examity', href: '/exam-platforms/examity', logo: '/logos/examity.svg' },
+  { name: 'PSI Bridge', href: '/exam-platforms/psi', logo: '/logos/psi.svg' },
+  { name: 'ATI Testing (TEAS)', href: '/exam-platforms/ati', logo: '/logos/ati.svg' },
+  { name: 'GED Exam Preparation', href: '/services/ged', logo: '/logos/ged.svg' },
+  { name: 'HESI A2 Exam Preparation', href: '/services/hesi', logo: '/logos/hesi.svg' },
+  { name: 'ATI TEAS Exam Preparation', href: '/services/teas', logo: '/logos/teas.svg' },
+  { name: 'Mock Tests & Practice Exams', href: '/services/practice-questions-mock-tests', logo: '/logos/mock.svg' },
 ];
 
 export default function Header() {
@@ -241,7 +258,6 @@ export default function Header() {
                 <ChevronDown className="w-3.5 h-3.5 text-[#2563EB] font-bold transition-transform duration-200 group-hover:rotate-180 shrink-0" />
               </Link>
 
-              {/* ULTRA-TIGHT DROPDOWN CONTAINER (260px WIDE, MAX-HEIGHT 360px, SLEEK TIGHT SPACING) */}
               <div className="absolute top-full left-0 pt-1.5 hidden group-hover:block z-50 animate-in fade-in slide-in-from-top-1">
                 <div className="w-[260px] max-h-[360px] overflow-y-auto bg-white border border-slate-200 rounded-xl p-1 shadow-2xl divide-y divide-slate-100/60 scrollbar-none">
                   {ALL_12_SERVICES.map((serv, idx) => {
@@ -265,7 +281,7 @@ export default function Header() {
               </div>
             </div>
 
-            {/* EXAM PLATFORMS DROPDOWN */}
+            {/* EXAM PLATFORMS DROPDOWN - ALL 13 ITEMS WITH OFFICIAL LOGOS */}
             <div className="relative group">
               <Link
                 href="/exam-platforms"
@@ -279,35 +295,26 @@ export default function Header() {
                 <ChevronDown className="w-3.5 h-3.5 text-[#2563EB] font-bold transition-transform duration-200 group-hover:rotate-180 shrink-0" />
               </Link>
 
-              <div className="absolute top-full left-0 pt-2 hidden group-hover:block z-50 animate-in fade-in slide-in-from-top-1">
-                <div className="w-64 bg-white border border-slate-200 rounded-xl p-2 shadow-xl space-y-0.5">
-                  <Link href="/exam-platforms/respondus-lockdown-browser" className="block text-xs font-semibold text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50 px-3 py-2 rounded-lg transition-colors">
-                    Respondus LockDown Browser
-                  </Link>
-                  <Link href="/exam-platforms/examplify" className="block text-xs font-semibold text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50 px-3 py-2 rounded-lg transition-colors">
-                    Examplify (ExamSoft)
-                  </Link>
-                  <Link href="/exam-platforms/honorlock" className="block text-xs font-semibold text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50 px-3 py-2 rounded-lg transition-colors">
-                    Honorlock
-                  </Link>
-                  <Link href="/exam-platforms/proctoru-meazure-learning" className="block text-xs font-semibold text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50 px-3 py-2 rounded-lg transition-colors">
-                    ProctorU / Meazure Learning
-                  </Link>
-                  <Link href="/exam-platforms/proctorio" className="block text-xs font-semibold text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50 px-3 py-2 rounded-lg transition-colors">
-                    Proctorio
-                  </Link>
-                  <Link href="/exam-platforms/proctortrack" className="block text-xs font-semibold text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50 px-3 py-2 rounded-lg transition-colors">
-                    Proctortrack
-                  </Link>
-                  <Link href="/exam-platforms/examity" className="block text-xs font-semibold text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50 px-3 py-2 rounded-lg transition-colors">
-                    Examity
-                  </Link>
-                  <Link href="/exam-platforms/psi" className="block text-xs font-semibold text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50 px-3 py-2 rounded-lg transition-colors">
-                    PSI Bridge
-                  </Link>
-                  <Link href="/exam-platforms/ati" className="block text-xs font-semibold text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50 px-3 py-2 rounded-lg transition-colors">
-                    ATI Testing (TEAS)
-                  </Link>
+              <div className="absolute top-full left-0 pt-1.5 hidden group-hover:block z-50 animate-in fade-in slide-in-from-top-1">
+                <div className="w-[280px] max-h-[420px] overflow-y-auto bg-white border border-slate-200 rounded-xl p-1 shadow-2xl divide-y divide-slate-100/60 scrollbar-none">
+                  {ALL_13_PLATFORMS.map((plat, idx) => (
+                    <Link
+                      key={idx}
+                      href={plat.href}
+                      className="flex items-center gap-2.5 py-1.5 px-2 rounded-md hover:bg-blue-50/90 hover:text-[#2563EB] transition-colors group/item"
+                    >
+                      <div className="w-6 h-6 rounded overflow-hidden bg-slate-100 flex items-center justify-center shrink-0 border border-slate-200/80">
+                        <img
+                          src={plat.logo}
+                          alt={`${plat.name} logo`}
+                          className="w-full h-full object-contain p-0.5"
+                        />
+                      </div>
+                      <span className="text-[11px] font-bold text-[#0F172A] group-hover/item:text-[#2563EB] transition-colors whitespace-nowrap leading-none">
+                        {plat.name}
+                      </span>
+                    </Link>
+                  ))}
                 </div>
               </div>
             </div>
@@ -391,7 +398,7 @@ export default function Header() {
               </div>
             </div>
 
-            {/* BLOG - CONDITIONALLY RENDERED BASED ON FEATURE FLAG */}
+            {/* BLOG - CONDITIONALLY RENDERED */}
             {BLOGS_ENABLED && (
               <Link
                 href="/blog"
@@ -416,29 +423,19 @@ export default function Header() {
             >
               FAQ
             </Link>
-
-            {/* CONTACT US */}
-            <Link
-              href="/contact"
-              className={`font-bold text-xs xl:text-sm px-3 py-2 rounded-lg transition-colors whitespace-nowrap ${
-                pathname === '/contact'
-                  ? 'text-[#2563EB] bg-blue-50/80 font-extrabold'
-                  : 'text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50'
-              }`}
-            >
-              Contact Us
-            </Link>
           </nav>
 
-          {/* RIGHT ACTION BUTTON: GET STARTED */}
+          {/* RIGHT ACTION BUTTON: GET STARTED (LINKS TO WHATSAPP) */}
           <div className="hidden sm:flex items-center shrink-0">
-            <Link
-              href="/contact"
+            <a
+              href="https://wa.me/254711882470"
+              target="_blank"
+              rel="noopener noreferrer"
               className="bg-[#2563EB] hover:bg-[#1D4ED8] text-white px-5 py-2.5 rounded-lg font-bold text-xs sm:text-sm shadow-sm hover:shadow transition-all duration-200 flex items-center gap-2 whitespace-nowrap"
             >
               <span>Get Started</span>
               <ChevronRight className="w-4 h-4 text-white stroke-[2.5]" />
-            </Link>
+            </a>
           </div>
 
           {/* MOBILE MENU HAMBURGER TOGGLE */}
@@ -485,9 +482,24 @@ export default function Header() {
               </div>
             </div>
 
-            <Link href="/exam-platforms" className="text-sm font-bold py-2.5 px-3 rounded-xl hover:bg-slate-50 text-[#0F172A]">
-              Exam Platforms
-            </Link>
+            {/* MOBILE EXAM PLATFORMS COMPACT LIST (ALL 13 ITEMS) */}
+            <div className="space-y-1 border-b border-slate-100 py-2">
+              <div className="text-xs font-black uppercase tracking-wider text-[#2563EB] px-3 py-1">
+                Exam Platforms (13 Options)
+              </div>
+
+              <div className="pl-2 space-y-0.5">
+                {ALL_13_PLATFORMS.map((plat, idx) => (
+                  <Link
+                    key={idx}
+                    href={plat.href}
+                    className="block text-xs font-semibold py-2 px-3 rounded-lg text-[#0F172A] hover:bg-blue-50 hover:text-[#2563EB]"
+                  >
+                    {plat.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
 
             <Link href="/certifications" className="text-sm font-bold py-2.5 px-3 rounded-xl hover:bg-slate-50 text-[#0F172A]">
               Certifications
@@ -506,20 +518,18 @@ export default function Header() {
             <Link href="/faq" className="text-sm font-bold py-2.5 px-3 rounded-xl hover:bg-slate-50 text-[#0F172A]">
               FAQ
             </Link>
-
-            <Link href="/contact" className="text-sm font-bold py-2.5 px-3 rounded-xl hover:bg-slate-50 text-[#0F172A]">
-              Contact Us
-            </Link>
           </nav>
 
           <div className="pt-4 border-t border-slate-200 flex flex-col gap-3">
-            <Link
-              href="/contact"
+            <a
+              href="https://wa.me/254711882470"
+              target="_blank"
+              rel="noopener noreferrer"
               className="bg-[#2563EB] hover:bg-[#1D4ED8] text-white py-3 px-6 rounded-lg font-bold text-sm shadow-sm text-center flex items-center justify-center gap-2"
             >
               <span>Get Started</span>
               <ChevronRight className="w-4 h-4 stroke-[2.5]" />
-            </Link>
+            </a>
           </div>
         </div>
       )}
