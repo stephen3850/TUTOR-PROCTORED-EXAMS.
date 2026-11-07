@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, use } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import {
@@ -24,14 +24,12 @@ import SectionHeading from '@/components/ui/SectionHeading';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
-import FaqAccordion from '@/components/ui/FaqAccordion';
 import JsonLd from '@/components/seo/JsonLd';
 import { STUDY_RESOURCES_DATA } from '@/lib/data/studyResourcesData';
 import { SITE_CONFIG } from '@/lib/utils';
 
 export default function StudyResourceDetailPage({ params }) {
-  const resolvedParams = use(params);
-  const slug = resolvedParams?.slug;
+  const slug = params?.slug;
   const resource = STUDY_RESOURCES_DATA[slug];
 
   if (!resource) {
@@ -340,7 +338,7 @@ export default function StudyResourceDetailPage({ params }) {
               onChange={(e) => setFormData({ ...formData, honeypot: e.target.value })}
               className="hidden"
               tabIndex={-1}
-              autocomplete="off"
+              autoComplete="off"
             />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
