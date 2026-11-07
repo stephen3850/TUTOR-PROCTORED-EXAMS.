@@ -23,7 +23,7 @@ import {
   MessageCircle,
 } from 'lucide-react';
 import PageContainer from './PageContainer';
-import { SITE_CONFIG, BLOGS_ENABLED } from '@/lib/utils';
+import { SITE_CONFIG, BLOGS_ENABLED, SERVICES_ENABLED } from '@/lib/utils';
 
 // COMPACT DROPDOWN - 12 SERVICES
 const ALL_12_SERVICES = [
@@ -244,42 +244,44 @@ export default function Header() {
               </div>
             </div>
 
-            {/* OUR SERVICES - ULTRA-COMPACT SLEEK VERTICAL DROPDOWN */}
-            <div className="relative group">
-              <Link
-                href="/services"
-                className={`font-bold text-xs xl:text-sm px-3 py-2 rounded-lg transition-colors flex items-center gap-1 whitespace-nowrap ${
-                  pathname.startsWith('/services')
-                    ? 'text-[#2563EB] bg-blue-50/80 font-extrabold'
-                    : 'text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50'
-                }`}
-              >
-                <span>Our Services</span>
-                <ChevronDown className="w-3.5 h-3.5 text-[#2563EB] font-bold transition-transform duration-200 group-hover:rotate-180 shrink-0" />
-              </Link>
+            {/* OUR SERVICES - CONDITIONALLY RENDERED VIA FEATURE FLAG */}
+            {SERVICES_ENABLED && (
+              <div className="relative group">
+                <Link
+                  href="/services"
+                  className={`font-bold text-xs xl:text-sm px-3 py-2 rounded-lg transition-colors flex items-center gap-1 whitespace-nowrap ${
+                    pathname.startsWith('/services')
+                      ? 'text-[#2563EB] bg-blue-50/80 font-extrabold'
+                      : 'text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50'
+                  }`}
+                >
+                  <span>Our Services</span>
+                  <ChevronDown className="w-3.5 h-3.5 text-[#2563EB] font-bold transition-transform duration-200 group-hover:rotate-180 shrink-0" />
+                </Link>
 
-              <div className="absolute top-full left-0 pt-1.5 hidden group-hover:block z-50 animate-in fade-in slide-in-from-top-1">
-                <div className="w-[260px] max-h-[360px] overflow-y-auto bg-white border border-slate-200 rounded-xl p-1 shadow-2xl divide-y divide-slate-100/60 scrollbar-none">
-                  {ALL_12_SERVICES.map((serv, idx) => {
-                    const ServIcon = serv.icon;
-                    return (
-                      <Link
-                        key={idx}
-                        href={serv.href}
-                        className="flex items-center gap-2 py-1 px-2 rounded-md hover:bg-blue-50/90 hover:text-[#2563EB] transition-colors group/item"
-                      >
-                        <div className="w-4.5 h-4.5 rounded bg-[#2563EB] flex items-center justify-center text-white shrink-0 group-hover/item:scale-105 transition-transform p-1">
-                          <ServIcon className="w-3 h-3 text-white" />
-                        </div>
-                        <span className="text-[11px] font-bold text-[#0F172A] group-hover/item:text-[#2563EB] transition-colors whitespace-nowrap leading-none">
-                          {serv.title}
-                        </span>
-                      </Link>
-                    );
-                  })}
+                <div className="absolute top-full left-0 pt-1.5 hidden group-hover:block z-50 animate-in fade-in slide-in-from-top-1">
+                  <div className="w-[260px] max-h-[360px] overflow-y-auto bg-white border border-slate-200 rounded-xl p-1 shadow-2xl divide-y divide-slate-100/60 scrollbar-none">
+                    {ALL_12_SERVICES.map((serv, idx) => {
+                      const ServIcon = serv.icon;
+                      return (
+                        <Link
+                          key={idx}
+                          href={serv.href}
+                          className="flex items-center gap-2 py-1 px-2 rounded-md hover:bg-blue-50/90 hover:text-[#2563EB] transition-colors group/item"
+                        >
+                          <div className="w-4.5 h-4.5 rounded bg-[#2563EB] flex items-center justify-center text-white shrink-0 group-hover/item:scale-105 transition-transform p-1">
+                            <ServIcon className="w-3 h-3 text-white" />
+                          </div>
+                          <span className="text-[11px] font-bold text-[#0F172A] group-hover/item:text-[#2563EB] transition-colors whitespace-nowrap leading-none">
+                            {serv.title}
+                          </span>
+                        </Link>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
             {/* EXAM PLATFORMS DROPDOWN - ALL 13 ITEMS WITH OFFICIAL LOGOS */}
             <div className="relative group">
@@ -464,23 +466,25 @@ export default function Header() {
             </Link>
 
             {/* MOBILE OUR SERVICES COMPACT EXPANDABLE LIST */}
-            <div className="space-y-1 border-y border-slate-100 py-2">
-              <div className="text-xs font-black uppercase tracking-wider text-[#2563EB] px-3 py-1">
-                Our Services (12 Offerings)
-              </div>
+            {SERVICES_ENABLED && (
+              <div className="space-y-1 border-y border-slate-100 py-2">
+                <div className="text-xs font-black uppercase tracking-wider text-[#2563EB] px-3 py-1">
+                  Our Services (12 Offerings)
+                </div>
 
-              <div className="pl-2 space-y-0.5">
-                {ALL_12_SERVICES.map((serv, idx) => (
-                  <Link
-                    key={idx}
-                    href={serv.href}
-                    className="block text-xs font-semibold py-2 px-3 rounded-lg text-[#0F172A] hover:bg-blue-50 hover:text-[#2563EB]"
-                  >
-                    {serv.title}
-                  </Link>
-                ))}
+                <div className="pl-2 space-y-0.5">
+                  {ALL_12_SERVICES.map((serv, idx) => (
+                    <Link
+                      key={idx}
+                      href={serv.href}
+                      className="block text-xs font-semibold py-2 px-3 rounded-lg text-[#0F172A] hover:bg-blue-50 hover:text-[#2563EB]"
+                    >
+                      {serv.title}
+                    </Link>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* MOBILE EXAM PLATFORMS COMPACT LIST (ALL 13 ITEMS) */}
             <div className="space-y-1 border-b border-slate-100 py-2">
