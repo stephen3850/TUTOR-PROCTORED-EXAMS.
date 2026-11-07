@@ -196,36 +196,49 @@ export default async function PlatformDetailPage({ params }) {
             </div>
           </div>
         ) : (
-          <div className="bg-white border border-brand-border rounded-2xl p-8 sm:p-10 space-y-6 shadow-sm my-6">
-            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-brand-border pb-6">
-              <div className="space-y-2">
-                <div className="flex items-center gap-3">
-                  <Badge variant="blue">{platform.category}</Badge>
-                  <span className="text-xs text-brand-muted font-bold">Vendor: {platform.vendor}</span>
-                </div>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-brand-navy tracking-tight">
-                  {platform.name}
-                </h1>
+          <div className="bg-white border border-brand-border rounded-2xl p-8 sm:p-10 space-y-6 shadow-sm my-6 relative overflow-hidden">
+            {/* Official Proctorio Watermark Logo on Right Side (Subtle 6% Opacity) */}
+            {platform.slug === 'proctorio' && (
+              <div className="absolute top-1/2 right-2 sm:right-6 -translate-y-1/2 w-64 h-64 sm:w-96 sm:h-96 opacity-[0.06] pointer-events-none z-0">
+                <img
+                  src="/logos/proctorio.svg"
+                  alt="Official Proctorio Watermark Logo"
+                  className="w-full h-full object-contain"
+                />
               </div>
-              <Button href="/contact?service=Examination%20Software%20Technical%20Guidance" variant="primary" size="md" icon={ArrowRight}>
-                Request Technical Assistance
-              </Button>
-            </div>
+            )}
 
-            <p className="text-base sm:text-lg text-brand-muted leading-relaxed max-w-4xl">
-              {platform.overview}
-            </p>
-
-            {/* KEY FEATURES */}
-            <div className="space-y-3 pt-2">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-brand-navy">Key Features</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {keyFeatures.map((feature, idx) => (
-                  <div key={idx} className="p-4 rounded-xl bg-brand-bg border border-brand-border flex items-start gap-2.5">
-                    <CheckCircle2 className="w-5 h-5 text-brand-blue shrink-0 mt-0.5" />
-                    <span className="text-xs text-brand-text font-medium leading-relaxed">{feature}</span>
+            <div className="relative z-10 space-y-6">
+              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-brand-border pb-6">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3">
+                    <Badge variant="blue">{platform.category}</Badge>
+                    <span className="text-xs text-brand-muted font-bold">Vendor: {platform.vendor}</span>
                   </div>
-                ))}
+                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-brand-navy tracking-tight">
+                    {platform.name}
+                  </h1>
+                </div>
+                <Button href="/contact?service=Examination%20Software%20Technical%20Guidance" variant="primary" size="md" icon={ArrowRight}>
+                  Request Technical Assistance
+                </Button>
+              </div>
+
+              <p className="text-base sm:text-lg text-brand-muted leading-relaxed max-w-4xl font-normal">
+                {platform.overview}
+              </p>
+
+              {/* KEY FEATURES */}
+              <div className="space-y-3 pt-2">
+                <h3 className="text-sm font-bold uppercase tracking-wider text-brand-navy">Key Features</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {keyFeatures.map((feature, idx) => (
+                    <div key={idx} className="p-4 rounded-xl bg-brand-bg/90 backdrop-blur-sm border border-brand-border flex items-start gap-2.5">
+                      <CheckCircle2 className="w-5 h-5 text-brand-blue shrink-0 mt-0.5" />
+                      <span className="text-xs text-brand-text font-medium leading-relaxed">{feature}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
