@@ -4,7 +4,7 @@ import { Resend } from 'resend';
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { fullName, email, subject, service, message, honeypot } = body;
+    const { fullName, email, phone, subject, service, message, pageUrl, honeypot } = body;
 
     // 1. Anti-spam check (honeypot field must be empty)
     if (honeypot && honeypot.trim() !== '') {
@@ -23,7 +23,7 @@ export async function POST(request) {
     }
 
     // 3. String length limits to prevent buffer abuse
-    if (fullName.length > 100 || email.length > 150 || message.length > 3000) {
+    if (fullName.length > 100 || email.length > 150 || message.length > 4000) {
       return NextResponse.json(
         { success: false, error: 'Input limits exceeded. Please shorten your entry.' },
         { status: 400 }
@@ -42,9 +42,11 @@ export async function POST(request) {
     // 5. Input sanitization
     const sanitizedFullName = fullName.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const sanitizedEmail = email.trim();
+    const sanitizedPhone = (phone || '').trim().replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const sanitizedSubject = (subject || 'General Inquiry').trim().replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const sanitizedService = (service || 'General Enquiry').trim().replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const sanitizedMessage = message.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const sanitizedPageUrl = (pageUrl || '').trim().replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
     // 6. Environment configuration
     const resendApiKey = process.env.RESEND_API_KEY || process.env.EMAIL_API_KEY;
@@ -64,21 +66,37 @@ export async function POST(request) {
           <div style="padding: 24px; color: #1e293b;">
             <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
               <tr>
-                <td style="padding: 8px 0; color: #64748b; font-size: 13px; width: 140px;"><strong>Full Name:</strong></td>
+                <td style="padding: 8px 0; color: #64748b; font-size: 13px; width: 150px;"><strong>Full Name:</strong></td>
                 <td style="padding: 8px 0; color: #0f172a; font-size: 14px; font-weight: bold;">${sanitizedFullName}</td>
               </tr>
               <tr>
                 <td style="padding: 8px 0; color: #64748b; font-size: 13px;"><strong>Customer Email:</strong></td>
                 <td style="padding: 8px 0; color: #2563EB; font-size: 14px; font-weight: bold;"><a href="mailto:${sanitizedEmail}">${sanitizedEmail}</a></td>
               </tr>
+              ${
+                sanitizedPhone
+                  ? `<tr>
+                <td style="padding: 8px 0; color: #64748b; font-size: 13px;"><strong>Phone / WhatsApp:</strong></td>
+                <td style="padding: 8px 0; color: #0f172a; font-size: 14px;">${sanitizedPhone}</td>
+              </tr>`
+                  : ''
+              }
               <tr>
-                <td style="padding: 8px 0; color: #64748b; font-size: 13px;"><strong>Service of Interest:</strong></td>
+                <td style="padding: 8px 0; color: #64748b; font-size: 13px;"><strong>Service Requested:</strong></td>
                 <td style="padding: 8px 0; color: #0f172a; font-size: 14px;">${sanitizedService}</td>
               </tr>
               <tr>
                 <td style="padding: 8px 0; color: #64748b; font-size: 13px;"><strong>Subject / Exam / Cert:</strong></td>
                 <td style="padding: 8px 0; color: #0f172a; font-size: 14px;">${sanitizedSubject}</td>
               </tr>
+              ${
+                sanitizedPageUrl
+                  ? `<tr>
+                <td style="padding: 8px 0; color: #64748b; font-size: 13px;"><strong>Source Page:</strong></td>
+                <td style="padding: 8px 0; color: #64748b; font-size: 12px;">${sanitizedPageUrl}</td>
+              </tr>`
+                  : ''
+              }
               <tr>
                 <td style="padding: 8px 0; color: #64748b; font-size: 13px;"><strong>Submission Date:</strong></td>
                 <td style="padding: 8px 0; color: #0f172a; font-size: 13px;">${new Date().toLocaleString('en-US', { timeZone: 'UTC' })} UTC</td>
@@ -115,7 +133,7 @@ export async function POST(request) {
 
       return NextResponse.json({
         success: true,
-        message: 'Thank you! Your inquiry has been sent directly to our team. An educational specialist will respond within 1 business day.',
+        message: 'Thank you! Your inquiry has been received. Our team will get back to you.',
         emailId: data?.id,
       });
     }
@@ -124,6 +142,7 @@ export async function POST(request) {
     console.log(`[Contact Form Submission - Local Log]`, {
       fullName: sanitizedFullName,
       email: sanitizedEmail,
+      phone: sanitizedPhone,
       service: sanitizedService,
       subject: sanitizedSubject,
       messageLength: sanitizedMessage.length,
@@ -132,7 +151,7 @@ export async function POST(request) {
 
     return NextResponse.json({
       success: true,
-      message: 'Thank you! Your inquiry has been received. An educational specialist will connect with you shortly.',
+      message: 'Thank you! Your inquiry has been received. Our team will get back to you.',
     });
   } catch (error) {
     console.error('[Contact API Error]:', error?.message || 'Unexpected error');
