@@ -156,7 +156,7 @@ export default function AboutPage() {
         </div>
 
         {/* 2. WHO WE ARE (Matching Reference Image) */}
-        <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-10 shadow-sm my-8">
+        <div id="story" className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-10 shadow-sm my-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
 
             {/* Left Image Card Column */}
@@ -259,7 +259,7 @@ export default function AboutPage() {
         </div>
 
         {/* 4. OUR CORE VALUES (5 VALUES) */}
-        <div className="space-y-8 my-10">
+        <div id="values" className="space-y-8 my-10">
           <SectionHeading
             badge="Core Principles"
             title="Our Core Values"
@@ -305,7 +305,7 @@ export default function AboutPage() {
         </div>
 
         {/* 6. OUR COMMITMENT TO ACADEMIC INTEGRITY (LIGHT RED / CRIMSON BACKGROUND) */}
-        <div className="bg-[#991B1B] text-white rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl my-10 border border-red-500/30">
+        <div id="integrity" className="bg-[#991B1B] text-white rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl my-10 border border-red-500/30">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-full bg-white/20 text-white flex items-center justify-center shrink-0">
               <Lock className="w-5 h-5" />
