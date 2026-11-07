@@ -156,10 +156,10 @@ export default async function PlatformDetailPage({ params }) {
           ]}
         />
 
-        {/* 1. 3D ROTATING LOGO & BLUISH GLASSMORPHISM PLATFORM HERO PANEL */}
+        {/* 1. 3D BREATHING & SCALING LOGO HERO PANEL (CLEAN MAP-FREE BACKGROUND) */}
         <div className={`relative text-white rounded-2xl p-8 sm:p-10 space-y-6 shadow-[0_20px_50px_rgba(0,0,0,0.35)] my-6 ${theme.bg} overflow-hidden`}>
-          {/* Background Image Texture */}
-          {theme.bgImg ? (
+          {/* Background Image when applicable */}
+          {theme.bgImg && (
             <>
               <div
                 className="absolute inset-0 z-0 bg-cover bg-center opacity-80"
@@ -167,16 +167,11 @@ export default async function PlatformDetailPage({ params }) {
               ></div>
               <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#0F172A]/90 via-[#0F172A]/70 to-[#0F172A]/40"></div>
             </>
-          ) : (
-            <div
-              className="absolute inset-0 z-0 bg-cover bg-center opacity-25 mix-blend-overlay"
-              style={{ backgroundImage: "url('/www.jpg')" }}
-            ></div>
           )}
 
-          {/* Official Platform Logo 3D Watermark on Right Side (Smooth 3D Rotating Animation) */}
+          {/* Official Platform Logo 3D Watermark with Continuous Breathing & Scaling Animation */}
           {theme.logo && (
-            <div className="absolute top-1/2 right-2 sm:right-6 -translate-y-1/2 w-64 h-64 sm:w-80 sm:h-80 opacity-35 pointer-events-none z-0 filter drop-shadow-[0_15px_30px_rgba(0,0,0,0.6)] animate-spin-slow">
+            <div className="absolute top-1/2 right-2 sm:right-6 w-64 h-64 sm:w-80 sm:h-80 opacity-35 pointer-events-none z-0 filter drop-shadow-[0_15px_30px_rgba(0,0,0,0.6)] animate-3d-pulse-slow">
               <img
                 src={theme.logo}
                 alt={`${platform.name} Official Logo`}

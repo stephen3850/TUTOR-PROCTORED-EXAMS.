@@ -48,12 +48,15 @@
   }
 }
 
-@keyframes spinSlow {
+@keyframes pulse3DSlow {
   0% {
-    transform: translateY(-50%) rotate(0deg);
+    transform: translateY(-50%) scale(0.95) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-50%) scale(1.15) rotate(180deg);
   }
   100% {
-    transform: translateY(-50%) rotate(360deg);
+    transform: translateY(-50%) scale(0.95) rotate(360deg);
   }
 }
 
@@ -71,7 +74,7 @@
     scrollbar-width: none;
   }
 
-  .animate-spin-slow {
-    animation: spinSlow 30s linear infinite;
+  .animate-3d-pulse-slow {
+    animation: pulse3DSlow 12s ease-in-out infinite;
   }
 }
