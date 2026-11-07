@@ -106,6 +106,20 @@ const ALL_13_PLATFORMS = [
   { name: 'Mock Tests & Practice Exams', href: '/services/practice-questions-mock-tests', logo: '/logos/mock.svg' },
 ];
 
+// ALL 10 CERTIFICATIONS WITH COLORFUL ACCENTS & LOGOS
+const ALL_10_CERTIFICATIONS = [
+  { name: 'PMP Certification Prep', href: '/certifications/pmp', logo: '/logos/pmp.svg', accent: 'bg-[#2563EB]/10 text-[#2563EB]' },
+  { name: 'CAPM Associate in PM', href: '/certifications/capm', logo: '/logos/capm.svg', accent: 'bg-[#4F46E5]/10 text-[#4F46E5]' },
+  { name: 'CompTIA (Security+, A+, Net+)', href: '/certifications/comptia', logo: '/logos/comptia.svg', accent: 'bg-[#0891B2]/10 text-[#0891B2]' },
+  { name: 'SHRM-CP / SHRM-SCP HR', href: '/certifications/shrm', logo: '/logos/shrm.svg', accent: 'bg-[#7C3AED]/10 text-[#7C3AED]' },
+  { name: 'Real Estate License Prep', href: '/certifications/real-estate', logo: '/logos/real-estate.svg', accent: 'bg-[#059669]/10 text-[#059669]' },
+  { name: 'AAPC Medical Coding', href: '/certifications/aapc', logo: '/logos/aapc.svg', accent: 'bg-[#DB2777]/10 text-[#DB2777]' },
+  { name: 'CPC Certified Coder', href: '/certifications/cpc', logo: '/logos/cpc.svg', accent: 'bg-[#9333EA]/10 text-[#9333EA]' },
+  { name: 'CCMA Clinical Assistant', href: '/certifications/ccma', logo: '/logos/ccma.svg', accent: 'bg-[#0284C7]/10 text-[#0284C7]' },
+  { name: 'CNA Nursing Assistant', href: '/certifications/cna', logo: '/logos/cna.svg', accent: 'bg-[#16A34A]/10 text-[#16A34A]' },
+  { name: 'CPhT Pharmacy Technician', href: '/certifications/cpht', logo: '/logos/cpht.svg', accent: 'bg-[#EA580C]/10 text-[#EA580C]' },
+];
+
 // STUDY RESOURCES DROPDOWN - 13 RESOURCES IN TWO LABELED GROUPS WITH LOGOS
 const STUDY_RESOURCES_GROUPS = [
   {
@@ -348,7 +362,7 @@ export default function Header() {
               </div>
             </div>
 
-            {/* CERTIFICATIONS DROPDOWN */}
+            {/* CERTIFICATIONS DROPDOWN - COLORFUL ACCENTS & LOGOS */}
             <div className="relative group">
               <Link
                 href="/certifications"
@@ -362,38 +376,33 @@ export default function Header() {
                 <ChevronDown className="w-3.5 h-3.5 text-[#2563EB] font-bold transition-transform duration-200 group-hover:rotate-180 shrink-0" />
               </Link>
 
-              <div className="absolute top-full left-0 pt-2 hidden group-hover:block z-50 animate-in fade-in slide-in-from-top-1">
-                <div className="w-64 bg-white border border-slate-200 rounded-xl p-2 shadow-xl space-y-0.5">
-                  <Link href="/certifications/pmp" className="block text-xs font-semibold text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50 px-3 py-2 rounded-lg transition-colors">
-                    PMP Certification Prep
-                  </Link>
-                  <Link href="/certifications/capm" className="block text-xs font-semibold text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50 px-3 py-2 rounded-lg transition-colors">
-                    CAPM Associate in PM
-                  </Link>
-                  <Link href="/certifications/comptia" className="block text-xs font-semibold text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50 px-3 py-2 rounded-lg transition-colors">
-                    CompTIA (Security+, A+, Net+)
-                  </Link>
-                  <Link href="/certifications/shrm" className="block text-xs font-semibold text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50 px-3 py-2 rounded-lg transition-colors">
-                    SHRM-CP / SHRM-SCP HR
-                  </Link>
-                  <Link href="/certifications/real-estate" className="block text-xs font-semibold text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50 px-3 py-2 rounded-lg transition-colors">
-                    Real Estate License Prep
-                  </Link>
-                  <Link href="/certifications/aapc" className="block text-xs font-semibold text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50 px-3 py-2 rounded-lg transition-colors">
-                    AAPC Medical Coding
-                  </Link>
-                  <Link href="/certifications/cpc" className="block text-xs font-semibold text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50 px-3 py-2 rounded-lg transition-colors">
-                    CPC Certified Coder
-                  </Link>
-                  <Link href="/certifications/ccma" className="block text-xs font-semibold text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50 px-3 py-2 rounded-lg transition-colors">
-                    CCMA Clinical Assistant
-                  </Link>
-                  <Link href="/certifications/cna" className="block text-xs font-semibold text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50 px-3 py-2 rounded-lg transition-colors">
-                    CNA Nursing Assistant
-                  </Link>
-                  <Link href="/certifications/cpht" className="block text-xs font-semibold text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50 px-3 py-2 rounded-lg transition-colors">
-                    CPhT Pharmacy Technician
-                  </Link>
+              <div className="absolute top-full left-0 pt-1.5 hidden group-hover:block z-50 animate-in fade-in slide-in-from-top-1">
+                <div className="w-[280px] max-h-[420px] overflow-y-auto bg-white border border-slate-200 rounded-xl p-1.5 shadow-2xl divide-y divide-slate-100/60 scrollbar-none">
+                  {ALL_10_CERTIFICATIONS.map((cert, idx) => {
+                    const isActiveCert = pathname === cert.href;
+                    return (
+                      <Link
+                        key={idx}
+                        href={cert.href}
+                        className={`flex items-center gap-2.5 py-1.5 px-2 rounded-md transition-colors group/item ${
+                          isActiveCert
+                            ? 'bg-blue-50 text-[#2563EB] font-extrabold'
+                            : 'hover:bg-blue-50/80 hover:text-[#2563EB]'
+                        }`}
+                      >
+                        <div className={`w-6 h-6 rounded overflow-hidden flex items-center justify-center shrink-0 border border-slate-200/80 ${cert.accent}`}>
+                          <img
+                            src={cert.logo}
+                            alt={`${cert.name} logo`}
+                            className="w-full h-full object-contain p-0.5"
+                          />
+                        </div>
+                        <span className="text-[11px] font-bold text-[#0F172A] group-hover/item:text-[#2563EB] transition-colors whitespace-nowrap leading-none">
+                          {cert.name}
+                        </span>
+                      </Link>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -550,9 +559,24 @@ export default function Header() {
               </div>
             </div>
 
-            <Link href="/certifications" className="text-sm font-bold py-2.5 px-3 rounded-xl hover:bg-slate-50 text-[#0F172A]">
-              Certifications
-            </Link>
+            {/* MOBILE CERTIFICATIONS COMPACT LIST (ALL 10 ITEMS) */}
+            <div className="space-y-1 border-b border-slate-100 py-2">
+              <div className="text-xs font-black uppercase tracking-wider text-[#2563EB] px-3 py-1">
+                Certifications (10 Credentials)
+              </div>
+
+              <div className="pl-2 space-y-0.5">
+                {ALL_10_CERTIFICATIONS.map((cert, idx) => (
+                  <Link
+                    key={idx}
+                    href={cert.href}
+                    className="block text-xs font-semibold py-2 px-3 rounded-lg text-[#0F172A] hover:bg-blue-50 hover:text-[#2563EB]"
+                  >
+                    {cert.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
 
             {/* MOBILE STUDY RESOURCES GROUPS */}
             <div className="space-y-1 border-b border-slate-100 py-2">
