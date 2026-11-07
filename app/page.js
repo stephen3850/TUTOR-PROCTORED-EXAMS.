@@ -434,7 +434,7 @@ export default function HomePage() {
             ))}
           </div>
 
-          <div className="mt-8 p-4 rounded-xl bg-brand-lightBlue/40 border border-brand-blue/20 text-xs text-brand-muted text-center">
+          <div className="mt-8 p-4 rounded-xl bg-orange-100/90 border border-orange-300 text-amber-950 text-xs text-center font-medium shadow-sm">
             <p>
               <strong>Disclaimer:</strong> TUTOR PROCTORED EXAMS provides independent technical guidance and study resources. We are not affiliated with or endorsed by any third-party proctoring software vendors.
             </p>

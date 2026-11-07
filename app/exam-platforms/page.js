@@ -129,13 +129,13 @@ export default function ExamPlatformsDirectoryPage() {
           </div>
         </div>
 
-        {/* Informational Disclaimer Box */}
-        <div className="mt-14 bg-white p-6 rounded-xl border border-brand-border space-y-3">
-          <h4 className="font-bold text-brand-navy flex items-center gap-2">
-            <HelpCircle className="w-5 h-5 text-brand-blue" />
+        {/* Informational Disclaimer Box (WARM ORANGE BACKGROUND) */}
+        <div className="mt-14 bg-orange-100/90 border border-orange-300 text-amber-950 p-6 rounded-xl space-y-2 shadow-sm font-medium">
+          <h4 className="font-extrabold text-amber-950 flex items-center gap-2">
+            <HelpCircle className="w-5 h-5 text-orange-600" />
             Independent Educational Guidance Notice
           </h4>
-          <p className="text-brand-muted text-xs sm:text-sm leading-relaxed">
+          <p className="text-amber-950 text-xs sm:text-sm leading-relaxed font-medium">
             TUTOR PROCTORED EXAMS is an independent academic tutoring and technical preparation service. We are not affiliated with, sponsored by, or endorsed by Respondus, ExamSoft, Honorlock, Meazure Learning, Proctorio, Verificient, Examity, PSI Services, or ATI. All platform names and trademarks belong to their respective holders and are referenced purely for informational educational purposes.
           </p>
         </div>

@@ -155,10 +155,10 @@ export default function ServicesHubPage() {
           </div>
         </div>
 
-        {/* Educational Disclaimer Banner */}
-        <div className="mt-14 bg-white p-6 rounded-xl border border-brand-border space-y-2">
-          <h4 className="font-bold text-brand-navy text-sm">Academic Integrity Notice</h4>
-          <p className="text-brand-muted text-xs leading-relaxed">
+        {/* Educational Disclaimer Banner (WARM ORANGE BACKGROUND) */}
+        <div className="mt-14 bg-orange-100/90 border border-orange-300 text-amber-950 p-6 rounded-xl space-y-2 font-medium shadow-sm">
+          <h4 className="font-extrabold text-amber-950 text-sm">Academic Integrity Notice</h4>
+          <p className="text-amber-950 text-xs leading-relaxed font-medium">
             TUTOR PROCTORED EXAMS is a professional academic support and tutoring service. We strictly adhere to academic integrity standards. All services are focused on genuine learning, concept explanations, study strategy coaching, practice testing, and legitimate hardware/software system guidance.
           </p>
         </div>
