@@ -195,6 +195,66 @@ export default async function PlatformDetailPage({ params }) {
               </div>
             </div>
           </div>
+        ) : platform.slug === 'proctoru-meazure-learning' ? (
+          /* PROCTORU / MEAZURE LEARNING LIGHT GREEN GLASSMORPHISM PANEL WITH LOGO */
+          <div className="relative text-white rounded-2xl p-8 sm:p-10 space-y-6 shadow-xl my-6 bg-[#05B851] overflow-hidden">
+            {/* World Map Background Texture */}
+            <div
+              className="absolute inset-0 z-0 bg-cover bg-center opacity-20 mix-blend-overlay"
+              style={{ backgroundImage: "url('/www.jpg')" }}
+            ></div>
+
+            {/* Official ProctorU Logo Watermark on Right Side */}
+            <div className="absolute top-1/2 right-2 sm:right-6 -translate-y-1/2 w-64 h-64 sm:w-80 sm:h-80 opacity-30 pointer-events-none z-0 filter drop-shadow-xl">
+              <img
+                src="/logos/proctoru.svg"
+                alt="Official ProctorU Logo"
+                className="w-full h-full object-contain"
+              />
+            </div>
+
+            <div className="relative z-10 space-y-6">
+              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/20 pb-6">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3">
+                    <span className="inline-block bg-white/20 text-white border border-white/30 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider">
+                      {platform.category}
+                    </span>
+                    <span className="text-xs text-emerald-100 font-bold">Vendor: {platform.vendor}</span>
+                  </div>
+                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight drop-shadow-md">
+                    {platform.name}
+                  </h1>
+                </div>
+                <a
+                  href="https://wa.me/254711882470"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-white text-emerald-950 px-6 py-3 rounded-xl font-extrabold text-xs sm:text-sm shadow-lg flex items-center gap-2 transition-all hover:bg-emerald-50"
+                >
+                  <span>Request Technical Assistance</span>
+                  <ArrowRight className="w-4 h-4 text-emerald-950 stroke-[2.5]" />
+                </a>
+              </div>
+
+              <p className="text-base sm:text-lg text-emerald-50 leading-relaxed max-w-3xl font-medium drop-shadow-sm">
+                {platform.overview}
+              </p>
+
+              {/* KEY FEATURES (FROSTED GLASSMORPHISM CARDS) */}
+              <div className="space-y-3 pt-2">
+                <h3 className="text-sm font-bold uppercase tracking-wider text-white drop-shadow-sm">KEY FEATURES</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {keyFeatures.map((feature, idx) => (
+                    <div key={idx} className="p-4 rounded-xl bg-white/15 backdrop-blur-md border border-white/25 flex items-start gap-2.5 shadow-md">
+                      <CheckCircle2 className="w-5 h-5 text-white shrink-0 mt-0.5" />
+                      <span className="text-xs text-white font-semibold leading-relaxed">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
         ) : platform.slug === 'proctorio' ? (
           /* PROCTORIO VIBRANT INDIGO HERO PANEL */
           <div className="relative text-white rounded-2xl p-8 sm:p-10 space-y-6 shadow-xl my-6 bg-gradient-to-br from-[#3730A3] via-[#4F46E5] to-[#1E1B4B] overflow-hidden">
