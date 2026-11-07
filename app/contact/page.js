@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import {
   Mail,
   Phone,
@@ -41,6 +42,31 @@ export default function ContactPage() {
     message: '',
   });
 
+  // Letter-by-letter Typewriter Headline Animation
+  const fullHeadline = "WE'RE HERE TO HELP YOU MOVE FORWARD";
+  const [typedText, setTypedText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    let timer;
+    if (!isDeleting && typedText.length < fullHeadline.length) {
+      timer = setTimeout(() => {
+        setTypedText(fullHeadline.slice(0, typedText.length + 1));
+      }, 65); // 65ms character typing speed
+    } else if (!isDeleting && typedText.length === fullHeadline.length) {
+      timer = setTimeout(() => {
+        setIsDeleting(true);
+      }, 3500); // 3.5s visibility pause
+    } else if (isDeleting && typedText.length > 0) {
+      timer = setTimeout(() => {
+        setTypedText(fullHeadline.slice(0, typedText.length - 1));
+      }, 35); // 35ms backspace speed
+    } else if (isDeleting && typedText.length === 0) {
+      setIsDeleting(false);
+    }
+    return () => clearTimeout(timer);
+  }, [typedText, isDeleting, fullHeadline]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -48,19 +74,14 @@ export default function ContactPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     setStatus({ loading: true, success: false, error: null, message: '' });
 
-    // Analytics: Track Form Submit Start Event
-    trackEvent('inquiry_form_submit_start', {
-      service: formData.service,
-    });
-
-    // Client-side validation
     if (!formData.fullName.trim() || !formData.email.trim() || !formData.message.trim()) {
       setStatus({
         loading: false,
         success: false,
-        error: 'Please fill in all required fields (Name, Email, and Message).',
+        error: 'Please fill in all required fields (Full Name, Email Address, and Message).',
         message: '',
       });
       return;
@@ -172,27 +193,60 @@ export default function ContactPage() {
       <PageContainer>
         <Breadcrumb items={[{ label: 'Contact Us' }]} />
 
-        {/* 1. CONTACT HERO (CLEAR VIBRANT GREEN BACKGROUND) */}
-        <div className="relative bg-[#05B851] text-white rounded-2xl p-6 sm:p-10 overflow-hidden my-6 shadow-xl">
-          <div className="relative z-10 max-w-3xl space-y-3">
-            <span className="inline-block bg-white/20 text-white border border-white/30 px-3 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider">
-              Get in Touch
-            </span>
+        {/* 1. CINEMATIC 3D ANIMATED CONTACT HERO */}
+        <div className="perspective-1000 my-6">
+          <motion.div
+            initial={false}
+            animate={{
+              scale: [1, 1.03, 1.03, 1, 1],
+              z: [0, 25, 25, 0, 0],
+              rotateX: [0, 1.2, 1.2, 0, 0],
+              rotateY: [0, -1.2, -1.2, 0, 0],
+              boxShadow: [
+                '0 10px 25px -5px rgba(0, 0, 0, 0.1)',
+                '0 25px 50px -12px rgba(5, 184, 81, 0.45)',
+                '0 25px 50px -12px rgba(5, 184, 81, 0.45)',
+                '0 10px 25px -5px rgba(0, 0, 0, 0.1)',
+                '0 10px 25px -5px rgba(0, 0, 0, 0.1)',
+              ],
+            }}
+            transition={{
+              duration: 5,
+              times: [0, 0.3, 0.4, 0.7, 1],
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+            className="relative bg-[#05B851] text-white rounded-2xl p-6 sm:p-10 overflow-hidden shadow-xl transform-gpu"
+            style={{ transformStyle: 'preserve-3d' }}
+          >
+            {/* Background Texture Overlay */}
+            <div
+              className="absolute inset-0 z-0 bg-cover bg-center opacity-20 mix-blend-overlay pointer-events-none"
+              style={{ backgroundImage: "url('/students.jpg')" }}
+            ></div>
 
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">
-              WE'RE HERE TO HELP YOU MOVE FORWARD
-            </h1>
+            <div className="relative z-10 max-w-3xl space-y-3">
+              <span className="inline-block bg-white/20 text-white border border-white/30 px-3 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider shadow-sm">
+                Get in Touch
+              </span>
 
-            <p className="text-sm sm:text-base text-emerald-100/90 leading-relaxed font-medium max-w-2xl">
-              Have questions about tutoring, examination preparation, or professional certification support? Get in touch with our team.
-            </p>
+              {/* Letter-by-letter Typewriter Headline */}
+              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight min-h-[3rem] sm:min-h-[4rem] drop-shadow-md">
+                <span>{typedText}</span>
+                <span className="animate-pulse inline-block border-r-2 border-white ml-0.5 h-[0.9em] align-middle">&nbsp;</span>
+              </h1>
 
-            <div className="pt-2 flex flex-wrap gap-4 text-xs text-white font-semibold">
-              <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-white" /> 100% Confidential Inquiry</span>
-              <span className="flex items-center gap-1.5"><Clock className="w-4 h-4 text-white" /> 24-Hour Response Time</span>
-              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-white" /> Educational Specialists</span>
+              <p className="text-sm sm:text-base text-emerald-100/90 leading-relaxed font-medium max-w-2xl">
+                Have questions about tutoring, examination preparation, or professional certification support? Get in touch with our team.
+              </p>
+
+              <div className="pt-2 flex flex-wrap gap-4 text-xs text-white font-semibold">
+                <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-white" /> 100% Confidential Inquiry</span>
+                <span className="flex items-center gap-1.5"><Clock className="w-4 h-4 text-white" /> 24-Hour Response Time</span>
+                <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-white" /> Educational Specialists</span>
+              </div>
             </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* 2. FORM & CONTACT INFO SECTION */}
@@ -216,20 +270,30 @@ export default function ContactPage() {
                     <Mail className="w-5 h-5" />
                   </div>
                   <div>
-                    <span className="text-xs uppercase tracking-wider text-brand-muted font-bold block">Email Inquiry</span>
-                    <a href={`mailto:${SITE_CONFIG.contactEmail}`} className="text-sm font-semibold text-white hover:text-brand-lightBlue transition-colors">
+                    <span className="text-xs uppercase tracking-wider text-brand-muted font-bold block">Inquiry Email</span>
+                    <a
+                      href={`mailto:${SITE_CONFIG.contactEmail}`}
+                      className="text-xs sm:text-sm font-semibold text-white hover:text-brand-lightBlue transition-colors"
+                    >
                       {SITE_CONFIG.contactEmail}
                     </a>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3.5">
-                  <div className="w-9 h-9 rounded-lg bg-brand-blue/20 text-brand-lightBlue flex items-center justify-center shrink-0 mt-0.5">
+                  <div className="w-9 h-9 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
                     <Phone className="w-5 h-5" />
                   </div>
                   <div>
-                    <span className="text-xs uppercase tracking-wider text-brand-muted font-bold block">Telephone Support</span>
-                    <span className="text-xs text-brand-muted font-medium">[Phone Support Available for Active Students]</span>
+                    <span className="text-xs uppercase tracking-wider text-brand-muted font-bold block">WhatsApp Support</span>
+                    <a
+                      href="https://wa.me/254711882470"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs sm:text-sm font-bold text-emerald-400 hover:underline"
+                    >
+                      +254 711 882470 (WhatsApp Direct)
+                    </a>
                   </div>
                 </div>
 
@@ -394,38 +458,46 @@ export default function ContactPage() {
                   rows={5}
                   value={formData.message}
                   onChange={handleInputChange}
-                  placeholder="Please describe your upcoming exam, course topics, or certification preparation needs..."
+                  placeholder="Describe your subject areas, upcoming exam dates, or technical questions..."
                   className="w-full px-4 py-2.5 rounded-lg border border-brand-border bg-brand-bg text-brand-text text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue"
                   required
-                />
+                ></textarea>
               </div>
 
-              <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="pt-2">
                 <Button
                   type="submit"
                   variant="primary"
                   size="lg"
-                  disabled={status.loading}
-                  icon={status.loading ? Loader2 : Send}
                   className="w-full sm:w-auto"
+                  disabled={status.loading}
                 >
-                  {status.loading ? 'Submitting Inquiry...' : 'Submit Inquiry'}
+                  {status.loading ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <Loader2 className="w-4 h-4 animate-spin" /> Sending Inquiry...
+                    </span>
+                  ) : (
+                    <span className="flex items-center justify-center gap-2">
+                      Submit Inquiry <Send className="w-4 h-4" />
+                    </span>
+                  )}
                 </Button>
-
-                <span className="text-xs text-brand-muted font-medium">
-                  100% Secure & Ethical Learning Inquiry
-                </span>
               </div>
+
+              <p className="text-[11px] text-brand-muted text-center pt-2">
+                Protected by spam detection. We will never share your personal information.
+              </p>
             </form>
           </div>
         </div>
 
         {/* 3. FREQUENTLY ASKED QUESTIONS */}
-        <div className="bg-white border border-brand-border rounded-2xl p-8 sm:p-10 space-y-6 my-12 shadow-sm">
+        <div className="space-y-6 my-16 bg-white border border-brand-border rounded-2xl p-8 sm:p-10 shadow-sm">
           <SectionHeading
-            badge="Contact Questions"
-            title="Frequently Asked Contact Questions"
-            subtitle="Common questions about submitting inquiries, tutor matching, and response timelines."
+            badge="Contact FAQ"
+            title="Frequently Asked Questions About Contacting Us"
+            subtitle="Clear answers regarding inquiry turnaround times, session scheduling, and service coverage."
+            centered
           />
           <FaqAccordion items={contactFaqs} />
         </div>
