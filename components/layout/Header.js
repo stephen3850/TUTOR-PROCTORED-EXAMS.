@@ -106,6 +106,33 @@ const ALL_13_PLATFORMS = [
   { name: 'Mock Tests & Practice Exams', href: '/services/practice-questions-mock-tests', logo: '/logos/mock.svg' },
 ];
 
+// STUDY RESOURCES DROPDOWN - 13 RESOURCES IN TWO LABELED GROUPS
+const STUDY_RESOURCES_GROUPS = [
+  {
+    category: 'Certification Study Guides',
+    items: [
+      { name: 'PMP Certification Prep', href: '/certifications/pmp' },
+      { name: 'CAPM Associate in PM', href: '/certifications/capm' },
+      { name: 'CompTIA (Security+, A+, Net+)', href: '/certifications/comptia' },
+      { name: 'SHRM-CP / SHRM-SCP HR', href: '/certifications/shrm' },
+      { name: 'Real Estate License Prep', href: '/certifications/real-estate' },
+      { name: 'AAPC Medical Coding', href: '/certifications/aapc' },
+      { name: 'CPC Certified Coder', href: '/certifications/cpc' },
+      { name: 'CCMA Clinical Assistant', href: '/certifications/ccma' },
+      { name: 'CNA Nursing Assistant', href: '/certifications/cna' },
+      { name: 'CPhT Pharmacy Technician', href: '/certifications/cpht' },
+    ],
+  },
+  {
+    category: 'Learning Resources',
+    items: [
+      { name: 'Learning Guides & Library', href: '/study-resources' },
+      { name: 'Exam Preparation FAQ', href: '/faq' },
+      { name: 'System Setup Guidance', href: '/services/software-technical-guidance' },
+    ],
+  },
+];
+
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
@@ -244,7 +271,7 @@ export default function Header() {
               </div>
             </div>
 
-            {/* OUR SERVICES - CONDITIONALLY RENDERED VIA FEATURE FLAG */}
+            {/* OUR SERVICES - CONDITIONALLY RENDERED */}
             {SERVICES_ENABLED && (
               <div className="relative group">
                 <Link
@@ -371,7 +398,7 @@ export default function Header() {
               </div>
             </div>
 
-            {/* STUDY RESOURCES */}
+            {/* STUDY RESOURCES DROPDOWN (13 RESOURCES IN TWO LABELED GROUPS) */}
             <div className="relative group">
               <Link
                 href="/study-resources"
@@ -385,17 +412,26 @@ export default function Header() {
                 <ChevronDown className="w-3.5 h-3.5 text-[#2563EB] font-bold transition-transform duration-200 group-hover:rotate-180 shrink-0" />
               </Link>
 
-              <div className="absolute top-full left-0 pt-2 hidden group-hover:block z-50 animate-in fade-in slide-in-from-top-1">
-                <div className="w-60 bg-white border border-slate-200 rounded-xl p-2 shadow-xl space-y-0.5">
-                  <Link href="/study-resources" className="block text-xs font-semibold text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50 px-3 py-2 rounded-lg transition-colors">
-                    Learning Guides & Library
-                  </Link>
-                  <Link href="/faq" className="block text-xs font-semibold text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50 px-3 py-2 rounded-lg transition-colors">
-                    Exam Preparation FAQ
-                  </Link>
-                  <Link href="/services/software-technical-guidance" className="block text-xs font-semibold text-[#0F172A] hover:text-[#2563EB] hover:bg-slate-50 px-3 py-2 rounded-lg transition-colors">
-                    System Setup Guidance
-                  </Link>
+              <div className="absolute top-full left-0 pt-1.5 hidden group-hover:block z-50 animate-in fade-in slide-in-from-top-1">
+                <div className="w-[280px] max-h-[440px] overflow-y-auto bg-white border border-slate-200 rounded-xl p-1.5 shadow-2xl space-y-2 scrollbar-none">
+                  {STUDY_RESOURCES_GROUPS.map((grp, gIdx) => (
+                    <div key={gIdx} className="space-y-0.5">
+                      <div className="text-[10px] uppercase font-black tracking-wider text-[#2563EB] px-2 py-1 bg-blue-50/60 rounded">
+                        {grp.category}
+                      </div>
+                      <div className="space-y-0.5">
+                        {grp.items.map((sub, idx) => (
+                          <Link
+                            key={idx}
+                            href={sub.href}
+                            className="block text-[11px] font-bold text-[#0F172A] hover:text-[#2563EB] hover:bg-blue-50/80 px-2 py-1 rounded-md transition-colors whitespace-nowrap"
+                          >
+                            {sub.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -509,9 +545,27 @@ export default function Header() {
               Certifications
             </Link>
 
-            <Link href="/study-resources" className="text-sm font-bold py-2.5 px-3 rounded-xl hover:bg-slate-50 text-[#0F172A]">
-              Study Resources
-            </Link>
+            {/* MOBILE STUDY RESOURCES GROUPS */}
+            <div className="space-y-1 border-b border-slate-100 py-2">
+              <div className="text-xs font-black uppercase tracking-wider text-[#2563EB] px-3 py-1">
+                Study Resources
+              </div>
+
+              {STUDY_RESOURCES_GROUPS.map((grp, gIdx) => (
+                <div key={gIdx} className="pl-2 space-y-0.5">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block px-2 pt-1">{grp.category}</span>
+                  {grp.items.map((sub, idx) => (
+                    <Link
+                      key={idx}
+                      href={sub.href}
+                      className="block text-xs font-semibold py-1.5 px-3 rounded-lg text-[#0F172A] hover:bg-blue-50 hover:text-[#2563EB]"
+                    >
+                      {sub.name}
+                    </Link>
+                  ))}
+                </div>
+              ))}
+            </div>
 
             {BLOGS_ENABLED && (
               <Link href="/blog" className="text-sm font-bold py-2.5 px-3 rounded-xl hover:bg-slate-50 text-[#0F172A]">
