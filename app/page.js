@@ -601,13 +601,13 @@ export default function HomePage() {
       <section className="my-10">
         <PageContainer>
           <div className="grid grid-cols-1 lg:grid-cols-12 overflow-hidden shadow-xl border border-slate-200">
-            {/* Left Column: Green Overlay Image with Testimonial */}
+            {/* Left Column: Green Overlay Image with Testimonial (90% Image Visibility) */}
             <div className="lg:col-span-6 relative p-8 sm:p-12 text-white min-h-[380px] flex flex-col justify-between bg-[#05B851] overflow-hidden">
               <div
-                className="absolute inset-0 z-0 bg-cover bg-center opacity-40 mix-blend-overlay"
+                className="absolute inset-0 z-0 bg-cover bg-center opacity-90"
                 style={{ backgroundImage: "url('/students.jpg')" }}
               ></div>
-              <div className="absolute inset-0 z-0 bg-[#05B851]/85"></div>
+              <div className="absolute inset-0 z-0 bg-[#05B851]/65 mix-blend-multiply"></div>
 
               <div className="relative z-10">
                 <div className="w-12 h-12 rounded bg-white/20 flex items-center justify-center text-white font-serif text-3xl font-black mb-6 shadow-sm">
