@@ -597,6 +597,61 @@ export default function HomePage() {
         </PageContainer>
       </section>
 
+      {/* 7. CAN SOMEONE DO MY EXAM FOR ME? 24/7 ASSISTANCE SECTION (Matching Reference Image) */}
+      <section className="my-10">
+        <PageContainer>
+          <div className="grid grid-cols-1 lg:grid-cols-12 overflow-hidden shadow-xl border border-slate-200">
+            {/* Left Column: Green Overlay Image with Testimonial */}
+            <div className="lg:col-span-6 relative p-8 sm:p-12 text-white min-h-[380px] flex flex-col justify-between bg-[#05B851] overflow-hidden">
+              <div
+                className="absolute inset-0 z-0 bg-cover bg-center opacity-40 mix-blend-overlay"
+                style={{ backgroundImage: "url('/students.jpg')" }}
+              ></div>
+              <div className="absolute inset-0 z-0 bg-[#05B851]/85"></div>
+
+              <div className="relative z-10">
+                <div className="w-12 h-12 rounded bg-white/20 flex items-center justify-center text-white font-serif text-3xl font-black mb-6 shadow-sm">
+                  “
+                </div>
+              </div>
+
+              <div className="relative z-10 space-y-4">
+                <p className="text-base sm:text-lg font-bold italic leading-relaxed text-white drop-shadow-sm">
+                  &quot;This is the best exam service I have ever used. I have used other services during my graduation, I never got less than A+ for any of my exam. I strongly recommend if you are seeking the finest grades in your exam&quot;
+                </p>
+                <div>
+                  <h4 className="font-extrabold text-white text-base">Michael Browning</h4>
+                  <span className="text-xs text-emerald-100 font-bold uppercase tracking-wider">Student</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: White Box with Heading & Contact Button */}
+            <div className="lg:col-span-6 bg-white p-8 sm:p-12 flex flex-col justify-center space-y-6">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0F172A] leading-[1.2]">
+                Can Someone Do My Exam For Me? Yes! We Are Available For Your Assistance 24/7.
+              </h2>
+
+              <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
+                Our online class specialists are here to help you unlock your academic potential and achieve success. Whether you need assistance with coursework or want to improve your grades.
+              </p>
+
+              <div>
+                <a
+                  href="https://wa.me/254711882470"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-[#05B851] hover:bg-emerald-600 text-white font-extrabold text-sm px-7 py-3.5 inline-flex items-center gap-2 transition-all shadow-md"
+                >
+                  <span>Contact Now</span>
+                  <ArrowRight className="w-4 h-4 text-white stroke-[3]" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </PageContainer>
+      </section>
+
       {/* 8. FAQ SECTION */}
       <section>
         <PageContainer>
