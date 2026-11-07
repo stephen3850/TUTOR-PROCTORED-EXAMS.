@@ -195,50 +195,83 @@ export default async function PlatformDetailPage({ params }) {
               </div>
             </div>
           </div>
-        ) : (
-          <div className="bg-white border border-brand-border rounded-2xl p-8 sm:p-10 space-y-6 shadow-sm my-6 relative overflow-hidden">
-            {/* Official Proctorio Watermark Logo on Right Side (Subtle 6% Opacity) */}
-            {platform.slug === 'proctorio' && (
-              <div className="absolute top-1/2 right-2 sm:right-6 -translate-y-1/2 w-64 h-64 sm:w-96 sm:h-96 opacity-[0.06] pointer-events-none z-0">
-                <img
-                  src="/logos/proctorio.svg"
-                  alt="Official Proctorio Watermark Logo"
-                  className="w-full h-full object-contain"
-                />
-              </div>
-            )}
+        ) : platform.slug === 'proctorio' ? (
+          /* PROCTORIO VIBRANT INDIGO HERO PANEL */
+          <div className="relative text-white rounded-2xl p-8 sm:p-10 space-y-6 shadow-xl my-6 bg-gradient-to-br from-[#3730A3] via-[#4F46E5] to-[#1E1B4B] overflow-hidden">
+            {/* Official Proctorio Logo Watermark on Right Side */}
+            <div className="absolute top-1/2 right-2 sm:right-6 -translate-y-1/2 w-64 h-64 sm:w-80 sm:h-80 opacity-30 pointer-events-none z-0 filter drop-shadow-xl">
+              <img
+                src="/logos/proctorio.svg"
+                alt="Official Proctorio Logo"
+                className="w-full h-full object-contain"
+              />
+            </div>
 
             <div className="relative z-10 space-y-6">
-              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-brand-border pb-6">
+              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/20 pb-6">
                 <div className="space-y-2">
                   <div className="flex items-center gap-3">
-                    <Badge variant="blue">{platform.category}</Badge>
-                    <span className="text-xs text-brand-muted font-bold">Vendor: {platform.vendor}</span>
+                    <Badge variant="blue" className="bg-white/20 text-white border-white/30 font-bold">{platform.category}</Badge>
+                    <span className="text-xs text-indigo-100 font-bold">Vendor: {platform.vendor}</span>
                   </div>
-                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-brand-navy tracking-tight">
+                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight drop-shadow-md">
                     {platform.name}
                   </h1>
                 </div>
-                <Button href="/contact?service=Examination%20Software%20Technical%20Guidance" variant="primary" size="md" icon={ArrowRight}>
+                <Button href="/contact?service=Examination%20Software%20Technical%20Guidance" variant="primary" size="md" icon={ArrowRight} className="bg-white text-indigo-950 font-black hover:bg-indigo-50">
                   Request Technical Assistance
                 </Button>
               </div>
 
-              <p className="text-base sm:text-lg text-brand-muted leading-relaxed max-w-4xl font-normal">
+              <p className="text-base sm:text-lg text-indigo-100 leading-relaxed max-w-3xl font-medium drop-shadow-sm">
                 {platform.overview}
               </p>
 
               {/* KEY FEATURES */}
               <div className="space-y-3 pt-2">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-brand-navy">Key Features</h3>
+                <h3 className="text-sm font-bold uppercase tracking-wider text-white drop-shadow-sm">Key Features</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {keyFeatures.map((feature, idx) => (
-                    <div key={idx} className="p-4 rounded-xl bg-brand-bg/90 backdrop-blur-sm border border-brand-border flex items-start gap-2.5">
-                      <CheckCircle2 className="w-5 h-5 text-brand-blue shrink-0 mt-0.5" />
-                      <span className="text-xs text-brand-text font-medium leading-relaxed">{feature}</span>
+                    <div key={idx} className="p-4 rounded-xl bg-white/15 backdrop-blur-md border border-white/25 flex items-start gap-2.5 shadow-md">
+                      <CheckCircle2 className="w-5 h-5 text-white shrink-0 mt-0.5" />
+                      <span className="text-xs text-white font-semibold leading-relaxed">{feature}</span>
                     </div>
                   ))}
                 </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-white border border-brand-border rounded-2xl p-8 sm:p-10 space-y-6 shadow-sm my-6">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-brand-border pb-6">
+              <div className="space-y-2">
+                <div className="flex items-center gap-3">
+                  <Badge variant="blue">{platform.category}</Badge>
+                  <span className="text-xs text-brand-muted font-bold">Vendor: {platform.vendor}</span>
+                </div>
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-brand-navy tracking-tight">
+                  {platform.name}
+                </h1>
+              </div>
+              <Button href="/contact?service=Examination%20Software%20Technical%20Guidance" variant="primary" size="md" icon={ArrowRight}>
+                Request Technical Assistance
+              </Button>
+            </div>
+
+            <p className="text-base sm:text-lg text-brand-muted leading-relaxed max-w-4xl font-normal">
+              {platform.overview}
+            </p>
+
+            {/* KEY FEATURES */}
+            <div className="space-y-3 pt-2">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-brand-navy">Key Features</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {keyFeatures.map((feature, idx) => (
+                  <div key={idx} className="p-4 rounded-xl bg-brand-bg border border-brand-border flex items-start gap-2.5">
+                    <CheckCircle2 className="w-5 h-5 text-brand-blue shrink-0 mt-0.5" />
+                    <span className="text-xs text-brand-text font-medium leading-relaxed">{feature}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
