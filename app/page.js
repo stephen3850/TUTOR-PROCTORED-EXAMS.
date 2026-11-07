@@ -22,6 +22,7 @@ import ContentCard from '@/components/ui/ContentCard';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
 import FaqAccordion from '@/components/ui/FaqAccordion';
+import TypewriterHeroHeadline from '@/components/ui/TypewriterHeroHeadline';
 
 export const metadata = {
   title: 'TUTOR PROCTORED EXAMS | Professional Tutoring & Exam Preparation',
@@ -319,9 +320,7 @@ export default function HomePage() {
                 Ethical Academic Support & Certification Guidance
               </Badge>
 
-              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-[1.15] drop-shadow-[0_4px_10px_rgba(0,0,0,0.95)]">
-                Your Academic and Exams Success Starts With The Right Approach
-              </h1>
+              <TypewriterHeroHeadline text="Your Academic and Exams Success Starts With The Right Approach" />
 
               <p className="text-sm sm:text-base lg:text-lg text-slate-100 leading-relaxed max-w-2xl text-balance drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)] font-medium">
                 Discover professional tutoring, structured exam preparation, practice resources, and certification guidance designed to help you pass your exams.
