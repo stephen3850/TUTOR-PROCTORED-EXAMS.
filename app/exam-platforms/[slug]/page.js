@@ -85,13 +85,20 @@ export default async function PlatformDetailPage({ params }) {
   // Maximum 3 key features
   const keyFeatures = (platform.features || []).slice(0, 3);
 
-  // Map background images per platform
-  const bgImages = {
-    'respondus-lockdown-browser': '/lockdown.png',
-    examplify: '/examplify.jpg',
-    honorlock: '/honorlock.jpg',
+  // 3D Bluish Glassmorphism Theme Configuration per Platform
+  const platformThemes = {
+    'respondus-lockdown-browser': { bg: 'bg-[#0F172A]', bgImg: '/lockdown.png', logo: '/logos/respondus.svg' },
+    examplify: { bg: 'bg-gradient-to-br from-[#1E3A8A] via-[#2563EB] to-[#0F172A]', bgImg: '/examplify.jpg', logo: '/logos/examplify.svg' },
+    honorlock: { bg: 'bg-gradient-to-br from-[#1E3A8A] via-[#2563EB] to-[#0F172A]', bgImg: '/honorlock.jpg', logo: '/logos/honorlock.svg' },
+    'proctoru-meazure-learning': { bg: 'bg-gradient-to-br from-[#047857] via-[#05B851] to-[#064E3B]', logo: '/logos/proctoru.svg' },
+    proctorio: { bg: 'bg-gradient-to-br from-[#3730A3] via-[#4F46E5] to-[#1E1B4B]', logo: '/logos/proctorio.svg' },
+    examity: { bg: 'bg-gradient-to-br from-[#1E3A8A] via-[#2563EB] to-[#0F172A]', logo: '/logos/examity.svg' },
+    proctortrack: { bg: 'bg-gradient-to-br from-[#991B1B] via-[#DC2626] to-[#450A0A]', logo: '/logos/proctortrack.svg' },
+    psi: { bg: 'bg-gradient-to-br from-[#1E3A8A] via-[#2563EB] to-[#0F172A]', logo: '/logos/psi.svg' },
+    ati: { bg: 'bg-gradient-to-br from-[#C2410C] via-[#EA580C] to-[#7C2D12]', logo: '/logos/ati.svg' },
   };
-  const platformBg = bgImages[platform.slug];
+
+  const theme = platformThemes[platform.slug] || { bg: 'bg-gradient-to-br from-[#1E3A8A] via-[#2563EB] to-[#0F172A]', logo: `/logos/${platform.slug}.svg` };
 
   // Structured Data JSON-LD
   const jsonLdData = {
@@ -149,198 +156,80 @@ export default async function PlatformDetailPage({ params }) {
           ]}
         />
 
-        {/* 1. PAGE TITLE, VENDOR & SHORT DESCRIPTION (WITH BACKGROUND IMAGE WHEN AVAILABLE) */}
-        {platformBg ? (
-          <div className="relative text-white rounded-2xl p-8 sm:p-10 space-y-6 shadow-xl my-6 bg-[#0F172A] overflow-hidden">
-            {/* Background Image: lockdown.png / examplify.jpg / honorlock.jpg */}
+        {/* 1. 3D ROTATING LOGO & BLUISH GLASSMORPHISM PLATFORM HERO PANEL */}
+        <div className={`relative text-white rounded-2xl p-8 sm:p-10 space-y-6 shadow-[0_20px_50px_rgba(0,0,0,0.35)] my-6 ${theme.bg} overflow-hidden`}>
+          {/* Background Image Texture */}
+          {theme.bgImg ? (
+            <>
+              <div
+                className="absolute inset-0 z-0 bg-cover bg-center opacity-80"
+                style={{ backgroundImage: `url('${theme.bgImg}')` }}
+              ></div>
+              <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#0F172A]/90 via-[#0F172A]/70 to-[#0F172A]/40"></div>
+            </>
+          ) : (
             <div
-              className="absolute inset-0 z-0 bg-cover bg-center opacity-80"
-              style={{ backgroundImage: `url('${platformBg}')` }}
-            ></div>
-
-            {/* Dark Gradient Overlay for Crisp Readability */}
-            <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#0F172A]/90 via-[#0F172A]/70 to-[#0F172A]/40"></div>
-
-            <div className="relative z-10 space-y-6">
-              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/20 pb-6">
-                <div className="space-y-2">
-                  <div className="flex items-center gap-3">
-                    <Badge variant="blue" className="bg-[#2563EB] text-white border-blue-400 font-bold">{platform.category}</Badge>
-                    <span className="text-xs text-slate-200 font-bold">Vendor: {platform.vendor}</span>
-                  </div>
-                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight drop-shadow-[0_4px_8px_rgba(0,0,0,0.9)]">
-                    {platform.name}
-                  </h1>
-                </div>
-                <Button href="/contact?service=Examination%20Software%20Technical%20Guidance" variant="primary" size="md" icon={ArrowRight} className="bg-[#2563EB] hover:bg-[#1D4ED8]">
-                  Request Technical Assistance
-                </Button>
-              </div>
-
-              <p className="text-base sm:text-lg text-slate-100 leading-relaxed max-w-4xl font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
-                {platform.overview}
-              </p>
-
-              {/* 2. KEY FEATURES (MAXIMUM 3 SHORT BULLETS) */}
-              <div className="space-y-3 pt-2">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-white drop-shadow-sm">Key Features</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {keyFeatures.map((feature, idx) => (
-                    <div key={idx} className="p-4 rounded-xl bg-slate-900/80 backdrop-blur-md border border-white/20 flex items-start gap-2.5 shadow-md">
-                      <CheckCircle2 className="w-5 h-5 text-[#356AE6] shrink-0 mt-0.5" />
-                      <span className="text-xs text-white font-semibold leading-relaxed">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        ) : platform.slug === 'proctoru-meazure-learning' ? (
-          /* PROCTORU / MEAZURE LEARNING LIGHT GREEN GLASSMORPHISM PANEL WITH LOGO */
-          <div className="relative text-white rounded-2xl p-8 sm:p-10 space-y-6 shadow-xl my-6 bg-[#05B851] overflow-hidden">
-            {/* World Map Background Texture */}
-            <div
-              className="absolute inset-0 z-0 bg-cover bg-center opacity-20 mix-blend-overlay"
+              className="absolute inset-0 z-0 bg-cover bg-center opacity-25 mix-blend-overlay"
               style={{ backgroundImage: "url('/www.jpg')" }}
             ></div>
+          )}
 
-            {/* Official ProctorU Logo Watermark on Right Side */}
-            <div className="absolute top-1/2 right-2 sm:right-6 -translate-y-1/2 w-64 h-64 sm:w-80 sm:h-80 opacity-30 pointer-events-none z-0 filter drop-shadow-xl">
+          {/* Official Platform Logo 3D Watermark on Right Side (Smooth 3D Rotating Animation) */}
+          {theme.logo && (
+            <div className="absolute top-1/2 right-2 sm:right-6 -translate-y-1/2 w-64 h-64 sm:w-80 sm:h-80 opacity-35 pointer-events-none z-0 filter drop-shadow-[0_15px_30px_rgba(0,0,0,0.6)] animate-spin-slow">
               <img
-                src="/logos/proctoru.svg"
-                alt="Official ProctorU Logo"
+                src={theme.logo}
+                alt={`${platform.name} Official Logo`}
                 className="w-full h-full object-contain"
               />
             </div>
+          )}
 
-            <div className="relative z-10 space-y-6">
-              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/20 pb-6">
-                <div className="space-y-2">
-                  <div className="flex items-center gap-3">
-                    <span className="inline-block bg-white/20 text-white border border-white/30 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider">
-                      {platform.category}
-                    </span>
-                    <span className="text-xs text-emerald-100 font-bold">Vendor: {platform.vendor}</span>
-                  </div>
-                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight drop-shadow-md">
-                    {platform.name}
-                  </h1>
-                </div>
-                <a
-                  href="https://wa.me/254711882470"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-white text-emerald-950 px-6 py-3 rounded-xl font-extrabold text-xs sm:text-sm shadow-lg flex items-center gap-2 transition-all hover:bg-emerald-50"
-                >
-                  <span>Request Technical Assistance</span>
-                  <ArrowRight className="w-4 h-4 text-emerald-950 stroke-[2.5]" />
-                </a>
-              </div>
-
-              <p className="text-base sm:text-lg text-emerald-50 leading-relaxed max-w-3xl font-medium drop-shadow-sm">
-                {platform.overview}
-              </p>
-
-              {/* KEY FEATURES (FROSTED GLASSMORPHISM CARDS) */}
-              <div className="space-y-3 pt-2">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-white drop-shadow-sm">KEY FEATURES</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {keyFeatures.map((feature, idx) => (
-                    <div key={idx} className="p-4 rounded-xl bg-white/15 backdrop-blur-md border border-white/25 flex items-start gap-2.5 shadow-md">
-                      <CheckCircle2 className="w-5 h-5 text-white shrink-0 mt-0.5" />
-                      <span className="text-xs text-white font-semibold leading-relaxed">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        ) : platform.slug === 'proctorio' ? (
-          /* PROCTORIO VIBRANT INDIGO HERO PANEL */
-          <div className="relative text-white rounded-2xl p-8 sm:p-10 space-y-6 shadow-xl my-6 bg-gradient-to-br from-[#3730A3] via-[#4F46E5] to-[#1E1B4B] overflow-hidden">
-            {/* Official Proctorio Logo Watermark on Right Side */}
-            <div className="absolute top-1/2 right-2 sm:right-6 -translate-y-1/2 w-64 h-64 sm:w-80 sm:h-80 opacity-30 pointer-events-none z-0 filter drop-shadow-xl">
-              <img
-                src="/logos/proctorio.svg"
-                alt="Official Proctorio Logo"
-                className="w-full h-full object-contain"
-              />
-            </div>
-
-            <div className="relative z-10 space-y-6">
-              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/20 pb-6">
-                <div className="space-y-2">
-                  <div className="flex items-center gap-3">
-                    <Badge variant="blue" className="bg-white/20 text-white border-white/30 font-bold">{platform.category}</Badge>
-                    <span className="text-xs text-indigo-100 font-bold">Vendor: {platform.vendor}</span>
-                  </div>
-                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight drop-shadow-md">
-                    {platform.name}
-                  </h1>
-                </div>
-                <Button href="/contact?service=Examination%20Software%20Technical%20Guidance" variant="primary" size="md" icon={ArrowRight} className="bg-white text-indigo-950 font-black hover:bg-indigo-50">
-                  Request Technical Assistance
-                </Button>
-              </div>
-
-              <p className="text-base sm:text-lg text-indigo-100 leading-relaxed max-w-3xl font-medium drop-shadow-sm">
-                {platform.overview}
-              </p>
-
-              {/* KEY FEATURES */}
-              <div className="space-y-3 pt-2">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-white drop-shadow-sm">Key Features</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {keyFeatures.map((feature, idx) => (
-                    <div key={idx} className="p-4 rounded-xl bg-white/15 backdrop-blur-md border border-white/25 flex items-start gap-2.5 shadow-md">
-                      <CheckCircle2 className="w-5 h-5 text-white shrink-0 mt-0.5" />
-                      <span className="text-xs text-white font-semibold leading-relaxed">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="bg-white border border-slate-200 rounded-2xl p-8 sm:p-10 space-y-6 shadow-sm my-6">
-            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-6">
+          <div className="relative z-10 space-y-6">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/20 pb-6">
               <div className="space-y-2">
                 <div className="flex items-center gap-3">
-                  <Badge variant="blue" className="bg-blue-50 text-[#2563EB] border border-blue-100 font-bold px-3 py-1 text-xs">
+                  <span className="inline-block bg-white/20 backdrop-blur-md text-white border border-white/30 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider shadow-sm">
                     {platform.category}
-                  </Badge>
-                  <span className="text-xs text-slate-500 font-bold">Vendor: {platform.vendor}</span>
+                  </span>
+                  <span className="text-xs text-slate-200 font-bold">Vendor: {platform.vendor}</span>
                 </div>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0F172A] tracking-tight">
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
                   {platform.name}
                 </h1>
               </div>
-              <Button href="/contact?service=Examination%20Software%20Technical%20Guidance" variant="primary" size="md" icon={ArrowRight} className="bg-[#2563EB] hover:bg-[#1D4ED8]">
-                Request Technical Assistance
-              </Button>
+              <a
+                href="https://wa.me/254711882470"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-white text-slate-950 px-6 py-3 rounded-xl font-extrabold text-xs sm:text-sm shadow-xl flex items-center gap-2 transition-all hover:bg-slate-100"
+              >
+                <span>Request Technical Assistance</span>
+                <ArrowRight className="w-4 h-4 text-slate-950 stroke-[2.5]" />
+              </a>
             </div>
 
-            <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-4xl font-normal">
+            <p className="text-base sm:text-lg text-slate-100 leading-relaxed max-w-3xl font-medium drop-shadow-sm">
               {platform.overview}
             </p>
 
-            {/* KEY FEATURES */}
+            {/* 3D FROSTED GLASS KEY FEATURES CARDS */}
             <div className="space-y-3 pt-2">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-[#0F172A]">KEY FEATURES</h3>
+              <h3 className="text-sm font-bold uppercase tracking-wider text-white drop-shadow-sm">KEY FEATURES</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {keyFeatures.map((feature, idx) => (
-                  <div key={idx} className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 flex items-start gap-2.5">
-                    <CheckCircle2 className="w-5 h-5 text-[#2563EB] shrink-0 mt-0.5" />
-                    <span className="text-xs text-slate-700 font-medium leading-relaxed">{feature}</span>
+                  <div key={idx} className="p-4 rounded-xl bg-white/15 backdrop-blur-md border border-white/25 flex items-start gap-2.5 shadow-lg transform hover:-translate-y-0.5 transition-all">
+                    <CheckCircle2 className="w-5 h-5 text-white shrink-0 mt-0.5" />
+                    <span className="text-xs text-white font-semibold leading-relaxed drop-shadow-sm">{feature}</span>
                   </div>
                 ))}
               </div>
             </div>
           </div>
-        )}
+        </div>
 
-        {/* 3. SYSTEM REQUIREMENTS SUMMARY */}
-        <div className="bg-white border border-brand-border rounded-2xl p-8 sm:p-10 space-y-4 shadow-sm">
+        {/* 2. SYSTEM REQUIREMENTS SUMMARY */}
+        <div className="bg-white border border-slate-200 rounded-2xl p-8 sm:p-10 space-y-4 shadow-sm">
           <SectionHeading
             badge="System Requirements"
             title={`${platform.shortName || platform.name} System Requirements Summary`}
@@ -348,39 +237,39 @@ export default async function PlatformDetailPage({ params }) {
           />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
-            <div className="p-4 rounded-xl bg-brand-bg border border-brand-border space-y-1">
-              <span className="text-xs text-brand-navy font-bold block flex items-center gap-1">
-                <Monitor className="w-4 h-4 text-brand-blue" /> Windows OS
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+              <span className="text-xs text-[#0F172A] font-bold block flex items-center gap-1">
+                <Monitor className="w-4 h-4 text-[#2563EB]" /> Windows OS
               </span>
-              <span className="text-xs text-brand-muted">{platform.systemRequirements.windows}</span>
+              <span className="text-xs text-slate-600">{platform.systemRequirements.windows}</span>
             </div>
 
-            <div className="p-4 rounded-xl bg-brand-bg border border-brand-border space-y-1">
-              <span className="text-xs text-brand-navy font-bold block flex items-center gap-1">
-                <Laptop className="w-4 h-4 text-brand-blue" /> macOS
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+              <span className="text-xs text-[#0F172A] font-bold block flex items-center gap-1">
+                <Laptop className="w-4 h-4 text-[#2563EB]" /> macOS
               </span>
-              <span className="text-xs text-brand-muted">{platform.systemRequirements.macOS}</span>
+              <span className="text-xs text-slate-600">{platform.systemRequirements.macOS}</span>
             </div>
 
-            <div className="p-4 rounded-xl bg-brand-bg border border-brand-border space-y-1">
-              <span className="text-xs text-brand-navy font-bold block flex items-center gap-1">
-                <HardDrive className="w-4 h-4 text-brand-blue" /> Chromebook / iOS
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+              <span className="text-xs text-[#0F172A] font-bold block flex items-center gap-1">
+                <HardDrive className="w-4 h-4 text-[#2563EB]" /> Chromebook / iOS
               </span>
-              <span className="text-xs text-brand-muted">
+              <span className="text-xs text-slate-600">
                 {platform.systemRequirements.chromebook || 'Supported depending on institutional guidelines'}
               </span>
             </div>
 
-            <div className="p-4 rounded-xl bg-brand-bg border border-brand-border space-y-1">
-              <span className="text-xs text-brand-navy font-bold block flex items-center gap-1">
-                <Cpu className="w-4 h-4 text-brand-blue" /> Hardware
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+              <span className="text-xs text-[#0F172A] font-bold block flex items-center gap-1">
+                <Cpu className="w-4 h-4 text-[#2563EB]" /> Hardware
               </span>
-              <span className="text-xs text-brand-muted">{platform.systemRequirements.hardware}</span>
+              <span className="text-xs text-slate-600">{platform.systemRequirements.hardware}</span>
             </div>
           </div>
         </div>
 
-        {/* 4. CONSISTENT CONTACT SUPPORT SECTION FOR ALL 9 PLATFORMS (CLEAR VIBRANT GREEN BACKGROUND) */}
+        {/* 3. CONSISTENT CONTACT SUPPORT SECTION FOR ALL PLATFORMS (CLEAR VIBRANT GREEN BACKGROUND) */}
         <div className="bg-[#05B851] text-white rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl text-center max-w-4xl mx-auto">
           <div className="max-w-2xl mx-auto space-y-2">
             <span className="inline-block bg-white/20 text-white border border-white/30 px-3 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider">
@@ -437,20 +326,20 @@ export default async function PlatformDetailPage({ params }) {
           </div>
         </div>
 
-        {/* 5. RELATED PLATFORMS NAVIGATION */}
+        {/* 4. RELATED PLATFORMS NAVIGATION */}
         <div className="space-y-6 my-10">
-          <h3 className="text-xl font-bold text-brand-navy">Explore Other Supported Platforms</h3>
+          <h3 className="text-xl font-bold text-[#0F172A]">Explore Other Supported Platforms</h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {relatedPlatforms.map((rel) => (
               <Link
                 key={rel.slug}
                 href={`/exam-platforms/${rel.slug}`}
-                className="group p-5 bg-white border border-brand-border rounded-xl hover:border-brand-blue hover:shadow-card transition-all"
+                className="group p-5 bg-white border border-slate-200 rounded-xl hover:border-[#2563EB] hover:shadow-card transition-all"
               >
-                <span className="text-xs text-brand-muted block mb-1">{rel.category}</span>
-                <h4 className="font-bold text-brand-navy group-hover:text-brand-blue transition-colors flex items-center justify-between">
+                <span className="text-xs text-slate-500 block mb-1 font-semibold">{rel.category}</span>
+                <h4 className="font-bold text-[#0F172A] group-hover:text-[#2563EB] transition-colors flex items-center justify-between">
                   <span>{rel.name}</span>
-                  <ArrowRight className="w-4 h-4 text-brand-muted group-hover:text-brand-blue group-hover:translate-x-1 transition-all" />
+                  <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-[#2563EB] group-hover:translate-x-1 transition-all" />
                 </h4>
               </Link>
             ))}
