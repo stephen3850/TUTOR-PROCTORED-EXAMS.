@@ -106,29 +106,29 @@ const ALL_13_PLATFORMS = [
   { name: 'Mock Tests & Practice Exams', href: '/services/practice-questions-mock-tests', logo: '/logos/mock.svg' },
 ];
 
-// STUDY RESOURCES DROPDOWN - 13 RESOURCES IN TWO LABELED GROUPS
+// STUDY RESOURCES DROPDOWN - 13 RESOURCES IN TWO LABELED GROUPS WITH LOGOS
 const STUDY_RESOURCES_GROUPS = [
   {
     category: 'Certification Study Guides',
     items: [
-      { name: 'PMP Certification Prep', href: '/certifications/pmp' },
-      { name: 'CAPM Associate in PM', href: '/certifications/capm' },
-      { name: 'CompTIA (Security+, A+, Net+)', href: '/certifications/comptia' },
-      { name: 'SHRM-CP / SHRM-SCP HR', href: '/certifications/shrm' },
-      { name: 'Real Estate License Prep', href: '/certifications/real-estate' },
-      { name: 'AAPC Medical Coding', href: '/certifications/aapc' },
-      { name: 'CPC Certified Coder', href: '/certifications/cpc' },
-      { name: 'CCMA Clinical Assistant', href: '/certifications/ccma' },
-      { name: 'CNA Nursing Assistant', href: '/certifications/cna' },
-      { name: 'CPhT Pharmacy Technician', href: '/certifications/cpht' },
+      { name: 'PMP Certification Prep', href: '/study-resources/pmp', logo: '/logos/pmp.svg' },
+      { name: 'CAPM Associate in PM', href: '/study-resources/capm', logo: '/logos/capm.svg' },
+      { name: 'CompTIA (Security+, A+, Net+)', href: '/study-resources/comptia', logo: '/logos/comptia.svg' },
+      { name: 'SHRM-CP / SHRM-SCP HR', href: '/study-resources/shrm', logo: '/logos/shrm.svg' },
+      { name: 'Real Estate License Prep', href: '/study-resources/real-estate', logo: '/logos/real-estate.svg' },
+      { name: 'AAPC Medical Coding', href: '/study-resources/aapc', logo: '/logos/aapc.svg' },
+      { name: 'CPC Certified Coder', href: '/study-resources/cpc', logo: '/logos/cpc.svg' },
+      { name: 'CCMA Clinical Assistant', href: '/study-resources/ccma', logo: '/logos/ccma.svg' },
+      { name: 'CNA Nursing Assistant', href: '/study-resources/cna', logo: '/logos/cna.svg' },
+      { name: 'CPhT Pharmacy Technician', href: '/study-resources/cpht', logo: '/logos/cpht.svg' },
     ],
   },
   {
     category: 'Learning Resources',
     items: [
-      { name: 'Learning Guides & Library', href: '/study-resources' },
-      { name: 'Exam Preparation FAQ', href: '/faq' },
-      { name: 'System Setup Guidance', href: '/services/software-technical-guidance' },
+      { name: 'Learning Guides & Library', href: '/study-resources/learning-guides-library', logo: '/logos/library.svg' },
+      { name: 'Exam Preparation FAQ', href: '/study-resources/exam-preparation-faq', logo: '/logos/faq.svg' },
+      { name: 'System Setup Guidance', href: '/study-resources/system-setup-guidance', logo: '/logos/setup.svg' },
     ],
   },
 ];
@@ -398,7 +398,7 @@ export default function Header() {
               </div>
             </div>
 
-            {/* STUDY RESOURCES DROPDOWN (13 RESOURCES IN TWO LABELED GROUPS) */}
+            {/* STUDY RESOURCES DROPDOWN (13 RESOURCES IN TWO LABELED GROUPS WITH LOGOS) */}
             <div className="relative group">
               <Link
                 href="/study-resources"
@@ -413,10 +413,10 @@ export default function Header() {
               </Link>
 
               <div className="absolute top-full left-0 pt-1.5 hidden group-hover:block z-50 animate-in fade-in slide-in-from-top-1">
-                <div className="w-[280px] max-h-[440px] overflow-y-auto bg-white border border-slate-200 rounded-xl p-1.5 shadow-2xl space-y-2 scrollbar-none">
+                <div className="w-[300px] max-h-[440px] overflow-y-auto bg-white border border-slate-200 rounded-xl p-1.5 shadow-2xl space-y-2 scrollbar-none">
                   {STUDY_RESOURCES_GROUPS.map((grp, gIdx) => (
                     <div key={gIdx} className="space-y-0.5">
-                      <div className="text-[10px] uppercase font-black tracking-wider text-[#2563EB] px-2 py-1 bg-blue-50/60 rounded">
+                      <div className="text-[10px] uppercase font-black tracking-wider text-[#2563EB] px-2 py-1 bg-blue-50/70 rounded">
                         {grp.category}
                       </div>
                       <div className="space-y-0.5">
@@ -424,9 +424,18 @@ export default function Header() {
                           <Link
                             key={idx}
                             href={sub.href}
-                            className="block text-[11px] font-bold text-[#0F172A] hover:text-[#2563EB] hover:bg-blue-50/80 px-2 py-1 rounded-md transition-colors whitespace-nowrap"
+                            className="flex items-center gap-2.5 py-1 px-2 rounded-md hover:bg-blue-50/90 hover:text-[#2563EB] transition-colors group/item"
                           >
-                            {sub.name}
+                            <div className="w-5 h-5 rounded overflow-hidden bg-slate-100 flex items-center justify-center shrink-0 border border-slate-200/80">
+                              <img
+                                src={sub.logo}
+                                alt={`${sub.name} logo`}
+                                className="w-full h-full object-contain p-0.5"
+                              />
+                            </div>
+                            <span className="text-[11px] font-bold text-[#0F172A] group-hover/item:text-[#2563EB] transition-colors whitespace-nowrap leading-none">
+                              {sub.name}
+                            </span>
                           </Link>
                         ))}
                       </div>
