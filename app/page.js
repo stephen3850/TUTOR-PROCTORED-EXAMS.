@@ -23,6 +23,7 @@ import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
 import FaqAccordion from '@/components/ui/FaqAccordion';
 import TypewriterHeroHeadline from '@/components/ui/TypewriterHeroHeadline';
+import ProcessStepsSequentialReveal from '@/components/ui/ProcessStepsSequentialReveal';
 
 export const metadata = {
   title: 'TUTOR PROCTORED EXAMS | Professional Tutoring & Exam Preparation',
@@ -578,20 +579,7 @@ export default function HomePage() {
               />
             </div>
 
-            <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {steps.map((step, idx) => (
-                <div
-                  key={idx}
-                  className="relative bg-white border border-brand-border rounded-xl p-5 space-y-2 hover:border-brand-blue/40 transition-colors shadow-sm"
-                >
-                  <div className="text-2xl font-extrabold text-brand-blue/30 font-mono">
-                    {step.step}
-                  </div>
-                  <h3 className="text-base font-bold text-brand-navy">{step.title}</h3>
-                  <p className="text-xs text-brand-muted leading-relaxed">{step.description}</p>
-                </div>
-              ))}
-            </div>
+            <ProcessStepsSequentialReveal steps={steps} />
           </div>
         </PageContainer>
       </section>
