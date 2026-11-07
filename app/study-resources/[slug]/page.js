@@ -194,8 +194,8 @@ export default function StudyResourceDetailPage({ params }) {
           </div>
         </div>
 
-        {/* SECTION 2: RESOURCE OVERVIEW ("What Are These Study Materials?") */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-8 sm:p-10 space-y-4 shadow-sm my-8">
+        {/* SECTION 2: RESOURCE OVERVIEW ("What Are These Study Materials?") (LIGHT GREEN BACKGROUND) */}
+        <div className="bg-emerald-50/80 border border-emerald-200 rounded-2xl p-8 sm:p-10 space-y-4 shadow-sm my-8">
           <SectionHeading
             badge="Overview"
             title="What Are These Study Materials?"
