@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, use } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import {
@@ -27,8 +27,7 @@ import { CERTIFICATIONS_DATA } from '@/lib/data/certificationsData';
 import { SITE_CONFIG } from '@/lib/utils';
 
 export default function CertificationDetailPage({ params }) {
-  const resolvedParams = use(params);
-  const slug = resolvedParams?.slug;
+  const slug = params?.slug;
   const cert = CERTIFICATIONS_DATA[slug];
 
   if (!cert) {
