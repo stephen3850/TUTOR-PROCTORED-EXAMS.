@@ -262,10 +262,12 @@ export default function PrivacyPolicyPage() {
 
             <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
               <a
-                href="mailto:info@tutorproctoredexams.com"
-                className="bg-white text-emerald-950 font-extrabold text-xs sm:text-sm px-6 py-3 rounded-xl shadow-md hover:bg-emerald-50 transition-all inline-flex items-center gap-2"
+                href="mailto:info@tutorproctoredexams.com?subject=Privacy%20Policy%20Inquiry%20-%20TUTOR%20PROCTORED%20EXAMS"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-white text-emerald-950 font-extrabold text-xs sm:text-sm px-6 py-3 rounded-xl shadow-md hover:bg-emerald-50 transition-all inline-flex items-center gap-2 cursor-pointer"
               >
-                <Mail className="w-4 h-4 text-emerald-950" />
+                <Mail className="w-4 h-4 text-emerald-950 shrink-0" />
                 <span>Email info@tutorproctoredexams.com</span>
               </a>
 
