@@ -1,0 +1,94 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "public/uploads"
+public_folder: "/uploads"
+
+collections:
+  - name: "content_management"
+    label: "Site Content"
+    files:
+      - name: "faqs"
+        label: "FAQs"
+        file: "content/faqs.json"
+        fields:
+          - label: "FAQ Categories"
+            name: "categories"
+            widget: "list"
+            fields:
+              - { label: "Category Name", name: "category", widget: "string" }
+              - label: "Items"
+                name: "items"
+                widget: "list"
+                fields:
+                  - { label: "Question", name: "question", widget: "string" }
+                  - { label: "Answer", name: "text", widget: "text" }
+
+      - name: "services"
+        label: "Services"
+        file: "content/services.json"
+        fields:
+          - label: "Services List"
+            name: "services"
+            widget: "list"
+            fields:
+              - { label: "Slug", name: "slug", widget: "string" }
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Category", name: "category", widget: "string" }
+              - { label: "Tagline", name: "tagline", widget: "text" }
+              - { label: "Hero Image", name: "heroImage", widget: "string" }
+              - { label: "Overview", name: "overview", widget: "text" }
+
+      - name: "certifications"
+        label: "Certifications"
+        file: "content/certifications.json"
+        fields:
+          - label: "Certifications List"
+            name: "certifications"
+            widget: "list"
+            fields:
+              - { label: "Slug", name: "slug", widget: "string" }
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Category", name: "category", widget: "string" }
+              - { label: "Description", name: "description", widget: "text" }
+
+      - name: "platforms"
+        label: "Exam Platforms"
+        file: "content/platforms.json"
+        fields:
+          - label: "Platforms List"
+            name: "platforms"
+            widget: "list"
+            fields:
+              - { label: "Slug", name: "slug", widget: "string" }
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Description", name: "description", widget: "text" }
+
+      - name: "study_resources"
+        label: "Study Resources"
+        file: "content/study-resources.json"
+        fields:
+          - label: "Study Resources List"
+            name: "resources"
+            widget: "list"
+            fields:
+              - { label: "Slug", name: "slug", widget: "string" }
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Category", name: "category", widget: "string" }
+              - { label: "Description", name: "description", widget: "text" }
+
+      - name: "blog"
+        label: "Blog Articles"
+        file: "content/blog.json"
+        fields:
+          - label: "Articles List"
+            name: "articles"
+            widget: "list"
+            fields:
+              - { label: "Slug", name: "slug", widget: "string" }
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Category", name: "category", widget: "string" }
+              - { label: "Publish Date", name: "publishDate", widget: "string" }
+              - { label: "Excerpt", name: "excerpt", widget: "text" }
+              - { label: "Intro", name: "intro", widget: "text" }

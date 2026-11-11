@@ -1,0 +1,64 @@
+{
+  "certifications": [
+    {
+      "slug": "pmp",
+      "title": "PMP",
+      "category": "Project Management",
+      "description": "The gold standard certification for project managers across all industries worldwide."
+    },
+    {
+      "slug": "capm",
+      "title": "CAPM",
+      "category": "Project Management",
+      "description": "Entry-level PMI project management credential establishing foundational PM and agile skills."
+    },
+    {
+      "slug": "comptia",
+      "title": "CompTIA Certifications",
+      "category": "Information Technology",
+      "description": "Vendor-neutral IT certifications establishing core cybersecurity, infrastructure, and helpdesk expertise."
+    },
+    {
+      "slug": "shrm",
+      "title": "SHRM Certification",
+      "category": "Human Resources",
+      "description": "Premier HR credentials validating behavioral competencies and HR expertise."
+    },
+    {
+      "slug": "real-estate",
+      "title": "Real Estate Licensing",
+      "category": "Licensing & Real Estate",
+      "description": "Pre-licensing exam coaching for salesperson and broker state licensing exams."
+    },
+    {
+      "slug": "aapc",
+      "title": "AAPC Medical Coding",
+      "category": "Healthcare & Coding",
+      "description": "Medical coding certifications validating mastery in physician practice coding."
+    },
+    {
+      "slug": "cpc",
+      "title": "CPC Certified Professional Coder",
+      "category": "Healthcare & Coding",
+      "description": "The gold standard for outpatient medical coding."
+    },
+    {
+      "slug": "ccma",
+      "title": "CCMA Certified Clinical Medical Assistant",
+      "category": "Healthcare Support",
+      "description": "Clinical medical assisting certification covering patient care, phlebotomy, and EKG."
+    },
+    {
+      "slug": "cna",
+      "title": "CNA Certified Nursing Assistant",
+      "category": "Nursing & Care",
+      "description": "State nursing assistant certification validating fundamental patient care skills."
+    },
+    {
+      "slug": "cpht",
+      "title": "CPhT Certified Pharmacy Technician",
+      "category": "Pharmacy & Medicine",
+      "description": "PTCB pharmacy technician certification validating pharmacy operations and pharmacology."
+    }
+  ]
+}

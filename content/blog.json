@@ -1,0 +1,100 @@
+{
+  "articles": [
+    {
+      "slug": "how-to-prepare-for-a-proctored-examination",
+      "title": "How to Prepare for a Proctored Online Examination",
+      "category": "Examination Preparation",
+      "publishDate": "2025-01-15",
+      "excerpt": "A comprehensive guide covering physical room preparation, technical system pre-checks, identification verification, and mindset strategies for online proctored exams.",
+      "intro": "Online proctored examinations have become a standard delivery model for higher education and professional credentialing worldwide."
+    },
+    {
+      "slug": "respondus-lockdown-browser-student-guide",
+      "title": "Respondus LockDown Browser: A Student Preparation Guide",
+      "category": "Examination Software Guidance",
+      "publishDate": "2025-01-22",
+      "excerpt": "Step-by-step checklist for system readiness, installer downloads, webcam permission setup, and background application troubleshooting for Respondus LockDown Browser.",
+      "intro": "Respondus LockDown Browser is a custom browser used by hundreds of US universities to secure online test environments within Canvas, Blackboard, Brightspace, and Moodle."
+    },
+    {
+      "slug": "understanding-professional-certification-exams",
+      "title": "Understanding Professional Certification Examinations",
+      "category": "Professional Certifications",
+      "publishDate": "2025-01-29",
+      "excerpt": "Overview of PMP, CompTIA, AAPC CPC, and CCMA exam structures, eligibility requirements, and study timeline recommendations.",
+      "intro": "Professional certifications validate specialized domain expertise, advance career mobility, and establish industry credibility."
+    },
+    {
+      "slug": "effective-study-planning-college-students",
+      "title": "Effective Study Planning and Revision Strategies for College Students",
+      "category": "Study Strategies",
+      "publishDate": "2025-02-02",
+      "excerpt": "How to create time-blocked study schedules, utilize active recall, apply spaced repetition, and structure revision blocks.",
+      "intro": "Developing structured revision routines is essential for mastering complex university syllabi without burn-out."
+    },
+    {
+      "slug": "pmp-certification-preparation-guide",
+      "title": "PMP Certification Preparation: Master the PMI ECO Domains",
+      "category": "Professional Certifications",
+      "publishDate": "2025-02-05",
+      "excerpt": "High-yield guide unpacking People, Process, and Business Environment pillars, agile methodologies, and situational questions.",
+      "intro": "Preparing for the Project Management Professional (PMP)® examination requires mastering the PMI Examination Content Outline."
+    },
+    {
+      "slug": "comptia-certification-beginners-guide",
+      "title": "CompTIA Security+, A+, and Network+: A Beginner's Preparation Roadmap",
+      "category": "Professional Certifications",
+      "publishDate": "2025-02-08",
+      "excerpt": "Roadmap for launching an IT career through CompTIA credentials, port memorization, and PBQ practice.",
+      "intro": "CompTIA credentials are globally recognized benchmarks for IT technicians and cybersecurity specialists."
+    },
+    {
+      "slug": "understanding-examplify",
+      "title": "Examplify (ExamSoft): Essential Preparation and Troubleshooting Guide",
+      "category": "Examination Software Guidance",
+      "publishDate": "2025-02-11",
+      "excerpt": "System setup, offline file downloads, answer file uploads, and crash prevention for law and nursing candidates.",
+      "intro": "Examplify by ExamSoft is widely utilized across law schools, nursing programs, and state bar examinations."
+    },
+    {
+      "slug": "medical-coding-certification-study-strategies",
+      "title": "AAPC CPC® Medical Coding Certification: Study & Codebook Strategies",
+      "category": "Academic Success",
+      "publishDate": "2025-02-14",
+      "excerpt": "Codebook tabbing techniques, CPT/ICD-10-CM guidelines, operative report analysis, and time management.",
+      "intro": "The Certified Professional Coder (CPC®) credential awarded by AAPC is the gold standard for medical coding."
+    },
+    {
+      "slug": "prepare-computer-online-proctored-exam",
+      "title": "How to Prepare Your Computer for an Online Proctored Exam",
+      "category": "Examination Software Guidance",
+      "publishDate": "2025-02-16",
+      "excerpt": "Pre-exam technical checklist covering OS updates, firewall settings, webcam permissions, and RAM optimization.",
+      "intro": "Ensuring your computer meets hardware and network requirements prevents unexpected disruptions on test day."
+    },
+    {
+      "slug": "weekly-revision-schedule",
+      "title": "Building a Weekly Revision Schedule for High-Stakes Exams",
+      "category": "Practice and Revision",
+      "publishDate": "2025-02-18",
+      "excerpt": "Practical framework for organizing study hours, balancing multiple courses, and tracking mock test scores.",
+      "intro": "A well-structured weekly schedule breaks daunting syllabi into manageable daily revision blocks."
+    },
+    {
+      "slug": "ccma-certification-study-guide",
+      "title": "NHA CCMA Certification Preparation: Clinical & Administrative Guide",
+      "category": "Professional Certifications",
+      "publishDate": "2025-02-20",
+      "excerpt": "Core topics breakdown for Certified Clinical Medical Assistant candidates including EKG, phlebotomy, and pharmacology.",
+      "intro": "The NHA CCMA credential validates clinical competence across outpatient healthcare settings."
+    },
+    {
+      "slug": "honorlock-technical-troubleshooting-guide",
+      "title": "Honorlock Online Proctoring: Chrome Extension & Setup Guide",
+      "category": "Examination Software Guidance",
+      "publishDate": "2025-02-22",
+      "excerpt": "How to install the Honorlock Chrome extension, pass ID verification scans, and resolve common extension blocks.",
+      "intro": "Honorlock is a popular browser-extension-based proctoring solution used by major universities."
+    }
+  ]
+}

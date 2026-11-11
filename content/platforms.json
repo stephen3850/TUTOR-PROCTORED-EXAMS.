@@ -1,0 +1,49 @@
+{
+  "platforms": [
+    {
+      "slug": "respondus-lockdown-browser",
+      "title": "Respondus LockDown Browser",
+      "description": "Custom web browser that locks down the testing environment within learning management systems."
+    },
+    {
+      "slug": "examplify",
+      "title": "Examplify (ExamSoft)",
+      "description": "High-security assessment application used in law schools, nursing programs, and professional boards."
+    },
+    {
+      "slug": "honorlock",
+      "title": "Honorlock",
+      "description": "Chrome extension-based online proctoring service combining AI analysis and live proctor support."
+    },
+    {
+      "slug": "proctoru-meazure-learning",
+      "title": "ProctorU / Meazure Learning",
+      "description": "Live human and automated online proctoring platform for university and professional exams."
+    },
+    {
+      "slug": "proctorio",
+      "title": "Proctorio",
+      "description": "Fully automated, browser-extension based proctoring solution integrated with major LMS platforms."
+    },
+    {
+      "slug": "proctortrack",
+      "title": "Proctortrack",
+      "description": "AI-powered automated and live remote proctoring platform."
+    },
+    {
+      "slug": "examity",
+      "title": "Examity",
+      "description": "Flexible online proctoring offering live, automated, and recorded proctoring modes."
+    },
+    {
+      "slug": "psi",
+      "title": "PSI Online Proctoring",
+      "description": "Secure remote testing environment for high-stakes certification and licensing exams."
+    },
+    {
+      "slug": "ati",
+      "title": "ATI Testing (TEAS)",
+      "description": "Assessment platform for nursing school admission (TEAS) and nursing comprehensive predictors."
+    }
+  ]
+}

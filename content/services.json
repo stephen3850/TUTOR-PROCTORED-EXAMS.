@@ -1,0 +1,52 @@
+{
+  "services": [
+    {
+      "slug": "one-on-one-tutoring",
+      "title": "1-on-1 Online Tutoring",
+      "category": "Academic Support",
+      "tagline": "Personalized academic learning support, subject explanations, guided lessons, and study assistance.",
+      "heroImage": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80",
+      "overview": "Our 1-on-1 Online Tutoring service connects students and adult learners worldwide with experienced educational specialists for personalized instruction."
+    },
+    {
+      "slug": "academic-exam-preparation",
+      "title": "Academic Exam Preparation",
+      "category": "Examination Support",
+      "tagline": "Structured study plans, concept reviews, topic drills, and time management coaching.",
+      "heroImage": "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1200&q=80",
+      "overview": "Comprehensive preparation for midterm and final exams across university courses."
+    },
+    {
+      "slug": "practice-questions-mock-tests",
+      "title": "Practice Questions & Mock Tests",
+      "category": "Assessment Practice",
+      "tagline": "Curated practice problem sets, timed mock test simulations, and detailed answer rationale breakdowns.",
+      "heroImage": "https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?auto=format&fit=crop&w=1200&q=80",
+      "overview": "Targeted practice tests and questions to build test-taking stamina and topic mastery."
+    },
+    {
+      "slug": "professional-certification-prep",
+      "title": "Professional Certification Preparation",
+      "category": "Career Credentials",
+      "tagline": "Targeted coaching for PMP, CompTIA, AAPC CPC, CCMA, and other professional certifications.",
+      "heroImage": "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=80",
+      "overview": "Specialized preparation programs for high-stakes professional certification exams."
+    },
+    {
+      "slug": "study-planning-revision-support",
+      "title": "Study Planning & Revision Support",
+      "category": "Academic Strategy",
+      "tagline": "Custom daily study schedules, active recall flashcards, spaced repetition routines, and revision tracking.",
+      "heroImage": "https://images.unsplash.com/photo-1488190211105-8b0e65b80b4e?auto=format&fit=crop&w=1200&q=80",
+      "overview": "Structured study schedules and revision techniques to optimize learning retention."
+    },
+    {
+      "slug": "software-technical-guidance",
+      "title": "Examination Software Technical Guidance",
+      "category": "Technical Assistance",
+      "tagline": "Legitimate hardware readiness checks, operating system requirements, camera permissions, and environment setup advice.",
+      "heroImage": "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80",
+      "overview": "Technical advice for online examination platforms to ensure smooth pre-exam setup."
+    }
+  ]
+}

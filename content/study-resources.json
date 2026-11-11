@@ -1,0 +1,64 @@
+{
+  "resources": [
+    {
+      "slug": "pmp",
+      "title": "PMP Certification Prep Study Materials",
+      "category": "Project Management",
+      "description": "High-yield PMP revision notes, ECO domain summaries, situational practice questions, and mock exam walkthroughs."
+    },
+    {
+      "slug": "capm",
+      "title": "CAPM Associate in PM Study Materials",
+      "category": "Project Management",
+      "description": "Foundational project management study guides, PMBOK summaries, agile basics, and EVM formula sheets."
+    },
+    {
+      "slug": "comptia",
+      "title": "CompTIA Certification Study Materials",
+      "category": "Information Technology",
+      "description": "Comprehensive revision guides, port number flashcards, PBQ walkthroughs, and practice exams for Security+, A+, and Network+."
+    },
+    {
+      "slug": "shrm",
+      "title": "SHRM HR Certification Study Materials",
+      "category": "Human Resources",
+      "description": "Behavioral competency summaries, HR functional area notes, situational question banks, and flashcard sets."
+    },
+    {
+      "slug": "real-estate",
+      "title": "Real Estate Licensing Exam Study Guides",
+      "category": "Licensing & Real Estate",
+      "description": "State-specific pre-licensing guides, real estate math formula sheets, contract law summaries, and practice exams."
+    },
+    {
+      "slug": "aapc",
+      "title": "AAPC Medical Coding Study Materials",
+      "category": "Healthcare & Coding",
+      "description": "Codebook tabbing guides, CPT/ICD-10 breakdown sheets, operative report practice cases, and CPC test strategies."
+    },
+    {
+      "slug": "cpc",
+      "title": "CPC Certified Professional Coder Study Guide",
+      "category": "Healthcare & Coding",
+      "description": "Specialized CPC exam preparation notes, speed-coding strategies, modifier usage sheets, and full mock exams."
+    },
+    {
+      "slug": "ccma",
+      "title": "CCMA Clinical Medical Assistant Study Guide",
+      "category": "Healthcare Support",
+      "description": "Clinical skill checklists, phlebotomy & EKG summaries, pharmacology flashcards, and NHA CCMA mock exams."
+    },
+    {
+      "slug": "cna",
+      "title": "CNA Nursing Assistant Study Materials",
+      "category": "Nursing & Care",
+      "description": "Written state exam revision notes, clinical skill step-by-step guides, infection control protocols, and practice sets."
+    },
+    {
+      "slug": "cpht",
+      "title": "CPhT Pharmacy Technician Study Materials",
+      "category": "Pharmacy & Medicine",
+      "description": "Pharmacy math conversion tables, top 200 drug brand/generic flashcards, law summaries, and PTCB practice questions."
+    }
+  ]
+}
