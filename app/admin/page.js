@@ -13,20 +13,12 @@ export default function AdminPage() {
       document.head.appendChild(link);
     }
 
-    // Load Netlify Identity Widget
-    if (!document.querySelector('script[src*="netlify-identity-widget"]')) {
-      const script1 = document.createElement('script');
-      script1.src = 'https://identity.netlify.com/v1/netlify-identity-widget.js';
-      script1.async = true;
-      document.head.appendChild(script1);
-    }
-
-    // Load Decap CMS
+    // Load Decap CMS script
     if (!document.querySelector('script[src*="decap-cms"]')) {
-      const script2 = document.createElement('script');
-      script2.src = 'https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js';
-      script2.async = true;
-      document.body.appendChild(script2);
+      const script = document.createElement('script');
+      script.src = 'https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js';
+      script.async = true;
+      document.body.appendChild(script);
     }
   }, []);
 

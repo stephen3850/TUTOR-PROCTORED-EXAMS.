@@ -1,5 +1,6 @@
 backend:
-  name: git-gateway
+  name: github
+  repo: stephen3850/tutorproctoredexams
   branch: main
 
 media_folder: "public/uploads"
