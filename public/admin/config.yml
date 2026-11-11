@@ -2,6 +2,8 @@ backend:
   name: github
   repo: stephen3850/tutorproctoredexams
   branch: main
+  base_url: https://tutorproctoredexams.com
+  auth_endpoint: /api/auth
 
 media_folder: "public/uploads"
 public_folder: "/uploads"
