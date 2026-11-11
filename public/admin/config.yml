@@ -8,8 +8,21 @@ public_folder: "/uploads"
 
 collections:
   - name: "content_management"
-    label: "Site Content"
+    label: "Site Content & SEO"
     files:
+      - name: "site_seo_settings"
+        label: "Global Site SEO Settings"
+        file: "content/settings.json"
+        fields:
+          - { label: "Website Name", name: "siteName", widget: "string" }
+          - { label: "Website URL", name: "siteUrl", widget: "string" }
+          - { label: "Default SEO Meta Title", name: "defaultMetaTitle", widget: "string" }
+          - { label: "Default SEO Meta Description", name: "defaultMetaDescription", widget: "text" }
+          - { label: "Default Social Share Image (OG Image)", name: "defaultOgImage", widget: "string" }
+          - { label: "Contact Email", name: "contactEmail", widget: "string" }
+          - { label: "WhatsApp Number", name: "whatsappNumber", widget: "string" }
+          - { label: "Google Site Verification Code", name: "googleSiteVerification", widget: "string", required: false }
+
       - name: "faqs"
         label: "FAQs"
         file: "content/faqs.json"
@@ -27,7 +40,7 @@ collections:
                   - { label: "Answer", name: "text", widget: "text" }
 
       - name: "services"
-        label: "Services"
+        label: "Services & SEO"
         file: "content/services.json"
         fields:
           - label: "Services List"
@@ -40,9 +53,12 @@ collections:
               - { label: "Tagline", name: "tagline", widget: "text" }
               - { label: "Hero Image", name: "heroImage", widget: "string" }
               - { label: "Overview", name: "overview", widget: "text" }
+              - { label: "SEO Meta Title", name: "metaTitle", widget: "string", required: false }
+              - { label: "SEO Meta Description", name: "metaDescription", widget: "text", required: false }
+              - { label: "SEO Keywords", name: "keywords", widget: "string", required: false }
 
       - name: "certifications"
-        label: "Certifications"
+        label: "Certifications & SEO"
         file: "content/certifications.json"
         fields:
           - label: "Certifications List"
@@ -53,9 +69,12 @@ collections:
               - { label: "Title", name: "title", widget: "string" }
               - { label: "Category", name: "category", widget: "string" }
               - { label: "Description", name: "description", widget: "text" }
+              - { label: "SEO Meta Title", name: "metaTitle", widget: "string", required: false }
+              - { label: "SEO Meta Description", name: "metaDescription", widget: "text", required: false }
+              - { label: "SEO Keywords", name: "keywords", widget: "string", required: false }
 
       - name: "platforms"
-        label: "Exam Platforms"
+        label: "Exam Platforms & SEO"
         file: "content/platforms.json"
         fields:
           - label: "Platforms List"
@@ -65,9 +84,12 @@ collections:
               - { label: "Slug", name: "slug", widget: "string" }
               - { label: "Title", name: "title", widget: "string" }
               - { label: "Description", name: "description", widget: "text" }
+              - { label: "SEO Meta Title", name: "metaTitle", widget: "string", required: false }
+              - { label: "SEO Meta Description", name: "metaDescription", widget: "text", required: false }
+              - { label: "SEO Keywords", name: "keywords", widget: "string", required: false }
 
       - name: "study_resources"
-        label: "Study Resources"
+        label: "Study Resources & SEO"
         file: "content/study-resources.json"
         fields:
           - label: "Study Resources List"
@@ -78,9 +100,12 @@ collections:
               - { label: "Title", name: "title", widget: "string" }
               - { label: "Category", name: "category", widget: "string" }
               - { label: "Description", name: "description", widget: "text" }
+              - { label: "SEO Meta Title", name: "metaTitle", widget: "string", required: false }
+              - { label: "SEO Meta Description", name: "metaDescription", widget: "text", required: false }
+              - { label: "SEO Keywords", name: "keywords", widget: "string", required: false }
 
       - name: "blog"
-        label: "Blog Articles"
+        label: "Blog Articles & SEO"
         file: "content/blog.json"
         fields:
           - label: "Articles List"
@@ -93,3 +118,7 @@ collections:
               - { label: "Publish Date", name: "publishDate", widget: "string" }
               - { label: "Excerpt", name: "excerpt", widget: "text" }
               - { label: "Intro", name: "intro", widget: "text" }
+              - { label: "SEO Meta Title", name: "metaTitle", widget: "string", required: false }
+              - { label: "SEO Meta Description", name: "metaDescription", widget: "text", required: false }
+              - { label: "SEO Keywords", name: "keywords", widget: "string", required: false }
+              - { label: "Social Image (OG Image)", name: "ogImage", widget: "string", required: false }
