@@ -5,7 +5,9 @@ import { SERVICES_DATA } from '@/lib/data/servicesData';
 import { BLOG_ARTICLES } from '@/lib/data/blogData';
 
 export default function sitemap() {
-  const baseUrl = SITE_CONFIG.domain;
+  const rawBaseUrl = SITE_CONFIG.domain || 'https://tutorproctoredexams.com';
+  // Strip any trailing slash to prevent double slashes in URLs
+  const baseUrl = rawBaseUrl.replace(/\/+$/, '');
   const now = new Date().toISOString();
 
   const staticRoutes = [
@@ -57,7 +59,7 @@ export default function sitemap() {
   ];
 
   return allRoutes.map((route) => ({
-    url: `${baseUrl}${route.url}`,
+    url: route.url ? `${baseUrl}${route.url}` : baseUrl,
     lastModified: now,
     changeFrequency: route.changeFrequency,
     priority: route.priority,
