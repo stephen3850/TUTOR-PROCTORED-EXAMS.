@@ -26,15 +26,10 @@ export default function BlogIndexPage() {
 
   const articlesList = Object.values(BLOG_ARTICLES);
 
-  // Categories list
+  // Dynamically extract unique categories from articles
   const categories = [
     'All',
-    'Examination Preparation',
-    'Examination Software Guidance',
-    'Professional Certifications',
-    'Study Strategies',
-    'Academic Success',
-    'Practice and Revision',
+    ...Array.from(new Set(articlesList.map((a) => a.category).filter(Boolean))),
   ];
 
   // Filter logic
@@ -75,7 +70,7 @@ export default function BlogIndexPage() {
 
             <div className="pt-2 flex flex-wrap gap-4 text-xs text-brand-muted border-t border-white/10">
               <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-brand-blue" /> Verified Academic Methods</span>
-              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-brand-blue" /> 10 In-Depth Articles</span>
+              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-brand-blue" /> {articlesList.length} In-Depth Articles</span>
               <span className="flex items-center gap-1.5"><Sparkles className="w-4 h-4 text-brand-blue" /> Exam & Certification Focus</span>
             </div>
           </div>
