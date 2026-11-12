@@ -11,6 +11,7 @@ import {
   ArrowRight,
   Mail,
   MessageCircle,
+  ExternalLink,
 } from 'lucide-react';
 import PageContainer from '@/components/layout/PageContainer';
 import SectionHeading from '@/components/ui/SectionHeading';
@@ -264,6 +265,28 @@ export default async function PlatformDetailPage({ params }) {
             </div>
           </div>
         </div>
+
+        {/* OFFICIAL VENDOR TECHNOLOGY REFERENCE DOCUMENTATION LINK */}
+        {platform.officialWebsiteUrl && (
+          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 my-6">
+            <h3 className="text-sm font-bold text-[#0F172A] mb-2 flex items-center gap-2">
+              <ExternalLink className="w-4 h-4 text-[#2563EB]" />
+              <span>Official Vendor & Technology Resources</span>
+            </h3>
+            <p className="text-xs text-slate-600 mb-3">
+              For official installer downloads, university portal logins, or vendor documentation, visit the platform website:
+            </p>
+            <a
+              href={platform.officialWebsiteUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-xs font-bold text-[#2563EB] hover:underline bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-200 transition-colors"
+            >
+              <span>{platform.officialWebsiteLabel || `${platform.name} Official Website`}</span>
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+          </div>
+        )}
 
         {/* 3. CONSISTENT CONTACT SUPPORT SECTION FOR ALL PLATFORMS (CLEAR VIBRANT GREEN BACKGROUND) */}
         <div className="bg-[#05B851] text-white rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl text-center max-w-4xl mx-auto">

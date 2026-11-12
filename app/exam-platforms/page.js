@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Cpu, ArrowRight, ShieldCheck, CheckCircle2, HardDrive, HelpCircle, Layers, Clock, Sparkles, FileCheck } from 'lucide-react';
+import { Cpu, ArrowRight, ShieldCheck, CheckCircle2, HardDrive, HelpCircle, Layers, Clock, Sparkles, FileCheck, Globe, ExternalLink } from 'lucide-react';
 import PageContainer from '@/components/layout/PageContainer';
 import SectionHeading from '@/components/ui/SectionHeading';
 import Breadcrumb from '@/components/ui/Breadcrumb';
@@ -138,6 +138,108 @@ export default function ExamPlatformsDirectoryPage() {
           <p className="text-amber-950 text-xs sm:text-sm leading-relaxed font-medium">
             TUTOR PROCTORED EXAMS is an independent academic tutoring and technical preparation service. We are not affiliated with, sponsored by, or endorsed by Respondus, ExamSoft, Honorlock, Meazure Learning, Proctorio, Verificient, Examity, PSI Services, or ATI. All platform names and trademarks belong to their respective holders and are referenced purely for informational educational purposes.
           </p>
+        </div>
+
+        {/* INTERNATIONAL REMOTE ASSESSMENT TECHNOLOGY DIRECTORY (USA, UAE, CANADA) */}
+        <div className="mt-12 bg-slate-50 border border-slate-200 rounded-2xl p-6 sm:p-8 space-y-6">
+          <div className="space-y-1">
+            <span className="text-xs font-bold text-[#2563EB] uppercase tracking-wider flex items-center gap-1.5">
+              <Globe className="w-4 h-4 text-[#2563EB]" /> International Assessment Technology Resources
+            </span>
+            <h3 className="text-xl font-extrabold text-[#0F172A]">Remote Examination & Invigilation Software Solutions</h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Reference resources for remote assessment platforms, automated proctoring software, and invigilation technology providers across target international markets (USA, UAE, and Canada):
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* USA MARKETS */}
+            <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-3">
+              <h4 className="font-bold text-xs text-[#0F172A] uppercase tracking-wider text-[#2563EB] pb-1 border-b border-slate-100">
+                United States (USA)
+              </h4>
+              <ul className="space-y-2 text-xs">
+                <li>
+                  <a href="https://honorlock.com/" target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-700 hover:text-[#2563EB] flex items-center justify-between group">
+                    <span>Honorlock Official Website</span>
+                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#2563EB]" />
+                  </a>
+                </li>
+                <li>
+                  <a href="https://proctorio.com/" target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-700 hover:text-[#2563EB] flex items-center justify-between group">
+                    <span>Proctorio Automated Proctoring</span>
+                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#2563EB]" />
+                  </a>
+                </li>
+                <li>
+                  <a href="https://www.proctoru.com/" target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-700 hover:text-[#2563EB] flex items-center justify-between group">
+                    <span>ProctorU Meazure Learning Portal</span>
+                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#2563EB]" />
+                  </a>
+                </li>
+                <li>
+                  <a href="https://www.proctorfree.com/" target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-700 hover:text-[#2563EB] flex items-center justify-between group">
+                    <span>ProctorFree On-Demand Proctoring</span>
+                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#2563EB]" />
+                  </a>
+                </li>
+                <li>
+                  <a href="https://proctor360.com/" target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-700 hover:text-[#2563EB] flex items-center justify-between group">
+                    <span>Proctor360 Remote Monitoring</span>
+                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#2563EB]" />
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* UAE MARKETS */}
+            <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-3">
+              <h4 className="font-bold text-xs text-[#0F172A] uppercase tracking-wider text-[#2563EB] pb-1 border-b border-slate-100">
+                United Arab Emirates (UAE)
+              </h4>
+              <ul className="space-y-2 text-xs">
+                <li>
+                  <a href="https://mait.ae/exam-software/" target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-700 hover:text-[#2563EB] flex items-center justify-between group">
+                    <span>MAIT Examination & Assessment Software</span>
+                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#2563EB]" />
+                  </a>
+                </li>
+                <li>
+                  <a href="https://capytech.com/en/exam-invigilation/" target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-700 hover:text-[#2563EB] flex items-center justify-between group">
+                    <span>Capytech Exam Invigilation Solutions</span>
+                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#2563EB]" />
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* CANADA MARKETS */}
+            <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-3">
+              <h4 className="font-bold text-xs text-[#0F172A] uppercase tracking-wider text-[#2563EB] pb-1 border-b border-slate-100">
+                Canada (CA)
+              </h4>
+              <ul className="space-y-2 text-xs">
+                <li>
+                  <a href="https://www.proctortrack.com/canada/" target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-700 hover:text-[#2563EB] flex items-center justify-between group">
+                    <span>Proctortrack Canada Official Portal</span>
+                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#2563EB]" />
+                  </a>
+                </li>
+                <li>
+                  <a href="https://uxpertise.ca/en/online-exam-proctoring-solution/" target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-700 hover:text-[#2563EB] flex items-center justify-between group">
+                    <span>Uxpertise Online Exam Proctoring</span>
+                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#2563EB]" />
+                  </a>
+                </li>
+                <li>
+                  <a href="https://examo.io/" target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-700 hover:text-[#2563EB] flex items-center justify-between group">
+                    <span>Examo Assessment Technology Platform</span>
+                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#2563EB]" />
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
 
         {/* Conversion CTA Banner (CLEAR GREEN BACKGROUND) */}
