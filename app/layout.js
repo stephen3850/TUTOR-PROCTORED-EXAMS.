@@ -6,6 +6,7 @@ import CookieConsent from '@/components/ui/CookieConsent';
 import WhatsAppButton from '@/components/ui/WhatsAppButton';
 import GoogleAnalytics from '@/components/seo/GoogleAnalytics';
 import GoogleTagManager from '@/components/seo/GoogleTagManager';
+import GoogleAdSense from '@/components/seo/GoogleAdSense';
 import { SITE_CONFIG } from '@/lib/utils';
 
 const inter = Inter({
@@ -78,6 +79,7 @@ export default function RootLayout({ children }) {
       <body className="flex flex-col min-h-screen bg-brand-bg text-brand-text font-sans antialiased">
         <GoogleAnalytics />
         <GoogleTagManager />
+        <GoogleAdSense />
         <Header />
         <main className="flex-grow">{children}</main>
         <Footer />
