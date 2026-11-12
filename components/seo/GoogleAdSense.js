@@ -3,7 +3,7 @@
 import Script from 'next/script';
 
 export default function GoogleAdSense({ publisherId }) {
-  const client = publisherId || process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
+  const client = publisherId || process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID || 'ca-pub-5788242711864988';
 
   if (!client) {
     return null;
