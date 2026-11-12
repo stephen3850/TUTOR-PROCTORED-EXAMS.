@@ -95,6 +95,30 @@
       "publishDate": "2025-02-22",
       "excerpt": "How to install the Honorlock Chrome extension, pass ID verification scans, and resolve common extension blocks.",
       "intro": "Honorlock is a popular browser-extension-based proctoring solution used by major universities."
+    },
+    {
+      "slug": "ati-teas-7-hesi-a2-nursing-exam-prep-guide",
+      "title": "ATI TEAS 7 & HESI A2 Preparation: Ultimate Nursing Entrance Exam Guide",
+      "category": "Nursing Exam Preparation",
+      "publishDate": "2025-02-25",
+      "excerpt": "Comprehensive preparation guide for ATI TEAS 7 and HESI A2 nursing entrance exams covering Anatomy & Physiology, Math conversions, Reading comprehension, and practice question drills.",
+      "intro": "Achieving competitive scores on the ATI TEAS 7 or HESI A2 is the primary gateway into accredited nursing programs across North America."
+    },
+    {
+      "slug": "proctoru-meazure-learning-technical-preparation-guide",
+      "title": "ProctorU / Meazure Learning: Technical Setup & Troubleshooting Guide",
+      "category": "Examination Software Guidance",
+      "publishDate": "2025-02-28",
+      "excerpt": "Step-by-step technical guide for passing ProctorU equipment checks, installing Guardian Browser, setting camera/mic permissions, and resolving launch errors on Windows & Mac.",
+      "intro": "ProctorU (by Meazure Learning) is a leading live and automated online proctoring service utilized by universities and professional certification boards."
+    },
+    {
+      "slug": "mastering-mock-tests-timed-practice-questions",
+      "title": "Mastering Mock Tests: How to Build Exam Stamina & Analyze Rationale",
+      "category": "Practice and Revision",
+      "publishDate": "2025-03-02",
+      "excerpt": "Learn how to simulate real test conditions with timed mock test sets, conduct wrong-answer rationale reviews, and build test-taking pacing for high-stakes exams.",
+      "intro": "Simulated practice exams and timed problem sets are proven tools for converting theoretical knowledge into high test scores."
     }
   ]
 }
