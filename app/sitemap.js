@@ -3,10 +3,10 @@ import { PLATFORMS_DATA } from '@/lib/data/platformsData';
 import { CERTIFICATIONS_DATA } from '@/lib/data/certificationsData';
 import { SERVICES_DATA } from '@/lib/data/servicesData';
 import { BLOG_ARTICLES } from '@/lib/data/blogData';
+import { getWpPosts, getWpPages } from '@/lib/wordpress';
 
-export default function sitemap() {
+export default async function sitemap() {
   const rawBaseUrl = SITE_CONFIG.domain || 'https://tutorproctoredexams.com';
-  // Strip any trailing slash to prevent double slashes in URLs
   const baseUrl = rawBaseUrl.replace(/\/+$/, '');
   const now = new Date().toISOString();
 
@@ -50,18 +50,42 @@ export default function sitemap() {
     changeFrequency: 'weekly',
   }));
 
-  const allRoutes = [
+  // Fetch published WordPress routes
+  const wpPosts = await getWpPosts();
+  const wpPostRoutes = (wpPosts || []).map((post) => ({
+    url: `/blog/${post.slug}`,
+    priority: 0.8,
+    changeFrequency: 'weekly',
+    lastModified: post.modified || now,
+  }));
+
+  const wpPages = await getWpPages();
+  const wpPageRoutes = (wpPages || []).map((page) => ({
+    url: `/${page.slug}`,
+    priority: 0.8,
+    changeFrequency: 'monthly',
+    lastModified: page.modified || now,
+  }));
+
+  // Deduplicate routes by URL
+  const routeMap = new Map();
+
+  [
     ...staticRoutes,
     ...blogRoutes,
     ...serviceRoutes,
     ...platformRoutes,
     ...certificationRoutes,
-  ];
+    ...wpPostRoutes,
+    ...wpPageRoutes,
+  ].forEach((route) => {
+    routeMap.set(route.url, {
+      url: route.url ? `${baseUrl}${route.url}` : baseUrl,
+      lastModified: route.lastModified || now,
+      changeFrequency: route.changeFrequency,
+      priority: route.priority,
+    });
+  });
 
-  return allRoutes.map((route) => ({
-    url: route.url ? `${baseUrl}${route.url}` : baseUrl,
-    lastModified: now,
-    changeFrequency: route.changeFrequency,
-    priority: route.priority,
-  }));
+  return Array.from(routeMap.values());
 }

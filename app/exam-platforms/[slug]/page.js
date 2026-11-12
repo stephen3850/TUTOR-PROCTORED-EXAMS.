@@ -20,6 +20,7 @@ import Badge from '@/components/ui/Badge';
 import JsonLd from '@/components/seo/JsonLd';
 import { PLATFORMS_DATA } from '@/lib/data/platformsData';
 import { SITE_CONFIG } from '@/lib/utils';
+import { getWpPageBySlug, extractWpSeo } from '@/lib/wordpress';
 
 export async function generateStaticParams() {
   return Object.keys(PLATFORMS_DATA).map((slug) => ({
@@ -29,42 +30,42 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
-  const platform = PLATFORMS_DATA[resolvedParams?.slug];
-  if (!platform) {
-    return {
-      title: 'Platform Not Found',
-    };
-  }
+  const slug = resolvedParams?.slug;
+  const platform = PLATFORMS_DATA[slug];
 
-  const title = `${platform.name} Prep Guide & System Requirements | TUTOR PROCTORED EXAMS`;
-  const description = `Legitimate preparation guide, system requirements, OS compatibility, and technical assistance for ${platform.name}.`;
-  const canonicalUrl = `${SITE_CONFIG.domain}/exam-platforms/${platform.slug}`;
+  const defaultTitle = platform ? `${platform.name} Prep Guide & System Requirements | TUTOR PROCTORED EXAMS` : 'Platform | TUTOR PROCTORED EXAMS';
+  const defaultDescription = platform ? `Legitimate preparation guide, system requirements, OS compatibility, and technical assistance for ${platform.name}.` : 'Exam platform guide.';
+  const defaultCanonical = `${SITE_CONFIG.domain}/exam-platforms/${slug}`;
+
+  const wpPage = await getWpPageBySlug(slug);
+  const seo = extractWpSeo(wpPage, {
+    title: defaultTitle,
+    description: defaultDescription,
+    canonicalUrl: defaultCanonical,
+  });
 
   return {
-    title,
-    description,
+    title: seo.title,
+    description: seo.description,
     keywords: [
-      `${platform.name} guide`,
-      `${platform.name} system requirements`,
-      `${platform.name} preparation`,
-      `${platform.name} troubleshooting`,
-      `${platform.name} compatibility`,
+      platform?.name || 'exam platform',
+      'system requirements',
       'online exam prep',
       'ethical tutoring',
     ],
     alternates: {
-      canonical: canonicalUrl,
+      canonical: seo.canonicalUrl,
     },
     openGraph: {
-      title,
-      description,
-      url: canonicalUrl,
+      title: seo.ogTitle || seo.title,
+      description: seo.ogDescription || seo.description,
+      url: seo.canonicalUrl,
       type: 'article',
     },
     twitter: {
       card: 'summary_large_image',
-      title,
-      description,
+      title: seo.twitterTitle || seo.title,
+      description: seo.twitterDescription || seo.description,
     },
   };
 }

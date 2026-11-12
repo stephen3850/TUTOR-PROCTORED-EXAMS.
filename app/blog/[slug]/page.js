@@ -22,6 +22,7 @@ import FaqAccordion from '@/components/ui/FaqAccordion';
 import JsonLd from '@/components/seo/JsonLd';
 import { BLOG_ARTICLES } from '@/lib/data/blogData';
 import { SITE_CONFIG } from '@/lib/utils';
+import { getWpPostBySlug, extractWpSeo } from '@/lib/wordpress';
 
 export async function generateStaticParams() {
   return Object.keys(BLOG_ARTICLES).map((slug) => ({
@@ -31,47 +32,51 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
-  const article = BLOG_ARTICLES[resolvedParams?.slug];
-  if (!article) {
-    return {
-      title: 'Article Not Found',
-    };
-  }
+  const slug = resolvedParams?.slug;
+  const article = BLOG_ARTICLES[slug];
 
-  const title = `${article.title} | TUTOR PROCTORED EXAMS`;
-  const description = article.excerpt;
-  const canonicalUrl = `${SITE_CONFIG.domain}/blog/${article.slug}`;
+  const defaultTitle = article ? `${article.title} | TUTOR PROCTORED EXAMS` : 'Article | TUTOR PROCTORED EXAMS';
+  const defaultDescription = article?.excerpt || 'Educational study guide and proctored examination preparation article.';
+  const defaultCanonical = `${SITE_CONFIG.domain}/blog/${slug}`;
+  const defaultImage = article?.image || 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1200&q=80';
+
+  const wpPost = await getWpPostBySlug(slug);
+  const seo = extractWpSeo(wpPost, {
+    title: defaultTitle,
+    description: defaultDescription,
+    canonicalUrl: defaultCanonical,
+    ogImage: defaultImage,
+  });
 
   return {
-    title,
-    description,
+    title: seo.title,
+    description: seo.description,
     keywords: [
-      article.title,
-      article.category,
+      article?.title || 'examination guide',
+      article?.category || 'education',
       'examination preparation',
       'study guides',
       'proctoring software guide',
-      'educational support',
     ],
     alternates: {
-      canonical: canonicalUrl,
+      canonical: seo.canonicalUrl,
     },
     openGraph: {
-      title,
-      description,
-      url: canonicalUrl,
+      title: seo.ogTitle || seo.title,
+      description: seo.ogDescription || seo.description,
+      url: seo.canonicalUrl,
       type: 'article',
       images: [
         {
-          url: article.image,
-          alt: article.title,
+          url: seo.ogImage,
+          alt: seo.title,
         },
       ],
     },
     twitter: {
       card: 'summary_large_image',
-      title,
-      description,
+      title: seo.twitterTitle || seo.title,
+      description: seo.twitterDescription || seo.description,
     },
   };
 }
