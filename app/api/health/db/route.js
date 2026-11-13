@@ -7,7 +7,7 @@ export async function GET() {
 
     // Secure verification of env variable presence (never exposing password)
     const configCheck = {
-      DB_HOST: process.env.DB_HOST || 'localhost (default)',
+      DB_HOST: process.env.DB_HOST || '127.0.0.1 (default)',
       DB_PORT: process.env.DB_PORT || '3306 (default)',
       DB_NAME: process.env.DB_NAME || 'u621127133_tutorproctored (default)',
       DB_USER: process.env.DB_USER || 'u621127133_tutoruser (default)',
@@ -16,6 +16,7 @@ export async function GET() {
 
     if (health.connected) {
       return NextResponse.json({
+        database: 'connected',
         success: true,
         status: 'healthy',
         message: 'Hostinger MySQL database connected successfully',
@@ -25,6 +26,7 @@ export async function GET() {
     } else {
       return NextResponse.json(
         {
+          database: 'disconnected',
           success: false,
           status: 'unhealthy',
           message: configCheck.DB_PASSWORD_SET
@@ -39,6 +41,7 @@ export async function GET() {
   } catch (error) {
     return NextResponse.json(
       {
+        database: 'error',
         success: false,
         status: 'error',
         message: 'Server error testing database connection',
