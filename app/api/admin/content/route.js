@@ -4,16 +4,48 @@ import path from 'path';
 
 const CONTENT_DIR = path.join(process.cwd(), 'content');
 
+// Whitelist of allowed JSON files to prevent path traversal vulnerability
+const ALLOWED_CONTENT_FILES = [
+  'blog.json',
+  'services.json',
+  'faqs.json',
+  'pages.json',
+  'settings.json',
+  'inquiries.json',
+  'platforms.json',
+  'certifications.json',
+  'study-resources.json',
+  'navigation.json',
+  'partnerships.json',
+];
+
+function sanitizeFilename(requestedFile) {
+  const safeName = path.basename(requestedFile || '');
+  if (!ALLOWED_CONTENT_FILES.includes(safeName)) {
+    return null;
+  }
+  return safeName;
+}
+
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
-    const file = searchParams.get('file') || 'blog.json';
+    const requestedFile = searchParams.get('file') || 'blog.json';
+    const safeFile = sanitizeFilename(requestedFile);
 
-    const filePath = path.join(CONTENT_DIR, file);
-    const fileData = await fs.readFile(filePath, 'utf8');
-    const json = JSON.parse(fileData);
+    if (!safeFile) {
+      return NextResponse.json({ success: false, error: 'Invalid content file requested' }, { status: 400 });
+    }
 
-    return NextResponse.json({ success: true, data: json });
+    const filePath = path.join(CONTENT_DIR, safeFile);
+    try {
+      const fileData = await fs.readFile(filePath, 'utf8');
+      const json = JSON.parse(fileData);
+      return NextResponse.json({ success: true, data: json });
+    } catch (readErr) {
+      // If file doesn't exist yet, return empty object
+      return NextResponse.json({ success: true, data: {} });
+    }
   } catch (error) {
     return NextResponse.json({ success: false, error: 'Failed to read content file' }, { status: 500 });
   }
@@ -24,21 +56,28 @@ export async function POST(request) {
     const body = await request.json();
     const { file, data, password } = body;
 
-    // Simple admin authentication check
+    // Secure Admin Password Verification
     const adminPassword = process.env.ADMIN_PASSWORD || 'admin12345';
     if (password !== adminPassword) {
-      return NextResponse.json({ success: false, error: 'Unauthorized: Invalid password' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Unauthorized: Invalid administrator credentials' }, { status: 401 });
     }
 
     if (!file || !data) {
-      return NextResponse.json({ success: false, error: 'Missing file or data' }, { status: 400 });
+      return NextResponse.json({ success: false, error: 'Missing file or data payload' }, { status: 400 });
     }
 
-    const filePath = path.join(CONTENT_DIR, file);
+    const safeFile = sanitizeFilename(file);
+    if (!safeFile) {
+      return NextResponse.json({ success: false, error: 'Directory traversal or unauthorized file path blocked' }, { status: 403 });
+    }
+
+    const filePath = path.join(CONTENT_DIR, safeFile);
+    await fs.mkdir(CONTENT_DIR, { recursive: true });
     await fs.writeFile(filePath, JSON.stringify(data, null, 2), 'utf8');
 
-    return NextResponse.json({ success: true, message: 'Content saved successfully' });
+    return NextResponse.json({ success: true, message: 'Content saved successfully to persistent storage' });
   } catch (error) {
-    return NextResponse.json({ success: false, error: 'Failed to write content file' }, { status: 500 });
+    console.error('[Content API Error]:', error);
+    return NextResponse.json({ success: false, error: 'Failed to save content file' }, { status: 500 });
   }
 }

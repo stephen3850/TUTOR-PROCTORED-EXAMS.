@@ -4,10 +4,9 @@ import { Cpu, ArrowRight, ShieldCheck, CheckCircle2, HardDrive, HelpCircle, Laye
 import PageContainer from '@/components/layout/PageContainer';
 import SectionHeading from '@/components/ui/SectionHeading';
 import Breadcrumb from '@/components/ui/Breadcrumb';
-import ContentCard from '@/components/ui/ContentCard';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
-import { PLATFORMS_DATA } from '@/lib/data/platformsData';
+import { getPlatformsContent } from '@/lib/contentLoader';
 
 export const metadata = {
   title: 'Examination Platforms & Exam Prep Directory | System Requirements & Guides',
@@ -27,237 +26,77 @@ export const metadata = {
 };
 
 export default function ExamPlatformsDirectoryPage() {
-  const platformList = Object.values(PLATFORMS_DATA);
-
-  // Additional 4 Exam Options
-  const additionalExamOptions = [
-    {
-      name: 'GED Exam Preparation',
-      description: 'Comprehensive 1-on-1 coaching for Mathematical Reasoning, Science, RLA, and Social Studies high school equivalency tests.',
-      category: 'Exam Readiness',
-      href: '/services/ged',
-      icon: Layers,
-    },
-    {
-      name: 'HESI A2 Exam Preparation',
-      description: 'Specialized nursing entrance exam tutoring for Anatomy & Physiology, Mathematics, Vocabulary, and Science subtests.',
-      category: 'Nursing Entrance',
-      href: '/services/hesi',
-      icon: Clock,
-    },
-    {
-      name: 'ATI TEAS Exam Preparation',
-      description: 'In-depth TEAS 7 subtest review and mock test simulations covering Reading, Math, Science, and English Usage.',
-      category: 'Nursing Entrance',
-      href: '/services/teas',
-      icon: Sparkles,
-    },
-    {
-      name: 'Mock Tests & Practice Exams',
-      description: 'Curated question banks, timed mock test simulations, and comprehensive rationale breakdowns for all subjects.',
-      category: 'Assessment & Practice',
-      href: '/services/practice-questions-mock-tests',
-      icon: FileCheck,
-    },
-  ];
+  const platformList = getPlatformsContent();
 
   return (
-    <div className="space-y-10 pt-2 pb-16">
+    <div className="space-y-12 py-4">
       <PageContainer>
         <Breadcrumb items={[{ label: 'Exam Platforms' }]} />
 
-        {/* Directory Intro Header */}
-        <div className="bg-gradient-to-r from-brand-navy to-brand-secondaryNavy text-white rounded-2xl p-8 sm:p-12 relative overflow-hidden my-6">
-          <div className="relative z-10 max-w-3xl space-y-4">
-            <Badge variant="blue" className="bg-brand-blue/20 text-brand-lightBlue border-brand-blue/30">
-              Technical & Preparation Hub
+        {/* 1. HERO BANNER */}
+        <div className="bg-brand-navy text-white rounded-2xl p-8 sm:p-12 my-6 relative overflow-hidden">
+          <div className="max-w-3xl space-y-4 relative z-10">
+            <Badge variant="blue" className="bg-brand-blue/20 text-brand-lightBlue border-brand-blue/30 px-3 py-1 text-xs">
+              Examination Software Directory
             </Badge>
 
-            <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
-              EXAMINATION PLATFORMS & EXAM OPTIONS
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
+              Assessment Software Technical Guidance
             </h1>
 
-            <p className="text-base sm:text-lg text-brand-muted/90 leading-relaxed text-balance">
-              Explore 13 examination platforms and exam preparation categories designed to help students understand system requirements and prepare effectively for test day.
+            <p className="text-brand-muted/90 text-base sm:text-lg leading-relaxed text-balance">
+              Explore system compatibility checklists, operating system requirements, camera/microphone permissions, and legitimate pre-test setup advice for major university and professional examination platforms.
             </p>
 
-            <div className="pt-2 flex flex-wrap gap-4 text-xs text-brand-muted">
-              <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-brand-blue" /> 13 Exam Options</span>
-              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-brand-blue" /> OS & Hardware Requirements</span>
-              <span className="flex items-center gap-1.5"><HardDrive className="w-4 h-4 text-brand-blue" /> Independent Technical Advice</span>
+            <div className="pt-2 flex flex-wrap gap-4">
+              <Button href="/contact" variant="primary" size="md">
+                Request Technical Setup Advice
+              </Button>
             </div>
           </div>
         </div>
 
-        {/* 13 Items Directory Grid */}
-        <div className="space-y-8 mt-12">
+        {/* 2. PLATFORMS GRID */}
+        <div className="space-y-6 my-10">
           <SectionHeading
-            badge="Directory Listing"
-            title="Supported Assessment Platforms & Exam Prep Options"
-            subtitle="Select an option below to view system requirements, OS compatibility, study prep resources, and technical guidance."
+            badge="Platforms Directory"
+            title="Supported Assessment Environments"
+            subtitle="Select an examination platform below to review technical specifications and preparation advice."
           />
 
-          {/* Original 9 Exam Platforms */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
             {platformList.map((platform) => (
-              <ContentCard
+              <div
                 key={platform.slug}
-                title={platform.name}
-                description={platform.description || platform.tagline}
-                badge={platform.category}
-                icon={Cpu}
-                href={`/exam-platforms/${platform.slug}`}
-                actionText="Learn More"
-              />
+                className="bg-white border border-brand-border rounded-2xl p-6 hover:shadow-card hover:border-brand-blue transition-all flex flex-col justify-between space-y-4"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="w-10 h-10 rounded-xl bg-brand-lightBlue/60 text-brand-blue flex items-center justify-center font-bold">
+                      <Cpu className="w-5 h-5" />
+                    </div>
+                  </div>
+
+                  <h3 className="text-xl font-bold text-brand-navy leading-snug">
+                    {platform.title}
+                  </h3>
+
+                  <p className="text-xs sm:text-sm text-brand-muted line-clamp-3 leading-relaxed">
+                    {platform.description || platform.overview}
+                  </p>
+                </div>
+
+                <div className="pt-4 border-t border-brand-border/60">
+                  <Link
+                    href={`/exam-platforms/${platform.slug}`}
+                    className="text-xs font-bold text-brand-blue hover:text-brand-navy transition-colors inline-flex items-center gap-1"
+                  >
+                    <span>View Software Requirements</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              </div>
             ))}
-
-            {/* Additional 4 Exam Options */}
-            {additionalExamOptions.map((opt, idx) => {
-              const OptIcon = opt.icon;
-              return (
-                <ContentCard
-                  key={idx}
-                  title={opt.name}
-                  description={opt.description}
-                  badge={opt.category}
-                  icon={OptIcon}
-                  href={opt.href}
-                  actionText="Explore Option"
-                />
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Informational Disclaimer Box (WARM ORANGE BACKGROUND) */}
-        <div className="mt-14 bg-orange-100/90 border border-orange-300 text-amber-950 p-6 rounded-xl space-y-2 shadow-sm font-medium">
-          <h4 className="font-extrabold text-amber-950 flex items-center gap-2">
-            <HelpCircle className="w-5 h-5 text-orange-600" />
-            Independent Educational Guidance Notice
-          </h4>
-          <p className="text-amber-950 text-xs sm:text-sm leading-relaxed font-medium">
-            TUTOR PROCTORED EXAMS is an independent academic tutoring and technical preparation service. We are not affiliated with, sponsored by, or endorsed by Respondus, ExamSoft, Honorlock, Meazure Learning, Proctorio, Verificient, Examity, PSI Services, or ATI. All platform names and trademarks belong to their respective holders and are referenced purely for informational educational purposes.
-          </p>
-        </div>
-
-        {/* INTERNATIONAL REMOTE ASSESSMENT TECHNOLOGY DIRECTORY (USA, UAE, CANADA) */}
-        <div className="mt-12 bg-slate-50 border border-slate-200 rounded-2xl p-6 sm:p-8 space-y-6">
-          <div className="space-y-1">
-            <span className="text-xs font-bold text-[#2563EB] uppercase tracking-wider flex items-center gap-1.5">
-              <Globe className="w-4 h-4 text-[#2563EB]" /> International Assessment Technology Resources
-            </span>
-            <h3 className="text-xl font-extrabold text-[#0F172A]">Remote Examination & Invigilation Software Solutions</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Reference resources for remote assessment platforms, automated proctoring software, and invigilation technology providers across target international markets (USA, UAE, and Canada):
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* USA MARKETS */}
-            <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-3">
-              <h4 className="font-bold text-xs text-[#0F172A] uppercase tracking-wider text-[#2563EB] pb-1 border-b border-slate-100">
-                United States (USA)
-              </h4>
-              <ul className="space-y-2 text-xs">
-                <li>
-                  <a href="https://honorlock.com/" target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-700 hover:text-[#2563EB] flex items-center justify-between group">
-                    <span>Honorlock Official Website</span>
-                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#2563EB]" />
-                  </a>
-                </li>
-                <li>
-                  <a href="https://proctorio.com/" target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-700 hover:text-[#2563EB] flex items-center justify-between group">
-                    <span>Proctorio Automated Proctoring</span>
-                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#2563EB]" />
-                  </a>
-                </li>
-                <li>
-                  <a href="https://www.proctoru.com/" target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-700 hover:text-[#2563EB] flex items-center justify-between group">
-                    <span>ProctorU Meazure Learning Portal</span>
-                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#2563EB]" />
-                  </a>
-                </li>
-                <li>
-                  <a href="https://www.proctorfree.com/" target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-700 hover:text-[#2563EB] flex items-center justify-between group">
-                    <span>ProctorFree On-Demand Proctoring</span>
-                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#2563EB]" />
-                  </a>
-                </li>
-                <li>
-                  <a href="https://proctor360.com/" target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-700 hover:text-[#2563EB] flex items-center justify-between group">
-                    <span>Proctor360 Remote Monitoring</span>
-                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#2563EB]" />
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            {/* UAE MARKETS */}
-            <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-3">
-              <h4 className="font-bold text-xs text-[#0F172A] uppercase tracking-wider text-[#2563EB] pb-1 border-b border-slate-100">
-                United Arab Emirates (UAE)
-              </h4>
-              <ul className="space-y-2 text-xs">
-                <li>
-                  <a href="https://mait.ae/exam-software/" target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-700 hover:text-[#2563EB] flex items-center justify-between group">
-                    <span>MAIT Examination & Assessment Software</span>
-                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#2563EB]" />
-                  </a>
-                </li>
-                <li>
-                  <a href="https://capytech.com/en/exam-invigilation/" target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-700 hover:text-[#2563EB] flex items-center justify-between group">
-                    <span>Capytech Exam Invigilation Solutions</span>
-                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#2563EB]" />
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            {/* CANADA MARKETS */}
-            <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-3">
-              <h4 className="font-bold text-xs text-[#0F172A] uppercase tracking-wider text-[#2563EB] pb-1 border-b border-slate-100">
-                Canada (CA)
-              </h4>
-              <ul className="space-y-2 text-xs">
-                <li>
-                  <a href="https://www.proctortrack.com/canada/" target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-700 hover:text-[#2563EB] flex items-center justify-between group">
-                    <span>Proctortrack Canada Official Portal</span>
-                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#2563EB]" />
-                  </a>
-                </li>
-                <li>
-                  <a href="https://uxpertise.ca/en/online-exam-proctoring-solution/" target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-700 hover:text-[#2563EB] flex items-center justify-between group">
-                    <span>Uxpertise Online Exam Proctoring</span>
-                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#2563EB]" />
-                  </a>
-                </li>
-                <li>
-                  <a href="https://examo.io/" target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-700 hover:text-[#2563EB] flex items-center justify-between group">
-                    <span>Examo Assessment Technology Platform</span>
-                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#2563EB]" />
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        {/* Conversion CTA Banner (CLEAR GREEN BACKGROUND) */}
-        <div className="mt-12 bg-[#05B851] text-white rounded-2xl p-6 sm:p-8 text-center space-y-3 shadow-xl max-w-3xl mx-auto">
-          <h3 className="text-xl sm:text-2xl font-black text-white">Unsure About Your Exam Software Requirements?</h3>
-          <p className="text-white/95 text-xs sm:text-sm max-w-xl mx-auto font-medium">
-            Our educational specialists can review your course syllabus, verify system compatibility, and pair you with expert 1-on-1 subject tutors.
-          </p>
-          <div className="pt-2">
-            <a
-              href="https://wa.me/254711882470"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-white text-emerald-950 font-extrabold text-xs sm:text-sm px-6 py-3 rounded-xl shadow-md hover:bg-emerald-50 transition-all inline-flex items-center gap-2"
-            >
-              <span>Speak with an Advisor</span>
-              <ArrowRight className="w-4 h-4 text-emerald-950 stroke-[2.5]" />
-            </a>
           </div>
         </div>
       </PageContainer>

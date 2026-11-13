@@ -32,6 +32,17 @@ import {
   Navigation,
   Sparkles,
   MapPin,
+  Award,
+  Cpu,
+  FolderOpen,
+  Image as ImageIcon,
+  UploadCloud,
+  Check,
+  ToggleLeft,
+  ToggleRight,
+  ArrowUp,
+  ArrowDown,
+  Layers,
 } from 'lucide-react';
 
 export default function CustomAdminCmsPage() {
@@ -51,6 +62,16 @@ export default function CustomAdminCmsPage() {
   const [inquiriesList, setInquiriesList] = useState([]);
   const [pagesData, setPagesData] = useState({});
   const [navData, setNavData] = useState({ topBanner: {}, navLinks: [] });
+  const [certificationsList, setCertificationsList] = useState([]);
+  const [platformsList, setPlatformsList] = useState([]);
+  const [studyResourcesList, setStudyResourcesList] = useState([]);
+  const [partnershipsList, setPartnershipsList] = useState([]);
+
+  // Media Library State
+  const [mediaLibrary, setMediaLibrary] = useState([]);
+  const [isMediaPickerOpen, setIsMediaPickerOpen] = useState(false);
+  const [mediaPickerTargetField, setMediaPickerTargetField] = useState('');
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   // Loading & Notification States
   const [loading, setLoading] = useState(false);
@@ -62,7 +83,7 @@ export default function CustomAdminCmsPage() {
 
   // Editor & View Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingItemType, setEditingItemType] = useState(''); // 'blog', 'service', 'faq', 'settings', 'inquiry', 'page', 'navigation'
+  const [editingItemType, setEditingItemType] = useState(''); // 'blog', 'service', 'faq', 'settings', 'inquiry', 'page', 'navigation', 'certification', 'platform', 'resource', 'partnership'
   const [editFormData, setEditFormData] = useState({});
 
   // Check stored auth session on mount
@@ -71,6 +92,7 @@ export default function CustomAdminCmsPage() {
     if (savedAuth === 'true') {
       setIsAuthenticated(true);
       fetchContentData();
+      fetchMediaLibrary();
     }
   }, []);
 
@@ -83,6 +105,7 @@ export default function CustomAdminCmsPage() {
       localStorage.setItem('cms_admin_pass', adminPasswordInput);
       setLoginError('');
       fetchContentData();
+      fetchMediaLibrary();
     } else {
       setLoginError('Invalid password. Default password is: admin12345');
     }
@@ -146,10 +169,107 @@ export default function CustomAdminCmsPage() {
       if (navJson.success && navJson.data) {
         setNavData(navJson.data);
       }
+
+      // Fetch Certifications
+      const certRes = await fetch('/api/admin/content?file=certifications.json');
+      const certJson = await certRes.json();
+      if (certJson.success && certJson.data?.certifications) {
+        setCertificationsList(certJson.data.certifications);
+      }
+
+      // Fetch Exam Platforms
+      const platRes = await fetch('/api/admin/content?file=platforms.json');
+      const platJson = await platRes.json();
+      if (platJson.success && platJson.data?.platforms) {
+        setPlatformsList(platJson.data.platforms);
+      }
+
+      // Fetch Study Resources
+      const resRes = await fetch('/api/admin/content?file=study-resources.json');
+      const resJson = await resRes.json();
+      if (resJson.success && resJson.data?.resources) {
+        setStudyResourcesList(resJson.data.resources);
+      }
+
+      // Fetch Partnerships & Logos
+      const partRes = await fetch('/api/admin/content?file=partnerships.json');
+      const partJson = await partRes.json();
+      if (partJson.success && partJson.data?.partners) {
+        setPartnershipsList(partJson.data.partners);
+      }
     } catch (err) {
       console.error('Failed to load content', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Fetch Media Library Images
+  const fetchMediaLibrary = async () => {
+    try {
+      const res = await fetch('/api/admin/upload');
+      const json = await res.json();
+      if (json.success && json.media) {
+        setMediaLibrary(json.media);
+      }
+    } catch (err) {
+      console.error('Failed to load media library', err);
+    }
+  };
+
+  // Upload New Image
+  const handleUploadImageFile = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    try {
+      const currentPass = localStorage.getItem('cms_admin_pass') || 'admin12345';
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('password', currentPass);
+
+      const res = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const json = await res.json();
+      if (json.success) {
+        setSaveStatus(`Image uploaded: ${json.filename}`);
+        fetchMediaLibrary();
+        if (mediaPickerTargetField) {
+          setEditFormData((prev) => ({ ...prev, [mediaPickerTargetField]: json.url }));
+          setIsMediaPickerOpen(false);
+        }
+      } else {
+        alert(`Upload error: ${json.error}`);
+      }
+    } catch (err) {
+      alert('Failed to upload image file.');
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  // Delete Media Image
+  const handleDeleteMediaImage = async (filename) => {
+    if (!confirm(`Are you sure you want to delete image "${filename}" from server storage?`)) return;
+
+    try {
+      const currentPass = localStorage.getItem('cms_admin_pass') || 'admin12345';
+      const res = await fetch(`/api/admin/upload?filename=${encodeURIComponent(filename)}&password=${encodeURIComponent(currentPass)}`, {
+        method: 'DELETE',
+      });
+      const json = await res.json();
+      if (json.success) {
+        setSaveStatus(`Image deleted: ${filename}`);
+        fetchMediaLibrary();
+      } else {
+        alert(`Delete error: ${json.error}`);
+      }
+    } catch (err) {
+      alert('Failed to delete media file.');
     }
   };
 
@@ -185,7 +305,22 @@ export default function CustomAdminCmsPage() {
     }
   };
 
-  // Modal Handlers
+  // Open Media Picker Modal for a specific field
+  const openMediaPickerFor = (fieldName) => {
+    setMediaPickerTargetField(fieldName);
+    fetchMediaLibrary();
+    setIsMediaPickerOpen(true);
+  };
+
+  // Select Image from Media Picker
+  const selectMediaImage = (url) => {
+    if (mediaPickerTargetField) {
+      setEditFormData((prev) => ({ ...prev, [mediaPickerTargetField]: url }));
+    }
+    setIsMediaPickerOpen(false);
+  };
+
+  // --- BLOG HANDLERS ---
   const openBlogEditor = (article = null) => {
     setEditingItemType('blog');
     setEditFormData(
@@ -198,6 +333,8 @@ export default function CustomAdminCmsPage() {
         intro: '',
         metaTitle: '',
         metaDescription: '',
+        published: true,
+        order: blogArticles.length + 1,
       }
     );
     setIsModalOpen(true);
@@ -222,17 +359,186 @@ export default function CustomAdminCmsPage() {
     }
   };
 
-  const openServiceEditor = (service) => {
+  // --- SERVICE HANDLERS ---
+  const openServiceEditor = (service = null) => {
     setEditingItemType('service');
-    setEditFormData(service);
+    setEditFormData(
+      service || {
+        slug: `new-service-${Date.now()}`,
+        title: '',
+        category: 'Academic Support',
+        tagline: '',
+        overview: '',
+        heroImage: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f',
+        published: true,
+        order: servicesList.length + 1,
+      }
+    );
     setIsModalOpen(true);
   };
 
   const handleSaveService = () => {
-    const updated = servicesList.map((s) => (s.slug === editFormData.slug ? editFormData : s));
+    let updated;
+    const existingIndex = servicesList.findIndex((s) => s.slug === editFormData.slug);
+    if (existingIndex >= 0) {
+      updated = [...servicesList];
+      updated[existingIndex] = editFormData;
+    } else {
+      updated = [...servicesList, editFormData];
+    }
     saveContentFile('services.json', { services: updated });
   };
 
+  const handleDeleteService = (slug) => {
+    if (confirm('Are you sure you want to delete this service?')) {
+      const updated = servicesList.filter((s) => s.slug !== slug);
+      saveContentFile('services.json', { services: updated });
+    }
+  };
+
+  // --- CERTIFICATION HANDLERS ---
+  const openCertEditor = (cert = null) => {
+    setEditingItemType('certification');
+    setEditFormData(
+      cert || {
+        slug: `new-cert-${Date.now()}`,
+        title: '',
+        category: 'Project Management',
+        description: '',
+        logo: '/logos/pmp.svg',
+        published: true,
+        order: certificationsList.length + 1,
+      }
+    );
+    setIsModalOpen(true);
+  };
+
+  const handleSaveCertification = () => {
+    let updated;
+    const existingIndex = certificationsList.findIndex((c) => c.slug === editFormData.slug);
+    if (existingIndex >= 0) {
+      updated = [...certificationsList];
+      updated[existingIndex] = editFormData;
+    } else {
+      updated = [...certificationsList, editFormData];
+    }
+    saveContentFile('certifications.json', { certifications: updated });
+  };
+
+  const handleDeleteCertification = (slug) => {
+    if (confirm('Are you sure you want to delete this certification?')) {
+      const updated = certificationsList.filter((c) => c.slug !== slug);
+      saveContentFile('certifications.json', { certifications: updated });
+    }
+  };
+
+  // --- EXAM PLATFORM HANDLERS ---
+  const openPlatformEditor = (platform = null) => {
+    setEditingItemType('platform');
+    setEditFormData(
+      platform || {
+        slug: `new-platform-${Date.now()}`,
+        title: '',
+        description: '',
+        logo: '/logos/respondus.svg',
+        published: true,
+        order: platformsList.length + 1,
+      }
+    );
+    setIsModalOpen(true);
+  };
+
+  const handleSavePlatform = () => {
+    let updated;
+    const existingIndex = platformsList.findIndex((p) => p.slug === editFormData.slug);
+    if (existingIndex >= 0) {
+      updated = [...platformsList];
+      updated[existingIndex] = editFormData;
+    } else {
+      updated = [...platformsList, editFormData];
+    }
+    saveContentFile('platforms.json', { platforms: updated });
+  };
+
+  const handleDeletePlatform = (slug) => {
+    if (confirm('Are you sure you want to delete this exam platform?')) {
+      const updated = platformsList.filter((p) => p.slug !== slug);
+      saveContentFile('platforms.json', { platforms: updated });
+    }
+  };
+
+  // --- STUDY RESOURCE HANDLERS ---
+  const openResourceEditor = (resource = null) => {
+    setEditingItemType('resource');
+    setEditFormData(
+      resource || {
+        slug: `new-resource-${Date.now()}`,
+        title: '',
+        category: 'Project Management',
+        description: '',
+        image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173',
+        published: true,
+        order: studyResourcesList.length + 1,
+      }
+    );
+    setIsModalOpen(true);
+  };
+
+  const handleSaveResource = () => {
+    let updated;
+    const existingIndex = studyResourcesList.findIndex((r) => r.slug === editFormData.slug);
+    if (existingIndex >= 0) {
+      updated = [...studyResourcesList];
+      updated[existingIndex] = editFormData;
+    } else {
+      updated = [...studyResourcesList, editFormData];
+    }
+    saveContentFile('study-resources.json', { resources: updated });
+  };
+
+  const handleDeleteResource = (slug) => {
+    if (confirm('Are you sure you want to delete this study resource?')) {
+      const updated = studyResourcesList.filter((r) => r.slug !== slug);
+      saveContentFile('study-resources.json', { resources: updated });
+    }
+  };
+
+  // --- PARTNERSHIP / LOGO HANDLERS ---
+  const openPartnershipEditor = (partner = null) => {
+    setEditingItemType('partnership');
+    setEditFormData(
+      partner || {
+        id: `partner-${Date.now()}`,
+        name: '',
+        logo: '/logos/pmp.svg',
+        url: '/',
+        published: true,
+        order: partnershipsList.length + 1,
+      }
+    );
+    setIsModalOpen(true);
+  };
+
+  const handleSavePartnership = () => {
+    let updated;
+    const existingIndex = partnershipsList.findIndex((p) => (p.id && p.id === editFormData.id) || p.name === editFormData.name);
+    if (existingIndex >= 0) {
+      updated = [...partnershipsList];
+      updated[existingIndex] = editFormData;
+    } else {
+      updated = [...partnershipsList, editFormData];
+    }
+    saveContentFile('partnerships.json', { partners: updated });
+  };
+
+  const handleDeletePartnership = (identifier) => {
+    if (confirm('Are you sure you want to delete this partner logo?')) {
+      const updated = partnershipsList.filter((p) => p.id !== identifier && p.name !== identifier);
+      saveContentFile('partnerships.json', { partners: updated });
+    }
+  };
+
+  // --- SETTINGS & INQUIRY HANDLERS ---
   const openSettingsEditor = () => {
     setEditingItemType('settings');
     setEditFormData({ ...siteSettings });
@@ -472,11 +778,11 @@ export default function CustomAdminCmsPage() {
           </div>
 
           {/* Navigation Links */}
-          <nav className="space-y-2">
+          <nav className="space-y-1.5 overflow-y-auto max-h-[calc(100vh-220px)] pr-1">
             <button
               type="button"
               onClick={() => setActiveTab('dashboard')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-xs transition-all ${
+              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold text-xs transition-all ${
                 activeTab === 'dashboard'
                   ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50'
                   : 'hover:bg-purple-900/40 text-purple-300 hover:text-white'
@@ -490,7 +796,7 @@ export default function CustomAdminCmsPage() {
             <button
               type="button"
               onClick={() => setActiveTab('inquiries')}
-              className={`w-full flex items-center justify-between px-4 py-3 rounded-xl font-bold text-xs transition-all ${
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-bold text-xs transition-all ${
                 activeTab === 'inquiries'
                   ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50'
                   : 'hover:bg-purple-900/40 text-purple-300 hover:text-white'
@@ -512,7 +818,7 @@ export default function CustomAdminCmsPage() {
             <button
               type="button"
               onClick={() => setActiveTab('blogs')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-xs transition-all ${
+              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold text-xs transition-all ${
                 activeTab === 'blogs'
                   ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50'
                   : 'hover:bg-purple-900/40 text-purple-300 hover:text-white'
@@ -525,7 +831,7 @@ export default function CustomAdminCmsPage() {
             <button
               type="button"
               onClick={() => setActiveTab('pages')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-xs transition-all ${
+              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold text-xs transition-all ${
                 activeTab === 'pages'
                   ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50'
                   : 'hover:bg-purple-900/40 text-purple-300 hover:text-white'
@@ -538,7 +844,7 @@ export default function CustomAdminCmsPage() {
             <button
               type="button"
               onClick={() => setActiveTab('services')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-xs transition-all ${
+              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold text-xs transition-all ${
                 activeTab === 'services'
                   ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50'
                   : 'hover:bg-purple-900/40 text-purple-300 hover:text-white'
@@ -548,11 +854,67 @@ export default function CustomAdminCmsPage() {
               <span>Services ({servicesList.length})</span>
             </button>
 
+            {/* CERTIFICATIONS MANAGER TAB */}
+            <button
+              type="button"
+              onClick={() => setActiveTab('certifications')}
+              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold text-xs transition-all ${
+                activeTab === 'certifications'
+                  ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50'
+                  : 'hover:bg-purple-900/40 text-purple-300 hover:text-white'
+              }`}
+            >
+              <Award className="w-4 h-4" />
+              <span>Certifications ({certificationsList.length})</span>
+            </button>
+
+            {/* EXAM PLATFORMS MANAGER TAB */}
+            <button
+              type="button"
+              onClick={() => setActiveTab('platforms')}
+              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold text-xs transition-all ${
+                activeTab === 'platforms'
+                  ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50'
+                  : 'hover:bg-purple-900/40 text-purple-300 hover:text-white'
+              }`}
+            >
+              <Cpu className="w-4 h-4" />
+              <span>Exam Platforms ({platformsList.length})</span>
+            </button>
+
+            {/* STUDY RESOURCES MANAGER TAB */}
+            <button
+              type="button"
+              onClick={() => setActiveTab('resources')}
+              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold text-xs transition-all ${
+                activeTab === 'resources'
+                  ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50'
+                  : 'hover:bg-purple-900/40 text-purple-300 hover:text-white'
+              }`}
+            >
+              <FolderOpen className="w-4 h-4" />
+              <span>Study Resources ({studyResourcesList.length})</span>
+            </button>
+
+            {/* PARTNERSHIPS & LOGOS TAB */}
+            <button
+              type="button"
+              onClick={() => setActiveTab('partnerships')}
+              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold text-xs transition-all ${
+                activeTab === 'partnerships'
+                  ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50'
+                  : 'hover:bg-purple-900/40 text-purple-300 hover:text-white'
+              }`}
+            >
+              <Sparkles className="w-4 h-4" />
+              <span>Partners & Logos ({partnershipsList.length})</span>
+            </button>
+
             {/* DOCUMENTS & FAQS TAB */}
             <button
               type="button"
               onClick={() => setActiveTab('faqs')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-xs transition-all ${
+              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold text-xs transition-all ${
                 activeTab === 'faqs'
                   ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50'
                   : 'hover:bg-purple-900/40 text-purple-300 hover:text-white'
@@ -562,10 +924,20 @@ export default function CustomAdminCmsPage() {
               <span>Documents & FAQs ({allFlattenedFaqs.length})</span>
             </button>
 
+            {/* MEDIA LIBRARY BUTTON */}
+            <button
+              type="button"
+              onClick={() => openMediaPickerFor('')}
+              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold text-xs text-purple-300 hover:bg-purple-900/40 hover:text-white transition-all"
+            >
+              <ImageIcon className="w-4 h-4" />
+              <span>Media Library ({mediaLibrary.length})</span>
+            </button>
+
             <button
               type="button"
               onClick={() => setActiveTab('settings')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-xs transition-all ${
+              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold text-xs transition-all ${
                 activeTab === 'settings'
                   ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50'
                   : 'hover:bg-purple-900/40 text-purple-300 hover:text-white'
@@ -637,22 +1009,235 @@ export default function CustomAdminCmsPage() {
               </div>
 
               <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm space-y-2">
-                <span className="text-xs font-bold text-slate-400 uppercase">Active FAQs</span>
-                <div className="text-3xl font-black text-purple-900">{allFlattenedFaqs.length}</div>
-                <span className="text-[11px] text-emerald-600 font-bold">Across {faqsList.length} Categories</span>
+                <span className="text-xs font-bold text-slate-400 uppercase">Certifications</span>
+                <div className="text-3xl font-black text-purple-900">{certificationsList.length}</div>
+                <span className="text-[11px] text-emerald-600 font-bold">10 Active Programs</span>
               </div>
 
               <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm space-y-2">
-                <span className="text-xs font-bold text-slate-400 uppercase">Blog Articles</span>
-                <div className="text-3xl font-black text-purple-900">{blogArticles.length}</div>
-                <span className="text-[11px] text-emerald-600 font-bold">Live & Indexable</span>
+                <span className="text-xs font-bold text-slate-400 uppercase">Exam Platforms</span>
+                <div className="text-3xl font-black text-purple-900">{platformsList.length}</div>
+                <span className="text-[11px] text-emerald-600 font-bold">9 Supported Softwares</span>
               </div>
 
               <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm space-y-2">
-                <span className="text-xs font-bold text-slate-400 uppercase">Active Services</span>
-                <div className="text-3xl font-black text-purple-900">{servicesList.length}</div>
-                <span className="text-[11px] text-emerald-600 font-bold">12 Active Programs</span>
+                <span className="text-xs font-bold text-slate-400 uppercase">Media Library</span>
+                <div className="text-3xl font-black text-purple-900">{mediaLibrary.length}</div>
+                <span className="text-[11px] text-emerald-600 font-bold">Uploaded Images</span>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB: CERTIFICATIONS MANAGER */}
+        {activeTab === 'certifications' && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-black text-slate-900">Certifications Manager</h1>
+                <p className="text-xs text-slate-500">Manage professional certification preparation programs, logos, and descriptions</p>
+              </div>
+              <button
+                onClick={() => openCertEditor()}
+                className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md flex items-center gap-2"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Certification</span>
+              </button>
+            </div>
+
+            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-slate-50 border-b border-slate-200 text-[11px] uppercase font-bold text-slate-500">
+                    <th className="py-3.5 px-6">Title</th>
+                    <th className="py-3.5 px-6">Category</th>
+                    <th className="py-3.5 px-6">Slug</th>
+                    <th className="py-3.5 px-6">Status</th>
+                    <th className="py-3.5 px-6 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 text-xs">
+                  {certificationsList.map((cert) => (
+                    <tr key={cert.slug} className="hover:bg-slate-50/80 transition-colors">
+                      <td className="py-4 px-6 font-bold text-slate-900">{cert.title}</td>
+                      <td className="py-4 px-6"><span className="px-2.5 py-1 rounded-full bg-blue-50 text-blue-800 font-bold text-[10px]">{cert.category}</span></td>
+                      <td className="py-4 px-6 font-mono text-slate-500 text-[11px]">{cert.slug}</td>
+                      <td className="py-4 px-6">
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${cert.published !== false ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}`}>
+                          {cert.published !== false ? 'Published' : 'Unpublished'}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6 text-right space-x-3">
+                        <button onClick={() => openCertEditor(cert)} className="text-purple-700 font-bold hover:underline inline-flex items-center gap-1">
+                          <Edit className="w-3.5 h-3.5" /> Edit
+                        </button>
+                        <button onClick={() => handleDeleteCertification(cert.slug)} className="text-rose-600 font-bold hover:underline inline-flex items-center gap-1">
+                          <Trash2 className="w-3.5 h-3.5" /> Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* TAB: EXAM PLATFORMS MANAGER */}
+        {activeTab === 'platforms' && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-black text-slate-900">Exam Platforms Manager</h1>
+                <p className="text-xs text-slate-500">Manage supported assessment platforms, technical guides, and requirements</p>
+              </div>
+              <button
+                onClick={() => openPlatformEditor()}
+                className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md flex items-center gap-2"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Exam Platform</span>
+              </button>
+            </div>
+
+            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-slate-50 border-b border-slate-200 text-[11px] uppercase font-bold text-slate-500">
+                    <th className="py-3.5 px-6">Title</th>
+                    <th className="py-3.5 px-6">Slug</th>
+                    <th className="py-3.5 px-6">Status</th>
+                    <th className="py-3.5 px-6 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 text-xs">
+                  {platformsList.map((plat) => (
+                    <tr key={plat.slug} className="hover:bg-slate-50/80 transition-colors">
+                      <td className="py-4 px-6 font-bold text-slate-900">{plat.title}</td>
+                      <td className="py-4 px-6 font-mono text-slate-500 text-[11px]">{plat.slug}</td>
+                      <td className="py-4 px-6">
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${plat.published !== false ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}`}>
+                          {plat.published !== false ? 'Published' : 'Unpublished'}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6 text-right space-x-3">
+                        <button onClick={() => openPlatformEditor(plat)} className="text-purple-700 font-bold hover:underline inline-flex items-center gap-1">
+                          <Edit className="w-3.5 h-3.5" /> Edit
+                        </button>
+                        <button onClick={() => handleDeletePlatform(plat.slug)} className="text-rose-600 font-bold hover:underline inline-flex items-center gap-1">
+                          <Trash2 className="w-3.5 h-3.5" /> Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* TAB: STUDY RESOURCES MANAGER */}
+        {activeTab === 'resources' && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-black text-slate-900">Study Resources Manager</h1>
+                <p className="text-xs text-slate-500">Manage revision guides, formula sheets, and study material catalogues</p>
+              </div>
+              <button
+                onClick={() => openResourceEditor()}
+                className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md flex items-center gap-2"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Study Resource</span>
+              </button>
+            </div>
+
+            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-slate-50 border-b border-slate-200 text-[11px] uppercase font-bold text-slate-500">
+                    <th className="py-3.5 px-6">Title</th>
+                    <th className="py-3.5 px-6">Category</th>
+                    <th className="py-3.5 px-6">Slug</th>
+                    <th className="py-3.5 px-6">Status</th>
+                    <th className="py-3.5 px-6 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 text-xs">
+                  {studyResourcesList.map((res) => (
+                    <tr key={res.slug} className="hover:bg-slate-50/80 transition-colors">
+                      <td className="py-4 px-6 font-bold text-slate-900">{res.title}</td>
+                      <td className="py-4 px-6"><span className="px-2.5 py-1 rounded-full bg-blue-50 text-blue-800 font-bold text-[10px]">{res.category}</span></td>
+                      <td className="py-4 px-6 font-mono text-slate-500 text-[11px]">{res.slug}</td>
+                      <td className="py-4 px-6">
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${res.published !== false ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}`}>
+                          {res.published !== false ? 'Published' : 'Unpublished'}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6 text-right space-x-3">
+                        <button onClick={() => openResourceEditor(res)} className="text-purple-700 font-bold hover:underline inline-flex items-center gap-1">
+                          <Edit className="w-3.5 h-3.5" /> Edit
+                        </button>
+                        <button onClick={() => handleDeleteResource(res.slug)} className="text-rose-600 font-bold hover:underline inline-flex items-center gap-1">
+                          <Trash2 className="w-3.5 h-3.5" /> Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* TAB: PARTNERSHIPS & LOGOS MANAGER */}
+        {activeTab === 'partnerships' && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-black text-slate-900">Partnerships & Logos Manager</h1>
+                <p className="text-xs text-slate-500">Manage partner logos, order, target links, and homepage slider visibility</p>
+              </div>
+              <button
+                onClick={() => openPartnershipEditor()}
+                className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md flex items-center gap-2"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Partner Logo</span>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {partnershipsList.map((partner, idx) => (
+                <div key={partner.id || idx} className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-3 flex flex-col justify-between">
+                  <div className="space-y-2">
+                    <div className="w-16 h-12 rounded-xl bg-slate-50 border border-slate-200 p-2 flex items-center justify-center mx-auto">
+                      <img src={partner.logo} alt={partner.name} className="max-h-full max-w-full object-contain" />
+                    </div>
+                    <div className="text-center">
+                      <h4 className="font-extrabold text-sm text-slate-900">{partner.name}</h4>
+                      <span className="font-mono text-[10px] text-slate-400 block truncate">{partner.url}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs font-bold">
+                    <span className={`px-2 py-0.5 rounded text-[10px] ${partner.published !== false ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}`}>
+                      {partner.published !== false ? 'Published' : 'Unpublished'}
+                    </span>
+
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => openPartnershipEditor(partner)} className="text-purple-700 hover:underline">
+                        Edit
+                      </button>
+                      <button onClick={() => handleDeletePartnership(partner.id || partner.name)} className="text-rose-600 hover:underline">
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}
@@ -675,7 +1260,6 @@ export default function CustomAdminCmsPage() {
               </button>
             </div>
 
-            {/* TOP NAVBAR ANNOUNCEMENT MANAGER SUMMARY CARD */}
             <div className="bg-gradient-to-r from-[#1E1035] to-purple-900 text-white p-6 rounded-2xl shadow-md space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-xs font-bold text-purple-300 uppercase tracking-wider">
@@ -693,7 +1277,6 @@ export default function CustomAdminCmsPage() {
               </p>
             </div>
 
-            {/* PAGES CARDS GRID WITH EDIT CONTENT & SEO BUTTONS */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {ALL_SITE_PAGES.map((pg) => {
                 const pageInfo = pagesData[pg.key] || {};
@@ -760,7 +1343,7 @@ export default function CustomAdminCmsPage() {
           </div>
         )}
 
-        {/* TAB 5: FAQS & DOCUMENTS CATALOGUE (SEPARATED BY PAGE LOCATION & EDITABLE) */}
+        {/* TAB 5: FAQS & DOCUMENTS CATALOGUE */}
         {activeTab === 'faqs' && (
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -793,7 +1376,6 @@ export default function CustomAdminCmsPage() {
               </div>
             </div>
 
-            {/* PAGE LOCATION FILTER BUTTONS */}
             <div className="space-y-2 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
               <span className="text-[11px] uppercase font-bold text-slate-400 tracking-wider flex items-center gap-1.5">
                 <MapPin className="w-3.5 h-3.5 text-purple-600" /> Filter FAQs by Website Page Location:
@@ -816,7 +1398,6 @@ export default function CustomAdminCmsPage() {
               </div>
             </div>
 
-            {/* FAQS DATA TABLE WITH INLINE EDIT BUTTONS */}
             <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
               <table className="w-full text-left border-collapse">
                 <thead>
@@ -1092,7 +1673,20 @@ export default function CustomAdminCmsPage() {
         {/* TAB 4: SERVICES CATALOGUE */}
         {activeTab === 'services' && (
           <div className="space-y-6">
-            <h1 className="text-2xl font-black text-slate-900">Services Directory</h1>
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-black text-slate-900">Services Directory</h1>
+                <p className="text-xs text-slate-500">Manage learning support programs, descriptions, and hero images</p>
+              </div>
+              <button
+                onClick={() => openServiceEditor()}
+                className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md flex items-center gap-2"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Service</span>
+              </button>
+            </div>
+
             <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
               <table className="w-full text-left border-collapse">
                 <thead>
@@ -1100,6 +1694,7 @@ export default function CustomAdminCmsPage() {
                     <th className="py-3.5 px-6">Title</th>
                     <th className="py-3.5 px-6">Category</th>
                     <th className="py-3.5 px-6">Tagline</th>
+                    <th className="py-3.5 px-6">Status</th>
                     <th className="py-3.5 px-6 text-right">Action</th>
                   </tr>
                 </thead>
@@ -1109,9 +1704,17 @@ export default function CustomAdminCmsPage() {
                       <td className="py-4 px-6 font-bold text-slate-900">{service.title}</td>
                       <td className="py-4 px-6"><span className="px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-bold text-[10px]">{service.category}</span></td>
                       <td className="py-4 px-6 text-slate-500 max-w-sm truncate">{service.tagline || service.overview}</td>
-                      <td className="py-4 px-6 text-right">
-                        <button onClick={() => openServiceEditor(service)} className="text-purple-700 font-bold inline-flex items-center gap-1">
+                      <td className="py-4 px-6">
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${service.published !== false ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}`}>
+                          {service.published !== false ? 'Published' : 'Unpublished'}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6 text-right space-x-3">
+                        <button onClick={() => openServiceEditor(service)} className="text-purple-700 font-bold hover:underline inline-flex items-center gap-1">
                           <Edit className="w-3.5 h-3.5" /> Edit
+                        </button>
+                        <button onClick={() => handleDeleteService(service.slug)} className="text-rose-600 font-bold hover:underline inline-flex items-center gap-1">
+                          <Trash2 className="w-3.5 h-3.5" /> Delete
                         </button>
                       </td>
                     </tr>
@@ -1157,6 +1760,78 @@ export default function CustomAdminCmsPage() {
         )}
       </main>
 
+      {/* MEDIA LIBRARY & IMAGE PICKER MODAL */}
+      {isMediaPickerOpen && (
+        <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 max-w-3xl w-full shadow-2xl space-y-6 my-8">
+            <div className="flex items-center justify-between border-b pb-4">
+              <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
+                <ImageIcon className="w-5 h-5 text-purple-600" />
+                <span>Media Library & Image Upload</span>
+              </h2>
+              <button onClick={() => setIsMediaPickerOpen(false)} className="p-1 rounded-lg text-slate-400 hover:bg-slate-100">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* UPLOAD NEW IMAGE DROPZONE */}
+            <div className="p-6 border-2 border-dashed border-purple-300 bg-purple-50/50 rounded-2xl text-center space-y-3">
+              <UploadCloud className="w-10 h-10 text-purple-600 mx-auto" />
+              <div>
+                <span className="font-extrabold text-sm text-slate-900 block">Upload New Image File</span>
+                <span className="text-xs text-slate-500">Supports PNG, JPG, WEBP, SVG, GIF (Max file size: 5MB)</span>
+              </div>
+
+              <label className="inline-block px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs rounded-xl cursor-pointer shadow-md transition-colors">
+                {uploadingImage ? 'Uploading Image...' : 'Choose File to Upload'}
+                <input
+                  type="file"
+                  accept="image/*,.svg"
+                  onChange={handleUploadImageFile}
+                  className="hidden"
+                  disabled={uploadingImage}
+                />
+              </label>
+            </div>
+
+            {/* MEDIA GALLERY GRID */}
+            <div className="space-y-2">
+              <span className="font-extrabold text-xs text-slate-700 block">Server Storage Gallery ({mediaLibrary.length} files)</span>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-h-64 overflow-y-auto p-1">
+                {mediaLibrary.map((item) => (
+                  <div key={item.filename} className="group border border-slate-200 rounded-xl p-2 bg-slate-50 hover:border-purple-500 flex flex-col justify-between space-y-2">
+                    <div className="h-20 bg-white rounded-lg border flex items-center justify-center p-1 overflow-hidden">
+                      <img src={item.url} alt={item.filename} className="max-h-full max-w-full object-contain" />
+                    </div>
+                    <span className="font-mono text-[10px] text-slate-600 truncate block">{item.filename}</span>
+                    <div className="flex items-center justify-between pt-1 border-t">
+                      <button
+                        onClick={() => selectMediaImage(item.url)}
+                        className="text-[10px] font-bold text-purple-700 hover:underline inline-flex items-center gap-1"
+                      >
+                        <Check className="w-3 h-3" /> Select
+                      </button>
+                      <button
+                        onClick={() => handleDeleteMediaImage(item.filename)}
+                        className="text-[10px] font-bold text-rose-600 hover:underline"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex justify-end pt-4 border-t">
+              <button onClick={() => setIsMediaPickerOpen(false)} className="px-4 py-2 border rounded-xl text-xs font-bold text-slate-600">
+                Close Media Library
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* EDITING / VIEWING MODAL */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
@@ -1165,6 +1840,10 @@ export default function CustomAdminCmsPage() {
               <h2 className="text-lg font-black text-slate-900">
                 {editingItemType === 'blog' && (editFormData.slug ? 'Edit Article' : 'Create New Article')}
                 {editingItemType === 'service' && 'Edit Service Details'}
+                {editingItemType === 'certification' && 'Edit Certification Program'}
+                {editingItemType === 'platform' && 'Edit Exam Platform'}
+                {editingItemType === 'resource' && 'Edit Study Resource'}
+                {editingItemType === 'partnership' && 'Edit Partner Logo'}
                 {editingItemType === 'settings' && 'Edit Site Settings & SEO'}
                 {editingItemType === 'inquiry' && 'Customer Form Inquiry Details'}
                 {editingItemType === 'faq' && 'Edit / Add FAQ Item'}
@@ -1175,6 +1854,272 @@ export default function CustomAdminCmsPage() {
                 <X className="w-5 h-5" />
               </button>
             </div>
+
+            {/* CERTIFICATION FORM FIELDS */}
+            {editingItemType === 'certification' && (
+              <div className="space-y-4 text-xs">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="font-bold text-slate-700 block mb-1">Certification Title</label>
+                    <input
+                      type="text"
+                      value={editFormData.title || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
+                      className="w-full px-3 py-2 border rounded-xl"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-bold text-slate-700 block mb-1">Category</label>
+                    <input
+                      type="text"
+                      value={editFormData.category || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
+                      className="w-full px-3 py-2 border rounded-xl"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Slug ID</label>
+                  <input
+                    type="text"
+                    value={editFormData.slug || ''}
+                    onChange={(e) => setEditFormData({ ...editFormData, slug: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-xl font-mono text-[11px]"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Logo / Badge Image URL</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={editFormData.logo || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, logo: e.target.value })}
+                      className="flex-grow px-3 py-2 border rounded-xl font-mono text-[11px]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => openMediaPickerFor('logo')}
+                      className="px-3 py-2 bg-purple-600 text-white font-bold rounded-xl text-xs hover:bg-purple-700"
+                    >
+                      Choose Media
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Program Description</label>
+                  <textarea
+                    rows={3}
+                    value={editFormData.description || ''}
+                    onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-xl"
+                  />
+                </div>
+
+                <div className="flex items-center gap-4 border-t pt-3">
+                  <label className="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
+                    <input
+                      type="checkbox"
+                      checked={editFormData.published !== false}
+                      onChange={(e) => setEditFormData({ ...editFormData, published: e.target.checked })}
+                      className="w-4 h-4 rounded text-purple-600"
+                    />
+                    <span>Published on Public Website</span>
+                  </label>
+                </div>
+              </div>
+            )}
+
+            {/* EXAM PLATFORM FORM FIELDS */}
+            {editingItemType === 'platform' && (
+              <div className="space-y-4 text-xs">
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Platform Title</label>
+                  <input
+                    type="text"
+                    value={editFormData.title || ''}
+                    onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-xl"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Slug ID</label>
+                  <input
+                    type="text"
+                    value={editFormData.slug || ''}
+                    onChange={(e) => setEditFormData({ ...editFormData, slug: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-xl font-mono text-[11px]"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Platform Logo Image URL</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={editFormData.logo || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, logo: e.target.value })}
+                      className="flex-grow px-3 py-2 border rounded-xl font-mono text-[11px]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => openMediaPickerFor('logo')}
+                      className="px-3 py-2 bg-purple-600 text-white font-bold rounded-xl text-xs hover:bg-purple-700"
+                    >
+                      Choose Media
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Overview Description</label>
+                  <textarea
+                    rows={3}
+                    value={editFormData.description || ''}
+                    onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-xl"
+                  />
+                </div>
+
+                <div className="flex items-center gap-4 border-t pt-3">
+                  <label className="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
+                    <input
+                      type="checkbox"
+                      checked={editFormData.published !== false}
+                      onChange={(e) => setEditFormData({ ...editFormData, published: e.target.checked })}
+                      className="w-4 h-4 rounded text-purple-600"
+                    />
+                    <span>Published on Public Website</span>
+                  </label>
+                </div>
+              </div>
+            )}
+
+            {/* STUDY RESOURCE FORM FIELDS */}
+            {editingItemType === 'resource' && (
+              <div className="space-y-4 text-xs">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="font-bold text-slate-700 block mb-1">Resource Title</label>
+                    <input
+                      type="text"
+                      value={editFormData.title || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
+                      className="w-full px-3 py-2 border rounded-xl"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-bold text-slate-700 block mb-1">Category</label>
+                    <input
+                      type="text"
+                      value={editFormData.category || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
+                      className="w-full px-3 py-2 border rounded-xl"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Cover Image URL</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={editFormData.image || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, image: e.target.value })}
+                      className="flex-grow px-3 py-2 border rounded-xl font-mono text-[11px]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => openMediaPickerFor('image')}
+                      className="px-3 py-2 bg-purple-600 text-white font-bold rounded-xl text-xs hover:bg-purple-700"
+                    >
+                      Choose Media
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Description</label>
+                  <textarea
+                    rows={3}
+                    value={editFormData.description || ''}
+                    onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-xl"
+                  />
+                </div>
+
+                <div className="flex items-center gap-4 border-t pt-3">
+                  <label className="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
+                    <input
+                      type="checkbox"
+                      checked={editFormData.published !== false}
+                      onChange={(e) => setEditFormData({ ...editFormData, published: e.target.checked })}
+                      className="w-4 h-4 rounded text-purple-600"
+                    />
+                    <span>Published on Public Website</span>
+                  </label>
+                </div>
+              </div>
+            )}
+
+            {/* PARTNERSHIP FORM FIELDS */}
+            {editingItemType === 'partnership' && (
+              <div className="space-y-4 text-xs">
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Partner Name</label>
+                  <input
+                    type="text"
+                    value={editFormData.name || ''}
+                    onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-xl"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Partner Logo URL</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={editFormData.logo || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, logo: e.target.value })}
+                      className="flex-grow px-3 py-2 border rounded-xl font-mono text-[11px]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => openMediaPickerFor('logo')}
+                      className="px-3 py-2 bg-purple-600 text-white font-bold rounded-xl text-xs hover:bg-purple-700"
+                    >
+                      Choose Media
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Target Web Link / URL</label>
+                  <input
+                    type="text"
+                    value={editFormData.url || ''}
+                    onChange={(e) => setEditFormData({ ...editFormData, url: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-xl font-mono text-[11px]"
+                  />
+                </div>
+
+                <div className="flex items-center gap-4 border-t pt-3">
+                  <label className="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
+                    <input
+                      type="checkbox"
+                      checked={editFormData.published !== false}
+                      onChange={(e) => setEditFormData({ ...editFormData, published: e.target.checked })}
+                      className="w-4 h-4 rounded text-purple-600"
+                    />
+                    <span>Published in Homepage Slider</span>
+                  </label>
+                </div>
+              </div>
+            )}
 
             {/* PAGE CONTENT & SEO EDITOR MODAL */}
             {editingItemType === 'page' && (
@@ -1289,7 +2234,7 @@ export default function CustomAdminCmsPage() {
               </div>
             )}
 
-            {/* FAQ EDITOR MODAL (WITH PAGE LOCATION SELECTOR) */}
+            {/* FAQ EDITOR MODAL */}
             {editingItemType === 'faq' && (
               <div className="space-y-4 text-xs">
                 <div className="grid grid-cols-2 gap-4">
@@ -1449,31 +2394,30 @@ export default function CustomAdminCmsPage() {
                 </div>
 
                 <div>
+                  <label className="font-bold text-slate-700 block mb-1">Cover Image URL</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={editFormData.heroImage || editFormData.image || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, heroImage: e.target.value })}
+                      className="flex-grow px-3 py-2 border rounded-xl font-mono text-[11px]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => openMediaPickerFor('heroImage')}
+                      className="px-3 py-2 bg-purple-600 text-white font-bold rounded-xl text-xs hover:bg-purple-700"
+                    >
+                      Choose Media
+                    </button>
+                  </div>
+                </div>
+
+                <div>
                   <label className="font-bold text-slate-700 block mb-1">Article Excerpt</label>
                   <textarea
                     rows={3}
                     value={editFormData.excerpt || ''}
                     onChange={(e) => setEditFormData({ ...editFormData, excerpt: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
-                  />
-                </div>
-
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">SEO Meta Title (Optional Override)</label>
-                  <input
-                    type="text"
-                    value={editFormData.metaTitle || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, metaTitle: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
-                  />
-                </div>
-
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">SEO Meta Description (Optional Override)</label>
-                  <textarea
-                    rows={2}
-                    value={editFormData.metaDescription || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, metaDescription: e.target.value })}
                     className="w-full px-3 py-2 border rounded-xl"
                   />
                 </div>
@@ -1491,6 +2435,24 @@ export default function CustomAdminCmsPage() {
                     onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
                     className="w-full px-3 py-2 border rounded-xl"
                   />
+                </div>
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Hero Image URL</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={editFormData.heroImage || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, heroImage: e.target.value })}
+                      className="flex-grow px-3 py-2 border rounded-xl font-mono text-[11px]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => openMediaPickerFor('heroImage')}
+                      className="px-3 py-2 bg-purple-600 text-white font-bold rounded-xl text-xs hover:bg-purple-700"
+                    >
+                      Choose Media
+                    </button>
+                  </div>
                 </div>
                 <div>
                   <label className="font-bold text-slate-700 block mb-1">Tagline</label>
@@ -1560,6 +2522,10 @@ export default function CustomAdminCmsPage() {
                   onClick={() => {
                     if (editingItemType === 'blog') handleSaveBlog();
                     if (editingItemType === 'service') handleSaveService();
+                    if (editingItemType === 'certification') handleSaveCertification();
+                    if (editingItemType === 'platform') handleSavePlatform();
+                    if (editingItemType === 'resource') handleSaveResource();
+                    if (editingItemType === 'partnership') handleSavePartnership();
                     if (editingItemType === 'settings') handleSaveSettings();
                     if (editingItemType === 'faq') handleSaveFaq();
                     if (editingItemType === 'page') handleSavePage();
