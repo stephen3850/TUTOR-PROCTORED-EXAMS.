@@ -1,0 +1,18 @@
+{
+  "topBanner": {
+    "supportText": "24/7 Support Available",
+    "contactText": "Contact Our Team",
+    "disclaimerText": "Academic Disclaimer",
+    "mainAnnouncement": "Ethical Educational Support & Proctoring Software Technical Guidance for Students Worldwide"
+  },
+  "navLinks": [
+    { "label": "Home", "href": "/", "enabled": true },
+    { "label": "About Us", "href": "/about", "enabled": true },
+    { "label": "Our Services", "href": "/services", "enabled": true },
+    { "label": "Exam Platforms", "href": "/exam-platforms", "enabled": true },
+    { "label": "Certifications", "href": "/certifications", "enabled": true },
+    { "label": "Study Resources", "href": "/study-resources", "enabled": true },
+    { "label": "Blog", "href": "/blog", "enabled": true },
+    { "label": "FAQ", "href": "/faq", "enabled": true }
+  ]
+}

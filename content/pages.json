@@ -1,0 +1,76 @@
+{
+  "pages": {
+    "home": {
+      "slug": "/",
+      "name": "Homepage",
+      "title": "TUTOR PROCTORED EXAMS",
+      "subtitle": "Ethical Educational Support & Proctoring Software Technical Guidance for Students Worldwide",
+      "metaTitle": "TUTOR PROCTORED EXAMS | Ethical Tutoring & Exam Preparation",
+      "metaDescription": "Premier online tutoring, practice exams, professional certification prep, and legitimate proctoring software technical guidance for students and working professionals worldwide.",
+      "keywords": "online tutoring, exam preparation, practice exams, proctoring software compatibility"
+    },
+    "about": {
+      "slug": "/about",
+      "name": "About Us",
+      "title": "About TUTOR PROCTORED EXAMS",
+      "subtitle": "Discover our mission, educational support services, and strict commitment to academic integrity.",
+      "metaTitle": "About Us | Ethical Educational Support & Tutoring | TUTOR PROCTORED EXAMS",
+      "metaDescription": "Learn about TUTOR PROCTORED EXAMS, our 1-on-1 educational tutoring mission, academic integrity principles, and professional certification coaching.",
+      "keywords": "ethical academic tutoring, educational support brand, 1-on-1 tutoring"
+    },
+    "services": {
+      "slug": "/services",
+      "name": "Services Directory",
+      "title": "Educational Support Services",
+      "subtitle": "Comprehensive 1-on-1 tutoring, examination preparation, practice question banks, and technical guidance.",
+      "metaTitle": "Educational Support Services | TUTOR PROCTORED EXAMS",
+      "metaDescription": "Explore our 6 core educational services: 1-on-1 Online Tutoring, Academic Exam Prep, Practice Questions, Certification Coaching, and Study Planning.",
+      "keywords": "educational services, 1-on-1 tutoring, exam prep, practice tests"
+    },
+    "exam-platforms": {
+      "slug": "/exam-platforms",
+      "name": "Exam Platforms",
+      "title": "Examination Platforms & Technical Guides",
+      "subtitle": "Explore preparation resources, software requirements, and technical guidance for online assessment platforms.",
+      "metaTitle": "Examination Platforms & Technical Guides | TUTOR PROCTORED EXAMS",
+      "metaDescription": "Technical guides, operating system requirements, and pre-test readiness advice for Respondus, Examplify, Honorlock, ProctorU, and Proctorio.",
+      "keywords": "proctoring software compatibility, LockDown Browser guide, Examplify system check"
+    },
+    "certifications": {
+      "slug": "/certifications",
+      "name": "Certifications",
+      "title": "Professional Certification Preparation Directory",
+      "subtitle": "Targeted 1-on-1 coaching for PMP, CAPM, CompTIA, AAPC CPC, CCMA, and healthcare credentials.",
+      "metaTitle": "Professional Certification Preparation Directory | TUTOR PROCTORED EXAMS",
+      "metaDescription": "Directory of coaching programs and study guides for PMP, CAPM, CompTIA, AAPC CPC, CCMA, SHRM, CNA, and Pharmacy Technician credentials.",
+      "keywords": "PMP certification prep, CompTIA Security+ study, AAPC CPC medical coding"
+    },
+    "study-resources": {
+      "slug": "/study-resources",
+      "name": "Study Resources",
+      "title": "Study Resources & Revision Guides Library",
+      "subtitle": "Access high-yield revision notes, flashcard decks, formula cheat sheets, and practice question banks.",
+      "metaTitle": "Study Resources & Revision Guides Library | TUTOR PROCTORED EXAMS",
+      "metaDescription": "Access curated revision notes, flashcard decks, formula cheat sheets, and practice question banks for PMP, CompTIA, CPC, and CCMA.",
+      "keywords": "certification study materials, PMP formula sheet, CompTIA port flashcards"
+    },
+    "faq": {
+      "slug": "/faq",
+      "name": "FAQ Page",
+      "title": "Frequently Asked Questions",
+      "subtitle": "Find answers to common questions about our tutoring, technical guidance, and inquiry process.",
+      "metaTitle": "Frequently Asked Questions (FAQ) | TUTOR PROCTORED EXAMS",
+      "metaDescription": "Answers to common questions about 1-on-1 tutoring, examination software technical guidance, academic integrity policies, and inquiry steps.",
+      "keywords": "tutor proctoring FAQ, academic integrity policy, tutoring questions"
+    },
+    "contact": {
+      "slug": "/contact",
+      "name": "Contact Page",
+      "title": "Contact Us & Submit Inquiry",
+      "subtitle": "Submit an inquiry about your course, examination platform, or target certification. Speak with an advisor within 1 business day.",
+      "metaTitle": "Contact Us & Submit Inquiry | TUTOR PROCTORED EXAMS",
+      "metaDescription": "Submit an inquiry about your course, examination platform, or target certification. Speak with an advisor within 1 business day.",
+      "keywords": "contact tutor proctored exams, tutoring inquiry form, advisor contact"
+    }
+  }
+}

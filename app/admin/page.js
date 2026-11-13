@@ -29,6 +29,8 @@ import {
   Calendar,
   MessageSquare,
   ExternalLink,
+  Navigation,
+  Sparkles,
 } from 'lucide-react';
 
 export default function CustomAdminCmsPage() {
@@ -46,6 +48,8 @@ export default function CustomAdminCmsPage() {
   const [faqsList, setFaqsList] = useState([]);
   const [siteSettings, setSiteSettings] = useState({});
   const [inquiriesList, setInquiriesList] = useState([]);
+  const [pagesData, setPagesData] = useState({});
+  const [navData, setNavData] = useState({ topBanner: {}, navLinks: [] });
 
   // Loading & Notification States
   const [loading, setLoading] = useState(false);
@@ -56,7 +60,7 @@ export default function CustomAdminCmsPage() {
 
   // Editor & View Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingItemType, setEditingItemType] = useState(''); // 'blog', 'service', 'faq', 'settings', 'inquiry'
+  const [editingItemType, setEditingItemType] = useState(''); // 'blog', 'service', 'faq', 'settings', 'inquiry', 'page', 'navigation'
   const [editFormData, setEditFormData] = useState({});
 
   // Check stored auth session on mount
@@ -125,6 +129,20 @@ export default function CustomAdminCmsPage() {
       const inqJson = await inqRes.json();
       if (inqJson.success && inqJson.data?.inquiries) {
         setInquiriesList(inqJson.data.inquiries);
+      }
+
+      // Fetch Pages Data
+      const pageRes = await fetch('/api/admin/content?file=pages.json');
+      const pageJson = await pageRes.json();
+      if (pageJson.success && pageJson.data?.pages) {
+        setPagesData(pageJson.data.pages);
+      }
+
+      // Fetch Navigation Data
+      const navRes = await fetch('/api/admin/content?file=navigation.json');
+      const navJson = await navRes.json();
+      if (navJson.success && navJson.data) {
+        setNavData(navJson.data);
       }
     } catch (err) {
       console.error('Failed to load content', err);
@@ -328,6 +346,37 @@ export default function CustomAdminCmsPage() {
     }
   };
 
+  // Page Content & Navbar Handlers
+  const openPageEditor = (pageKey, defaultObj) => {
+    setEditingItemType('page');
+    setEditFormData({
+      pageKey,
+      ...(pagesData[pageKey] || defaultObj),
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleSavePage = () => {
+    const pageKey = editFormData.pageKey;
+    const updatedPages = {
+      ...pagesData,
+      [pageKey]: editFormData,
+    };
+    setPagesData(updatedPages);
+    saveContentFile('pages.json', { pages: updatedPages });
+  };
+
+  const openNavEditor = () => {
+    setEditingItemType('navigation');
+    setEditFormData(JSON.parse(JSON.stringify(navData)));
+    setIsModalOpen(true);
+  };
+
+  const handleSaveNavigation = () => {
+    setNavData(editFormData);
+    saveContentFile('navigation.json', editFormData);
+  };
+
   // Flattened FAQ items list with page location
   const allFlattenedFaqs = faqsList.flatMap((catObj) =>
     (catObj.items || []).map((item) => ({
@@ -338,6 +387,18 @@ export default function CustomAdminCmsPage() {
   );
 
   const newInquiriesCount = inquiriesList.filter((i) => i.status === 'New').length;
+
+  // Pages Directory Definition
+  const ALL_SITE_PAGES = [
+    { key: 'home', slug: '/', name: 'Homepage', path: '/' },
+    { key: 'about', slug: '/about', name: 'About Us', path: '/about' },
+    { key: 'services', slug: '/services', name: 'Services Directory', path: '/services' },
+    { key: 'exam-platforms', slug: '/exam-platforms', name: 'Exam Platforms', path: '/exam-platforms' },
+    { key: 'certifications', slug: '/certifications', name: 'Certifications', path: '/certifications' },
+    { key: 'study-resources', slug: '/study-resources', name: 'Study Resources', path: '/study-resources' },
+    { key: 'faq', slug: '/faq', name: 'FAQ Page', path: '/faq' },
+    { key: 'contact', slug: '/contact', name: 'Contact Page', path: '/contact' },
+  ];
 
   // 1. LOGIN SCREEN
   if (!isAuthenticated) {
@@ -466,7 +527,7 @@ export default function CustomAdminCmsPage() {
               }`}
             >
               <FileText className="w-4 h-4" />
-              <span>Pages</span>
+              <span>Pages & Navbar</span>
             </button>
 
             <button
@@ -482,7 +543,6 @@ export default function CustomAdminCmsPage() {
               <span>Services ({servicesList.length})</span>
             </button>
 
-            {/* DOCUMENTS & FAQS TAB */}
             <button
               type="button"
               onClick={() => setActiveTab('faqs')}
@@ -591,7 +651,93 @@ export default function CustomAdminCmsPage() {
           </div>
         )}
 
-        {/* TAB 5: FAQS & DOCUMENTS CATALOGUE (ENHANCED WITH PAGE LOCATIONS & ALL ITEMS) */}
+        {/* TAB 3: PAGES & NAVBAR MANAGEMENT (ENHANCED WITH CONTENT & NAVBAR EDITORS) */}
+        {activeTab === 'pages' && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-black text-slate-900">Website Pages & Navigation Manager</h1>
+                <p className="text-xs text-slate-500">Edit titles, subtitles, hero text, SEO metadata, and top navigation bar links</p>
+              </div>
+
+              <button
+                onClick={openNavEditor}
+                className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md flex items-center gap-2"
+              >
+                <Navigation className="w-4 h-4" />
+                <span>Edit Navigation Bar</span>
+              </button>
+            </div>
+
+            {/* TOP NAVBAR ANNOUNCEMENT MANAGER SUMMARY CARD */}
+            <div className="bg-gradient-to-r from-[#1E1035] to-purple-900 text-white p-6 rounded-2xl shadow-md space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-xs font-bold text-purple-300 uppercase tracking-wider">
+                  <Sparkles className="w-4 h-4 text-purple-400" /> Top Navigation & Announcement Bar
+                </div>
+                <button
+                  onClick={openNavEditor}
+                  className="px-3.5 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-bold transition-all"
+                >
+                  Edit Header Navbar
+                </button>
+              </div>
+              <p className="text-xs text-purple-100 font-medium leading-relaxed">
+                <strong>Announcement Banner:</strong> &ldquo;{navData.topBanner?.mainAnnouncement || 'Ethical Educational Support & Proctoring Software Technical Guidance for Students Worldwide'}&rdquo;
+              </p>
+            </div>
+
+            {/* PAGES CARDS GRID WITH EDIT CONTENT & SEO BUTTONS */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {ALL_SITE_PAGES.map((pg) => {
+                const pageInfo = pagesData[pg.key] || {};
+                return (
+                  <div
+                    key={pg.key}
+                    className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4 hover:border-purple-300 transition-all flex flex-col justify-between"
+                  >
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="font-extrabold text-sm text-slate-900">{pg.name}</span>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-purple-700 bg-purple-50 px-2 py-0.5 rounded">
+                          {pg.slug}
+                        </span>
+                      </div>
+
+                      <p className="text-xs text-slate-600 font-medium line-clamp-2">
+                        {pageInfo.subtitle || pageInfo.metaDescription || `Content manager for ${pg.name}`}
+                      </p>
+
+                      <div className="pt-2 border-t border-slate-100 text-[11px] text-slate-400 font-mono truncate">
+                        https://tutorproctoredexams.com{pg.path}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+                      <a
+                        href={pg.path}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-3.5 py-1.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold inline-flex items-center gap-1.5 transition-colors"
+                      >
+                        <Eye className="w-3.5 h-3.5 text-slate-500" /> View Page
+                      </a>
+
+                      <button
+                        onClick={() => openPageEditor(pg.key, pg)}
+                        className="px-4 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-sm inline-flex items-center gap-1.5 transition-colors"
+                      >
+                        <Edit className="w-3.5 h-3.5" /> Edit Page Content & SEO
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* TAB 5: FAQS & DOCUMENTS CATALOGUE */}
         {activeTab === 'faqs' && (
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -908,29 +1054,6 @@ export default function CustomAdminCmsPage() {
           </div>
         )}
 
-        {/* TAB 3: PAGES CATALOGUE */}
-        {activeTab === 'pages' && (
-          <div className="space-y-6">
-            <h1 className="text-2xl font-black text-slate-900">Website Pages</h1>
-            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 space-y-4">
-              <p className="text-xs text-slate-600">All primary landing pages (Home, About, Services, Certifications, Platforms, Study Resources, FAQ, Contact) are active.</p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {['/', '/about', '/services', '/exam-platforms', '/certifications', '/study-resources', '/faq', '/contact'].map((path) => (
-                  <div key={path} className="p-4 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
-                    <div>
-                      <span className="font-bold text-xs text-slate-900 block">{path === '/' ? 'Homepage' : path.substring(1).toUpperCase()}</span>
-                      <span className="text-[11px] text-slate-500 font-mono">https://tutorproctoredexams.com{path}</span>
-                    </div>
-                    <a href={path} target="_blank" className="p-2 bg-white border border-slate-200 rounded-lg text-purple-700 hover:bg-purple-50">
-                      <Eye className="w-4 h-4" />
-                    </a>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* TAB 4: SERVICES CATALOGUE */}
         {activeTab === 'services' && (
           <div className="space-y-6">
@@ -1010,11 +1133,126 @@ export default function CustomAdminCmsPage() {
                 {editingItemType === 'settings' && 'Edit Site Settings & SEO'}
                 {editingItemType === 'inquiry' && 'Customer Form Inquiry Details'}
                 {editingItemType === 'faq' && 'Edit / Add FAQ Item'}
+                {editingItemType === 'page' && `Edit Page Content & SEO (${editFormData.name || editFormData.pageKey})`}
+                {editingItemType === 'navigation' && 'Edit Navigation Bar & Announcement Header'}
               </h2>
               <button onClick={() => setIsModalOpen(false)} className="p-1 rounded-lg text-slate-400 hover:bg-slate-100">
                 <X className="w-5 h-5" />
               </button>
             </div>
+
+            {/* PAGE CONTENT & SEO EDITOR MODAL */}
+            {editingItemType === 'page' && (
+              <div className="space-y-4 text-xs">
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Page Name / Identifier</label>
+                  <input
+                    type="text"
+                    value={editFormData.name || editFormData.pageKey || ''}
+                    onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-xl"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Page Headline / H1 Title</label>
+                  <input
+                    type="text"
+                    value={editFormData.title || ''}
+                    onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-xl"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Page Subtitle / Hero Tagline</label>
+                  <textarea
+                    rows={3}
+                    value={editFormData.subtitle || ''}
+                    onChange={(e) => setEditFormData({ ...editFormData, subtitle: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-xl leading-relaxed"
+                  />
+                </div>
+
+                <div className="border-t pt-3 space-y-3">
+                  <span className="font-extrabold text-[#2563EB] block text-xs">SEO Metadata Overrides</span>
+
+                  <div>
+                    <label className="font-bold text-slate-700 block mb-1">SEO Meta Title Tag</label>
+                    <input
+                      type="text"
+                      value={editFormData.metaTitle || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, metaTitle: e.target.value })}
+                      className="w-full px-3 py-2 border rounded-xl font-medium text-slate-800"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="font-bold text-slate-700 block mb-1">SEO Meta Description</label>
+                    <textarea
+                      rows={2}
+                      value={editFormData.metaDescription || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, metaDescription: e.target.value })}
+                      className="w-full px-3 py-2 border rounded-xl leading-relaxed text-slate-800"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="font-bold text-slate-700 block mb-1">SEO Keywords</label>
+                    <input
+                      type="text"
+                      value={editFormData.keywords || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, keywords: e.target.value })}
+                      className="w-full px-3 py-2 border rounded-xl text-slate-600"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* NAVIGATION BAR & ANNOUNCEMENT HEADER MODAL */}
+            {editingItemType === 'navigation' && (
+              <div className="space-y-4 text-xs">
+                <div className="space-y-3 border-b pb-4">
+                  <span className="font-extrabold text-[#2563EB] block text-xs">Top Announcement Bar Text</span>
+                  <div>
+                    <label className="font-bold text-slate-700 block mb-1">Main Announcement Banner Text</label>
+                    <input
+                      type="text"
+                      value={editFormData.topBanner?.mainAnnouncement || ''}
+                      onChange={(e) =>
+                        setEditFormData({
+                          ...editFormData,
+                          topBanner: { ...editFormData.topBanner, mainAnnouncement: e.target.value },
+                        })
+                      }
+                      className="w-full px-3 py-2 border rounded-xl"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <span className="font-extrabold text-slate-900 block text-xs">Main Navigation Links</span>
+                  <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                    {(editFormData.navLinks || []).map((linkItem, idx) => (
+                      <div key={idx} className="flex items-center gap-2 p-2 bg-slate-50 border rounded-xl">
+                        <input
+                          type="text"
+                          value={linkItem.label}
+                          onChange={(e) => {
+                            const updatedLinks = [...editFormData.navLinks];
+                            updatedLinks[idx].label = e.target.value;
+                            setEditFormData({ ...editFormData, navLinks: updatedLinks });
+                          }}
+                          className="flex-grow px-2 py-1 border rounded text-xs font-bold text-slate-800"
+                        />
+                        <span className="font-mono text-[10px] text-slate-400">{linkItem.href}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* FAQ EDITOR MODAL */}
             {editingItemType === 'faq' && (
@@ -1271,6 +1509,8 @@ export default function CustomAdminCmsPage() {
                     if (editingItemType === 'service') handleSaveService();
                     if (editingItemType === 'settings') handleSaveSettings();
                     if (editingItemType === 'faq') handleSaveFaq();
+                    if (editingItemType === 'page') handleSavePage();
+                    if (editingItemType === 'navigation') handleSaveNavigation();
                   }}
                   disabled={loading}
                   className="px-6 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md flex items-center gap-2"
