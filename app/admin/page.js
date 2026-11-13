@@ -22,6 +22,12 @@ import {
   Loader2,
   Eye,
   ShieldCheck,
+  Inbox,
+  Mail,
+  Phone,
+  User,
+  Calendar,
+  MessageSquare,
 } from 'lucide-react';
 
 export default function CustomAdminCmsPage() {
@@ -38,15 +44,17 @@ export default function CustomAdminCmsPage() {
   const [servicesList, setServicesList] = useState([]);
   const [faqsList, setFaqsList] = useState([]);
   const [siteSettings, setSiteSettings] = useState({});
+  const [inquiriesList, setInquiriesList] = useState([]);
 
   // Loading & Notification States
   const [loading, setLoading] = useState(false);
   const [saveStatus, setSaveStatus] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [inquiryFilter, setInquiryFilter] = useState('All');
 
-  // Editor Modal State
+  // Editor & View Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingItemType, setEditingItemType] = useState(''); // 'blog', 'service', 'faq', 'settings'
+  const [editingItemType, setEditingItemType] = useState(''); // 'blog', 'service', 'faq', 'settings', 'inquiry'
   const [editFormData, setEditFormData] = useState({});
 
   // Check stored auth session on mount
@@ -108,6 +116,13 @@ export default function CustomAdminCmsPage() {
       const setJson = await setRes.json();
       if (setJson.success && setJson.data) {
         setSiteSettings(setJson.data);
+      }
+
+      // Fetch Inquiries
+      const inqRes = await fetch('/api/admin/content?file=inquiries.json');
+      const inqJson = await inqRes.json();
+      if (inqJson.success && inqJson.data?.inquiries) {
+        setInquiriesList(inqJson.data.inquiries);
       }
     } catch (err) {
       console.error('Failed to load content', err);
@@ -206,6 +221,31 @@ export default function CustomAdminCmsPage() {
     saveContentFile('settings.json', editFormData);
   };
 
+  const openInquiryViewer = (inquiry) => {
+    setEditingItemType('inquiry');
+    setEditFormData(inquiry);
+    setIsModalOpen(true);
+  };
+
+  const handleToggleInquiryStatus = (inquiryId) => {
+    const updated = inquiriesList.map((inq) => {
+      if (inq.id === inquiryId) {
+        return { ...inq, status: inq.status === 'New' ? 'Responded' : 'New' };
+      }
+      return inq;
+    });
+    saveContentFile('inquiries.json', { inquiries: updated });
+  };
+
+  const handleDeleteInquiry = (inquiryId) => {
+    if (confirm('Are you sure you want to delete this inquiry submission?')) {
+      const updated = inquiriesList.filter((inq) => inq.id !== inquiryId);
+      saveContentFile('inquiries.json', { inquiries: updated });
+    }
+  };
+
+  const newInquiriesCount = inquiriesList.filter((i) => i.status === 'New').length;
+
   // 1. LOGIN SCREEN
   if (!isAuthenticated) {
     return (
@@ -256,10 +296,10 @@ export default function CustomAdminCmsPage() {
     );
   }
 
-  // 2. LOGGED IN CMS DASHBOARD UI (MATCHING SCREENSHOT)
+  // 2. LOGGED IN CMS DASHBOARD UI (WITH INQUIRIES SIDEBAR TAB)
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex font-sans text-slate-800">
-      {/* DARK PURPLE SIDEBAR (MATCHING SCREENSHOT) */}
+      {/* DARK PURPLE SIDEBAR */}
       <aside className="w-64 bg-[#1E1035] text-purple-200 shrink-0 flex flex-col justify-between p-6 shadow-xl">
         <div className="space-y-8">
           {/* Logo / Header */}
@@ -285,6 +325,29 @@ export default function CustomAdminCmsPage() {
             >
               <LayoutDashboard className="w-4 h-4" />
               <span>Dashboard</span>
+            </button>
+
+            {/* INQUIRIES TAB (NEW) */}
+            <button
+              type="button"
+              onClick={() => setActiveTab('inquiries')}
+              className={`w-full flex items-center justify-between px-4 py-3 rounded-xl font-bold text-xs transition-all ${
+                activeTab === 'inquiries'
+                  ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50'
+                  : 'hover:bg-purple-900/40 text-purple-300 hover:text-white'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <Inbox className="w-4 h-4" />
+                <span>Inquiries</span>
+              </div>
+              {newInquiriesCount > 0 ? (
+                <span className="bg-rose-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full">
+                  {newInquiriesCount}
+                </span>
+              ) : (
+                <span className="text-[10px] text-purple-400 font-bold">{inquiriesList.length}</span>
+              )}
             </button>
 
             <button
@@ -394,7 +457,7 @@ export default function CustomAdminCmsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-2xl font-black text-slate-900">CMS Overview Dashboard</h1>
-                <p className="text-xs text-slate-500">Manage all website content, articles, pages, and SEO metadata</p>
+                <p className="text-xs text-slate-500">Manage all website content, customer inquiries, pages, and SEO metadata</p>
               </div>
               <button
                 onClick={() => openBlogEditor()}
@@ -408,6 +471,12 @@ export default function CustomAdminCmsPage() {
             {/* Metrics Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm space-y-2">
+                <span className="text-xs font-bold text-slate-400 uppercase">Customer Inquiries</span>
+                <div className="text-3xl font-black text-purple-900">{inquiriesList.length}</div>
+                <span className="text-[11px] text-rose-600 font-bold">{newInquiriesCount} Unread / New</span>
+              </div>
+
+              <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm space-y-2">
                 <span className="text-xs font-bold text-slate-400 uppercase">Blog Articles</span>
                 <div className="text-3xl font-black text-purple-900">{blogArticles.length}</div>
                 <span className="text-[11px] text-emerald-600 font-bold">Live & Indexable</span>
@@ -420,12 +489,6 @@ export default function CustomAdminCmsPage() {
               </div>
 
               <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm space-y-2">
-                <span className="text-xs font-bold text-slate-400 uppercase">FAQ Categories</span>
-                <div className="text-3xl font-black text-purple-900">{faqsList.length}</div>
-                <span className="text-[11px] text-slate-500 font-bold">Grouped Questions</span>
-              </div>
-
-              <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm space-y-2">
                 <span className="text-xs font-bold text-slate-400 uppercase">System Status</span>
                 <div className="text-xl font-black text-emerald-600">Operational</div>
                 <span className="text-[11px] text-slate-500 font-bold">Hostinger Live</span>
@@ -434,7 +497,118 @@ export default function CustomAdminCmsPage() {
           </div>
         )}
 
-        {/* TAB 2: BLOGS CATALOGUE (MATCHING SCREENSHOT DATA TABLE) */}
+        {/* TAB: INQUIRIES CATALOGUE (NEW) */}
+        {activeTab === 'inquiries' && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h1 className="text-2xl font-black text-slate-900">Website Form Inquiries</h1>
+                <p className="text-xs text-slate-500">View and respond to all student and customer inquiries submitted from website forms</p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                {/* Status Filter Pills */}
+                <div className="flex items-center gap-1 bg-slate-200/60 p-1 rounded-xl">
+                  {['All', 'New', 'Responded'].map((st) => (
+                    <button
+                      key={st}
+                      type="button"
+                      onClick={() => setInquiryFilter(st)}
+                      className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                        inquiryFilter === st ? 'bg-white text-purple-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                      }`}
+                    >
+                      {st}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Search name, email..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-9 pr-4 py-2 rounded-xl border border-slate-200 bg-white text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-600"
+                  />
+                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+                </div>
+              </div>
+            </div>
+
+            {/* INQUIRIES DATA TABLE */}
+            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-slate-50 border-b border-slate-200 text-[11px] uppercase font-bold text-slate-500">
+                    <th className="py-3.5 px-6">Date</th>
+                    <th className="py-3.5 px-6">Customer Name</th>
+                    <th className="py-3.5 px-6">Email / Phone</th>
+                    <th className="py-3.5 px-6">Service Requested</th>
+                    <th className="py-3.5 px-6">Status</th>
+                    <th className="py-3.5 px-6 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 text-xs">
+                  {inquiriesList
+                    .filter((inq) => {
+                      const matchesStatus = inquiryFilter === 'All' || inq.status === inquiryFilter;
+                      const matchesSearch =
+                        searchQuery.trim() === '' ||
+                        inq.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        inq.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        inq.service.toLowerCase().includes(searchQuery.toLowerCase());
+                      return matchesStatus && matchesSearch;
+                    })
+                    .map((inq) => (
+                      <tr key={inq.id} className="hover:bg-slate-50/80 transition-colors">
+                        <td className="py-4 px-6 text-slate-500 font-mono text-[11px] whitespace-nowrap">
+                          {inq.date}
+                        </td>
+                        <td className="py-4 px-6 font-bold text-slate-900">
+                          {inq.fullName}
+                        </td>
+                        <td className="py-4 px-6 text-slate-600">
+                          <div>{inq.email}</div>
+                          <div className="text-[11px] text-slate-400">{inq.phone}</div>
+                        </td>
+                        <td className="py-4 px-6 font-semibold text-slate-700">
+                          {inq.service}
+                        </td>
+                        <td className="py-4 px-6">
+                          <span
+                            className={`px-2.5 py-1 rounded-full font-bold text-[10px] ${
+                              inq.status === 'New'
+                                ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                                : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                            }`}
+                          >
+                            {inq.status}
+                          </span>
+                        </td>
+                        <td className="py-4 px-6 text-right space-x-3 whitespace-nowrap">
+                          <button
+                            onClick={() => openInquiryViewer(inq)}
+                            className="text-purple-700 hover:text-purple-900 font-bold transition-colors inline-flex items-center gap-1"
+                          >
+                            <Eye className="w-3.5 h-3.5" /> View Message
+                          </button>
+                          <button
+                            onClick={() => handleDeleteInquiry(inq.id)}
+                            className="text-rose-600 hover:text-rose-800 font-bold transition-colors inline-flex items-center gap-1"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" /> Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 2: BLOGS CATALOGUE */}
         {activeTab === 'blogs' && (
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -455,7 +629,6 @@ export default function CustomAdminCmsPage() {
                   <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
                 </div>
 
-                {/* ADD NEW BUTTON (MATCHING SCREENSHOT) */}
                 <button
                   onClick={() => openBlogEditor()}
                   className="px-5 py-2.5 rounded-xl bg-[#581C87] hover:bg-[#4C1D95] text-white text-xs font-bold shadow-md flex items-center gap-2"
@@ -466,7 +639,6 @@ export default function CustomAdminCmsPage() {
               </div>
             </div>
 
-            {/* DATA TABLE (MATCHING SCREENSHOT DESIGN) */}
             <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
               <table className="w-full text-left border-collapse">
                 <thead>
@@ -624,7 +796,7 @@ export default function CustomAdminCmsPage() {
         )}
       </main>
 
-      {/* EDITING MODAL (POPUP FORM) */}
+      {/* EDITING / VIEWING MODAL */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 max-w-2xl w-full shadow-2xl space-y-6 my-8">
@@ -633,11 +805,72 @@ export default function CustomAdminCmsPage() {
                 {editingItemType === 'blog' && (editFormData.slug ? 'Edit Article' : 'Create New Article')}
                 {editingItemType === 'service' && 'Edit Service Details'}
                 {editingItemType === 'settings' && 'Edit Site Settings & SEO'}
+                {editingItemType === 'inquiry' && 'Customer Form Inquiry Details'}
               </h2>
               <button onClick={() => setIsModalOpen(false)} className="p-1 rounded-lg text-slate-400 hover:bg-slate-100">
                 <X className="w-5 h-5" />
               </button>
             </div>
+
+            {/* INQUIRY VIEWER MODAL */}
+            {editingItemType === 'inquiry' && (
+              <div className="space-y-5 text-xs">
+                <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                  <div>
+                    <span className="text-slate-400 font-bold uppercase block">Customer Name</span>
+                    <span className="font-bold text-slate-900 text-sm">{editFormData.fullName}</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 font-bold uppercase block">Submission Date</span>
+                    <span className="font-mono text-slate-700">{editFormData.date}</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 font-bold uppercase block">Email Address</span>
+                    <a href={`mailto:${editFormData.email}`} className="font-bold text-purple-700 hover:underline">{editFormData.email}</a>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 font-bold uppercase block">Phone / WhatsApp</span>
+                    <span className="font-semibold text-slate-800">{editFormData.phone || 'N/A'}</span>
+                  </div>
+                </div>
+
+                <div>
+                  <span className="text-slate-400 font-bold uppercase block mb-1">Service Requested</span>
+                  <span className="inline-block bg-purple-100 text-purple-900 font-extrabold px-3 py-1 rounded-lg text-xs">
+                    {editFormData.service}
+                  </span>
+                </div>
+
+                <div className="space-y-1">
+                  <span className="text-slate-400 font-bold uppercase block">Message & Learning Goals</span>
+                  <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 text-slate-800 leading-relaxed whitespace-pre-wrap font-sans text-xs">
+                    {editFormData.message}
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-4 border-t">
+                  <button
+                    type="button"
+                    onClick={() => handleToggleInquiryStatus(editFormData.id)}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
+                      editFormData.status === 'New'
+                        ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                        : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
+                    }`}
+                  >
+                    {editFormData.status === 'New' ? 'Mark as Responded' : 'Mark as New'}
+                  </button>
+
+                  <a
+                    href={`mailto:${editFormData.email}?subject=RE: ${encodeURIComponent(editFormData.service)} Inquiry`}
+                    className="px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-md inline-flex items-center gap-2"
+                  >
+                    <Mail className="w-4 h-4" />
+                    <span>Reply via Email</span>
+                  </a>
+                </div>
+              </div>
+            )}
 
             {/* BLOG FORM FIELDS */}
             {editingItemType === 'blog' && (
@@ -777,21 +1010,23 @@ export default function CustomAdminCmsPage() {
                 onClick={() => setIsModalOpen(false)}
                 className="px-4 py-2 rounded-xl border text-xs font-bold text-slate-600 hover:bg-slate-50"
               >
-                Cancel
+                Close
               </button>
 
-              <button
-                onClick={() => {
-                  if (editingItemType === 'blog') handleSaveBlog();
-                  if (editingItemType === 'service') handleSaveService();
-                  if (editingItemType === 'settings') handleSaveSettings();
-                }}
-                disabled={loading}
-                className="px-6 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md flex items-center gap-2"
-              >
-                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                <span>Save Changes</span>
-              </button>
+              {editingItemType !== 'inquiry' && (
+                <button
+                  onClick={() => {
+                    if (editingItemType === 'blog') handleSaveBlog();
+                    if (editingItemType === 'service') handleSaveService();
+                    if (editingItemType === 'settings') handleSaveSettings();
+                  }}
+                  disabled={loading}
+                  className="px-6 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md flex items-center gap-2"
+                >
+                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                  <span>Save Changes</span>
+                </button>
+              )}
             </div>
           </div>
         </div>

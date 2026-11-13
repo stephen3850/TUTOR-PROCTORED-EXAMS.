@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
+import fs from 'fs/promises';
+import path from 'path';
 
 export async function POST(request) {
   try {
@@ -46,9 +48,37 @@ export async function POST(request) {
     const sanitizedSubject = (subject || 'General Inquiry').trim().replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const sanitizedService = (service || 'General Enquiry').trim().replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const sanitizedMessage = message.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    const sanitizedPageUrl = (pageUrl || '').trim().replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-    // 6. Environment configuration
+    // 6. Save Inquiry to CMS JSON Store (content/inquiries.json)
+    try {
+      const filePath = path.join(process.cwd(), 'content', 'inquiries.json');
+      let inquiriesData = { inquiries: [] };
+      try {
+        const raw = await fs.readFile(filePath, 'utf8');
+        inquiriesData = JSON.parse(raw);
+      } catch (e) {
+        // file initialization
+      }
+
+      const newInquiry = {
+        id: `inq-${Date.now()}`,
+        date: new Date().toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' }),
+        fullName: sanitizedFullName,
+        email: sanitizedEmail,
+        phone: sanitizedPhone || 'N/A',
+        service: sanitizedService,
+        subject: sanitizedSubject,
+        message: sanitizedMessage,
+        status: 'New',
+      };
+
+      inquiriesData.inquiries = [newInquiry, ...(inquiriesData.inquiries || [])];
+      await fs.writeFile(filePath, JSON.stringify(inquiriesData, null, 2), 'utf8');
+    } catch (saveError) {
+      console.error('[Inquiries Save Error]:', saveError);
+    }
+
+    // 7. Environment configuration for Email Notification
     const resendApiKey = process.env.RESEND_API_KEY || process.env.EMAIL_API_KEY;
     const receiverEmail = process.env.INQUIRY_RECEIVER_EMAIL || 'info@tutorproctoredexams.com';
     const fromEmail = process.env.INQUIRY_FROM_EMAIL || 'TUTOR PROCTORED EXAMS <onboarding@resend.dev>';
@@ -82,21 +112,9 @@ export async function POST(request) {
                   : ''
               }
               <tr>
-                <td style="padding: 8px 0; color: #64748b; font-size: 13px;"><strong>Service Requested:</strong></td>
-                <td style="padding: 8px 0; color: #0f172a; font-size: 14px;">${sanitizedService}</td>
+                <td style="padding: 8px 0; color: #64748b; font-size: 13px;"><strong>Service / Program:</strong></td>
+                <td style="padding: 8px 0; color: #0f172a; font-size: 14px; font-weight: bold;">${sanitizedService}</td>
               </tr>
-              <tr>
-                <td style="padding: 8px 0; color: #64748b; font-size: 13px;"><strong>Subject / Exam / Cert:</strong></td>
-                <td style="padding: 8px 0; color: #0f172a; font-size: 14px;">${sanitizedSubject}</td>
-              </tr>
-              ${
-                sanitizedPageUrl
-                  ? `<tr>
-                <td style="padding: 8px 0; color: #64748b; font-size: 13px;"><strong>Source Page:</strong></td>
-                <td style="padding: 8px 0; color: #64748b; font-size: 12px;">${sanitizedPageUrl}</td>
-              </tr>`
-                  : ''
-              }
               <tr>
                 <td style="padding: 8px 0; color: #64748b; font-size: 13px;"><strong>Submission Date:</strong></td>
                 <td style="padding: 8px 0; color: #0f172a; font-size: 13px;">${new Date().toLocaleString('en-US', { timeZone: 'UTC' })} UTC</td>
@@ -115,39 +133,14 @@ export async function POST(request) {
         </div>
       `;
 
-      const { data, error } = await resend.emails.send({
+      await resend.emails.send({
         from: fromEmail,
         to: receiverEmail,
         reply_to: sanitizedEmail,
         subject: emailSubject,
         html: htmlBody,
       });
-
-      if (error) {
-        console.error('[Resend Email Error]:', error);
-        return NextResponse.json(
-          { success: false, error: `Email delivery failed: ${error.message || 'Unable to send email via Resend.'}` },
-          { status: 500 }
-        );
-      }
-
-      return NextResponse.json({
-        success: true,
-        message: 'Thank you! Your inquiry has been received. Our team will get back to you.',
-        emailId: data?.id,
-      });
     }
-
-    // Local Development Fallback Log
-    console.log(`[Contact Form Submission - Local Log]`, {
-      fullName: sanitizedFullName,
-      email: sanitizedEmail,
-      phone: sanitizedPhone,
-      service: sanitizedService,
-      subject: sanitizedSubject,
-      messageLength: sanitizedMessage.length,
-      time: new Date().toISOString(),
-    });
 
     return NextResponse.json({
       success: true,
