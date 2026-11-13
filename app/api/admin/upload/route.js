@@ -16,7 +16,7 @@ async function ensureUploadDir() {
 }
 
 // GET: List all uploaded media files
-export async function GET() {
+export async function GET(request) {
   try {
     await ensureUploadDir();
     const filenames = await fs.readdir(UPLOAD_DIR);
@@ -26,13 +26,17 @@ export async function GET() {
       const ext = path.extname(name).toLowerCase();
       if (ALLOWED_EXTENSIONS.includes(ext)) {
         const filePath = path.join(UPLOAD_DIR, name);
-        const stats = await fs.stat(filePath);
-        mediaList.push({
-          filename: name,
-          url: `/uploads/${name}`,
-          size: stats.size,
-          updatedAt: stats.mtime.toISOString(),
-        });
+        try {
+          const stats = await fs.stat(filePath);
+          mediaList.push({
+            filename: name,
+            url: `/uploads/${name}`,
+            size: stats.size,
+            updatedAt: stats.mtime.toISOString(),
+          });
+        } catch (statErr) {
+          // Ignore missing files
+        }
       }
     }
 
@@ -76,13 +80,22 @@ export async function POST(request) {
       );
     }
 
+    const buffer = Buffer.from(await file.arrayBuffer());
+
+    // SVG Script & XSS Protection
+    if (ext === '.svg') {
+      const textContent = buffer.toString('utf8');
+      if (/<script/i.test(textContent) || /on\w+\s*=/i.test(textContent) || /javascript:/i.test(textContent)) {
+        return NextResponse.json({ success: false, error: 'Malicious SVG script content detected and blocked' }, { status: 400 });
+      }
+    }
+
     // Sanitize filename to prevent path traversal
     const safeBaseName = path.basename(file.name, ext).replace(/[^a-zA-Z0-9_-]/g, '_');
     const timestamp = Date.now();
     const finalFilename = `${safeBaseName}_${timestamp}${ext}`;
     const destinationPath = path.join(UPLOAD_DIR, finalFilename);
 
-    const buffer = Buffer.from(await file.arrayBuffer());
     await fs.writeFile(destinationPath, buffer);
 
     const publicUrl = `/uploads/${finalFilename}`;
