@@ -18,6 +18,8 @@ import {
   HelpCircle,
   Send,
   Loader2,
+  ExternalLink,
+  Building2,
 } from 'lucide-react';
 import PageContainer from '@/components/layout/PageContainer';
 import SectionHeading from '@/components/ui/SectionHeading';
@@ -204,6 +206,29 @@ export default function StudyResourceDetailPage({ params }) {
           <p className="text-slate-700 text-sm sm:text-base leading-relaxed max-w-4xl font-normal">
             {resource.overview}
           </p>
+
+          {/* OFFICIAL GOVERNING BODY REFERENCE LINK */}
+          {resource.officialBodyUrl && (
+            <div className="pt-4 border-t border-emerald-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="space-y-0.5">
+                <span className="text-xs font-bold text-[#0F172A] flex items-center gap-1.5">
+                  <Building2 className="w-4 h-4 text-[#2563EB]" /> Official Governing Body: {resource.governingBody}
+                </span>
+                <p className="text-xs text-slate-600">
+                  Access official candidate handbooks, exam ECO outlines, and registration portals on the governing body site.
+                </p>
+              </div>
+              <a
+                href={resource.officialBodyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-xs font-bold text-[#2563EB] hover:underline bg-white px-3.5 py-2 rounded-xl border border-emerald-200 shadow-sm transition-colors shrink-0"
+              >
+                <span>{resource.officialBodyLabel || `${resource.shortTitle || 'Official'} Portal`}</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            </div>
+          )}
         </div>
 
         {/* SECTION 3: WHAT THE STUDENT CAN REQUEST ("Explore Available Study Materials") */}
