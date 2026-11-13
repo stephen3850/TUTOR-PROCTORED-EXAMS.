@@ -28,6 +28,7 @@ import {
   User,
   Calendar,
   MessageSquare,
+  ExternalLink,
 } from 'lucide-react';
 
 export default function CustomAdminCmsPage() {
@@ -51,6 +52,7 @@ export default function CustomAdminCmsPage() {
   const [saveStatus, setSaveStatus] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [inquiryFilter, setInquiryFilter] = useState('All');
+  const [faqCategoryFilter, setFaqCategoryFilter] = useState('All');
 
   // Editor & View Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -244,6 +246,97 @@ export default function CustomAdminCmsPage() {
     }
   };
 
+  // FAQ Editor Handlers
+  const openFaqEditor = (catName = 'General Questions', item = null) => {
+    setEditingItemType('faq');
+    setEditFormData(
+      item
+        ? { ...item, originalQuestion: item.question, category: catName }
+        : {
+            category: catName,
+            originalQuestion: '',
+            question: '',
+            answer: '',
+            pageLocation: '/faq',
+          }
+    );
+    setIsModalOpen(true);
+  };
+
+  const handleSaveFaq = () => {
+    const targetCat = editFormData.category || 'General Questions';
+    const targetLoc = editFormData.pageLocation || '/faq';
+
+    let catFound = false;
+    const updatedCategories = faqsList.map((catObj) => {
+      if (catObj.category.toLowerCase() === targetCat.toLowerCase()) {
+        catFound = true;
+        let items = catObj.items || [];
+        const matchIndex = items.findIndex(
+          (i) => i.question === editFormData.originalQuestion || i.question === editFormData.question
+        );
+        if (matchIndex >= 0) {
+          items[matchIndex] = {
+            question: editFormData.question,
+            answer: editFormData.answer,
+            pageLocation: targetLoc,
+          };
+        } else {
+          items = [
+            ...items,
+            {
+              question: editFormData.question,
+              answer: editFormData.answer,
+              pageLocation: targetLoc,
+            },
+          ];
+        }
+        return { ...catObj, pageLocation: targetLoc, items };
+      }
+      return catObj;
+    });
+
+    if (!catFound) {
+      updatedCategories.push({
+        category: targetCat,
+        pageLocation: targetLoc,
+        items: [
+          {
+            question: editFormData.question,
+            answer: editFormData.answer,
+            pageLocation: targetLoc,
+          },
+        ],
+      });
+    }
+
+    saveContentFile('faqs.json', { categories: updatedCategories });
+  };
+
+  const handleDeleteFaq = (categoryName, questionText) => {
+    if (confirm('Are you sure you want to delete this FAQ question?')) {
+      const updatedCategories = faqsList.map((catObj) => {
+        if (catObj.category === categoryName) {
+          return {
+            ...catObj,
+            items: (catObj.items || []).filter((i) => i.question !== questionText),
+          };
+        }
+        return catObj;
+      });
+      saveContentFile('faqs.json', { categories: updatedCategories });
+    }
+  };
+
+  // Flattened FAQ items list with page location
+  const allFlattenedFaqs = faqsList.flatMap((catObj) =>
+    (catObj.items || []).map((item) => ({
+      ...item,
+      category: catObj.category,
+      pageLocation: item.pageLocation || catObj.pageLocation || '/faq',
+    }))
+  );
+
   const newInquiriesCount = inquiriesList.filter((i) => i.status === 'New').length;
 
   // 1. LOGIN SCREEN
@@ -296,7 +389,7 @@ export default function CustomAdminCmsPage() {
     );
   }
 
-  // 2. LOGGED IN CMS DASHBOARD UI (WITH INQUIRIES SIDEBAR TAB)
+  // 2. LOGGED IN CMS DASHBOARD UI
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex font-sans text-slate-800">
       {/* DARK PURPLE SIDEBAR */}
@@ -327,7 +420,7 @@ export default function CustomAdminCmsPage() {
               <span>Dashboard</span>
             </button>
 
-            {/* INQUIRIES TAB (NEW) */}
+            {/* INQUIRIES TAB */}
             <button
               type="button"
               onClick={() => setActiveTab('inquiries')}
@@ -389,6 +482,7 @@ export default function CustomAdminCmsPage() {
               <span>Services ({servicesList.length})</span>
             </button>
 
+            {/* DOCUMENTS & FAQS TAB */}
             <button
               type="button"
               onClick={() => setActiveTab('faqs')}
@@ -399,7 +493,7 @@ export default function CustomAdminCmsPage() {
               }`}
             >
               <HelpCircle className="w-4 h-4" />
-              <span>Documents & FAQs</span>
+              <span>Documents & FAQs ({allFlattenedFaqs.length})</span>
             </button>
 
             <button
@@ -457,7 +551,7 @@ export default function CustomAdminCmsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-2xl font-black text-slate-900">CMS Overview Dashboard</h1>
-                <p className="text-xs text-slate-500">Manage all website content, customer inquiries, pages, and SEO metadata</p>
+                <p className="text-xs text-slate-500">Manage all website content, FAQs, customer inquiries, pages, and SEO metadata</p>
               </div>
               <button
                 onClick={() => openBlogEditor()}
@@ -477,6 +571,12 @@ export default function CustomAdminCmsPage() {
               </div>
 
               <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm space-y-2">
+                <span className="text-xs font-bold text-slate-400 uppercase">Active FAQs</span>
+                <div className="text-3xl font-black text-purple-900">{allFlattenedFaqs.length}</div>
+                <span className="text-[11px] text-emerald-600 font-bold">Across {faqsList.length} Categories</span>
+              </div>
+
+              <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm space-y-2">
                 <span className="text-xs font-bold text-slate-400 uppercase">Blog Articles</span>
                 <div className="text-3xl font-black text-purple-900">{blogArticles.length}</div>
                 <span className="text-[11px] text-emerald-600 font-bold">Live & Indexable</span>
@@ -487,17 +587,136 @@ export default function CustomAdminCmsPage() {
                 <div className="text-3xl font-black text-purple-900">{servicesList.length}</div>
                 <span className="text-[11px] text-emerald-600 font-bold">12 Active Programs</span>
               </div>
-
-              <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm space-y-2">
-                <span className="text-xs font-bold text-slate-400 uppercase">System Status</span>
-                <div className="text-xl font-black text-emerald-600">Operational</div>
-                <span className="text-[11px] text-slate-500 font-bold">Hostinger Live</span>
-              </div>
             </div>
           </div>
         )}
 
-        {/* TAB: INQUIRIES CATALOGUE (NEW) */}
+        {/* TAB 5: FAQS & DOCUMENTS CATALOGUE (ENHANCED WITH PAGE LOCATIONS & ALL ITEMS) */}
+        {activeTab === 'faqs' && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h1 className="text-2xl font-black text-slate-900">FAQs & Documents Catalogue</h1>
+                <p className="text-xs text-slate-500">
+                  Manage all {allFlattenedFaqs.length} frequently asked questions and their target website page locations
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Search question, page URL..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-9 pr-4 py-2 rounded-xl border border-slate-200 bg-white text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-600"
+                  />
+                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+                </div>
+
+                <button
+                  onClick={() => openFaqEditor()}
+                  className="px-5 py-2.5 rounded-xl bg-[#581C87] hover:bg-[#4C1D95] text-white text-xs font-bold shadow-md flex items-center gap-2 shrink-0"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add New FAQ</span>
+                </button>
+              </div>
+            </div>
+
+            {/* CATEGORY FILTER PILLS */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+              {['All', ...faqsList.map((c) => c.category)].map((catName) => (
+                <button
+                  key={catName}
+                  type="button"
+                  onClick={() => setFaqCategoryFilter(catName)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                    faqCategoryFilter === catName
+                      ? 'bg-purple-600 text-white shadow-sm'
+                      : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
+                  }`}
+                >
+                  {catName}
+                </button>
+              ))}
+            </div>
+
+            {/* FAQS DATA TABLE */}
+            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-slate-50 border-b border-slate-200 text-[11px] uppercase font-bold text-slate-500">
+                    <th className="py-3.5 px-6">#</th>
+                    <th className="py-3.5 px-6">Question</th>
+                    <th className="py-3.5 px-6">Answer Snippet</th>
+                    <th className="py-3.5 px-6">Category</th>
+                    <th className="py-3.5 px-6">Page Location</th>
+                    <th className="py-3.5 px-6 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 text-xs">
+                  {allFlattenedFaqs
+                    .filter((item) => {
+                      const matchesCategory =
+                        faqCategoryFilter === 'All' || item.category === faqCategoryFilter;
+                      const matchesSearch =
+                        searchQuery.trim() === '' ||
+                        item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        item.answer.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        item.pageLocation.toLowerCase().includes(searchQuery.toLowerCase());
+                      return matchesCategory && matchesSearch;
+                    })
+                    .map((item, idx) => (
+                      <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
+                        <td className="py-4 px-6 font-mono text-slate-400">
+                          {String(idx + 1).padStart(2, '0')}
+                        </td>
+                        <td className="py-4 px-6 font-bold text-slate-900 max-w-xs leading-snug">
+                          {item.question}
+                        </td>
+                        <td className="py-4 px-6 text-slate-500 max-w-sm truncate">
+                          {item.answer}
+                        </td>
+                        <td className="py-4 px-6">
+                          <span className="px-2.5 py-1 rounded-full bg-purple-50 text-purple-800 font-bold text-[10px] whitespace-nowrap">
+                            {item.category}
+                          </span>
+                        </td>
+                        <td className="py-4 px-6">
+                          <a
+                            href={item.pageLocation}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 font-mono text-[11px] text-purple-700 bg-purple-50/60 px-2 py-0.5 rounded hover:underline"
+                          >
+                            <span>{item.pageLocation}</span>
+                            <ExternalLink className="w-3 h-3 text-purple-500" />
+                          </a>
+                        </td>
+                        <td className="py-4 px-6 text-right space-x-3 whitespace-nowrap">
+                          <button
+                            onClick={() => openFaqEditor(item.category, item)}
+                            className="text-purple-700 hover:text-purple-900 font-bold transition-colors inline-flex items-center gap-1"
+                          >
+                            <Edit className="w-3.5 h-3.5" /> Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteFaq(item.category, item.question)}
+                            className="text-rose-600 hover:text-rose-800 font-bold transition-colors inline-flex items-center gap-1"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" /> Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* TAB: INQUIRIES CATALOGUE */}
         {activeTab === 'inquiries' && (
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -507,7 +726,6 @@ export default function CustomAdminCmsPage() {
               </div>
 
               <div className="flex items-center gap-3">
-                {/* Status Filter Pills */}
                 <div className="flex items-center gap-1 bg-slate-200/60 p-1 rounded-xl">
                   {['All', 'New', 'Responded'].map((st) => (
                     <button
@@ -536,7 +754,6 @@ export default function CustomAdminCmsPage() {
               </div>
             </div>
 
-            {/* INQUIRIES DATA TABLE */}
             <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
               <table className="w-full text-left border-collapse">
                 <thead>
@@ -565,16 +782,12 @@ export default function CustomAdminCmsPage() {
                         <td className="py-4 px-6 text-slate-500 font-mono text-[11px] whitespace-nowrap">
                           {inq.date}
                         </td>
-                        <td className="py-4 px-6 font-bold text-slate-900">
-                          {inq.fullName}
-                        </td>
+                        <td className="py-4 px-6 font-bold text-slate-900">{inq.fullName}</td>
                         <td className="py-4 px-6 text-slate-600">
                           <div>{inq.email}</div>
                           <div className="text-[11px] text-slate-400">{inq.phone}</div>
                         </td>
-                        <td className="py-4 px-6 font-semibold text-slate-700">
-                          {inq.service}
-                        </td>
+                        <td className="py-4 px-6 font-semibold text-slate-700">{inq.service}</td>
                         <td className="py-4 px-6">
                           <span
                             className={`px-2.5 py-1 rounded-full font-bold text-[10px] ${
@@ -751,16 +964,6 @@ export default function CustomAdminCmsPage() {
           </div>
         )}
 
-        {/* TAB 5: FAQS */}
-        {activeTab === 'faqs' && (
-          <div className="space-y-6">
-            <h1 className="text-2xl font-black text-slate-900">FAQs & Documents</h1>
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
-              <p className="text-xs text-slate-600">Frequently Asked Questions grouped by category ({faqsList.length} categories active).</p>
-            </div>
-          </div>
-        )}
-
         {/* TAB 6: SITE SETTINGS & SEO */}
         {activeTab === 'settings' && (
           <div className="space-y-6 max-w-3xl">
@@ -806,11 +1009,59 @@ export default function CustomAdminCmsPage() {
                 {editingItemType === 'service' && 'Edit Service Details'}
                 {editingItemType === 'settings' && 'Edit Site Settings & SEO'}
                 {editingItemType === 'inquiry' && 'Customer Form Inquiry Details'}
+                {editingItemType === 'faq' && 'Edit / Add FAQ Item'}
               </h2>
               <button onClick={() => setIsModalOpen(false)} className="p-1 rounded-lg text-slate-400 hover:bg-slate-100">
                 <X className="w-5 h-5" />
               </button>
             </div>
+
+            {/* FAQ EDITOR MODAL */}
+            {editingItemType === 'faq' && (
+              <div className="space-y-4 text-xs">
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">FAQ Category</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. General Questions, Tutoring, Professional Certifications"
+                    value={editFormData.category || ''}
+                    onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-xl"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Target Page Location / URL</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. /faq, /services/one-on-one-tutoring, /certifications/pmp, /contact"
+                    value={editFormData.pageLocation || ''}
+                    onChange={(e) => setEditFormData({ ...editFormData, pageLocation: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-xl font-mono text-[11px]"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Question</label>
+                  <input
+                    type="text"
+                    value={editFormData.question || ''}
+                    onChange={(e) => setEditFormData({ ...editFormData, question: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-xl"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Answer / Response Text</label>
+                  <textarea
+                    rows={4}
+                    value={editFormData.answer || ''}
+                    onChange={(e) => setEditFormData({ ...editFormData, answer: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-xl leading-relaxed"
+                  />
+                </div>
+              </div>
+            )}
 
             {/* INQUIRY VIEWER MODAL */}
             {editingItemType === 'inquiry' && (
@@ -1019,6 +1270,7 @@ export default function CustomAdminCmsPage() {
                     if (editingItemType === 'blog') handleSaveBlog();
                     if (editingItemType === 'service') handleSaveService();
                     if (editingItemType === 'settings') handleSaveSettings();
+                    if (editingItemType === 'faq') handleSaveFaq();
                   }}
                   disabled={loading}
                   className="px-6 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md flex items-center gap-2"
