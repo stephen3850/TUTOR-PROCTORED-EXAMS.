@@ -1,7 +1,33 @@
 {
   "categories": [
     {
-      "category": "General Questions",
+      "category": "Homepage FAQs",
+      "pageLocation": "/",
+      "items": [
+        {
+          "question": "What is TUTOR PROCTORED EXAMS?",
+          "answer": "TUTOR PROCTORED EXAMS is a professional educational support brand providing 1-on-1 online tutoring, structured examination preparation, practice question banks, professional certification coaching, and legitimate software technical guidance.",
+          "pageLocation": "/"
+        },
+        {
+          "question": "What educational services do you provide?",
+          "answer": "We provide six core services: One-to-One Tutoring, Academic Exam Preparation, Practice Questions & Mock Tests, Professional Certification Preparation (PMP, CompTIA, AAPC, CPC, CCMA), Study Planning & Revision Support, and Examination Software Technical Guidance.",
+          "pageLocation": "/"
+        },
+        {
+          "question": "Who can access your educational support services?",
+          "answer": "Our services are open to university students, adult learners, and working professionals worldwide preparing for undergraduate courses, high-stakes exams, or professional credentials.",
+          "pageLocation": "/"
+        },
+        {
+          "question": "How do I get started on the website?",
+          "answer": "Visit our Contact page or click \"Get Started\" to submit a brief inquiry about your course, examination platform, or target certification. An advisor will respond within 1 business day.",
+          "pageLocation": "/"
+        }
+      ]
+    },
+    {
+      "category": "General & Master FAQ Page",
       "pageLocation": "/faq",
       "items": [
         {
@@ -27,7 +53,7 @@
       ]
     },
     {
-      "category": "Tutoring and Academic Support",
+      "category": "Tutoring and Academic Support Services",
       "pageLocation": "/services/one-on-one-tutoring",
       "items": [
         {
@@ -53,8 +79,8 @@
       ]
     },
     {
-      "category": "Examination Preparation",
-      "pageLocation": "/services/academic-exam-preparation",
+      "category": "Examination Software Technical Guidance",
+      "pageLocation": "/services/software-technical-guidance",
       "items": [
         {
           "question": "How can I prepare for a proctored examination?",
@@ -74,7 +100,7 @@
       ]
     },
     {
-      "category": "Professional Certifications",
+      "category": "Professional Certification Preparation",
       "pageLocation": "/certifications",
       "items": [
         {
@@ -100,18 +126,18 @@
       ]
     },
     {
-      "category": "Academic Integrity Policy",
-      "pageLocation": "/about#integrity",
+      "category": "Academic Integrity Policy & About Us",
+      "pageLocation": "/about",
       "items": [
         {
           "question": "What is your position on academic integrity?",
           "answer": "TUTOR PROCTORED EXAMS strictly adheres to academic integrity. We do NOT take exams for students, provide impersonation services, or engage in test proxy taking under any circumstances.",
-          "pageLocation": "/about#integrity"
+          "pageLocation": "/about"
         },
         {
           "question": "Does your technical guidance bypass proctoring software?",
           "answer": "No. We do NOT bypass, disable, hack, or modify proctoring software. Our technical guidance is 100% legitimate and focused solely on hardware compatibility, privacy settings, and official installation guidelines.",
-          "pageLocation": "/about#integrity"
+          "pageLocation": "/about"
         }
       ]
     },

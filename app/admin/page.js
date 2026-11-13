@@ -31,6 +31,7 @@ import {
   ExternalLink,
   Navigation,
   Sparkles,
+  MapPin,
 } from 'lucide-react';
 
 export default function CustomAdminCmsPage() {
@@ -57,6 +58,7 @@ export default function CustomAdminCmsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [inquiryFilter, setInquiryFilter] = useState('All');
   const [faqCategoryFilter, setFaqCategoryFilter] = useState('All');
+  const [faqLocationFilter, setFaqLocationFilter] = useState('All');
 
   // Editor & View Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -386,6 +388,9 @@ export default function CustomAdminCmsPage() {
     }))
   );
 
+  // Extract unique page locations for filter pills
+  const uniquePageLocations = ['All', ...Array.from(new Set(allFlattenedFaqs.map((f) => f.pageLocation)))];
+
   const newInquiriesCount = inquiriesList.filter((i) => i.status === 'New').length;
 
   // Pages Directory Definition
@@ -543,6 +548,7 @@ export default function CustomAdminCmsPage() {
               <span>Services ({servicesList.length})</span>
             </button>
 
+            {/* DOCUMENTS & FAQS TAB */}
             <button
               type="button"
               onClick={() => setActiveTab('faqs')}
@@ -651,7 +657,7 @@ export default function CustomAdminCmsPage() {
           </div>
         )}
 
-        {/* TAB 3: PAGES & NAVBAR MANAGEMENT (ENHANCED WITH CONTENT & NAVBAR EDITORS) */}
+        {/* TAB 3: PAGES & NAVBAR MANAGEMENT */}
         {activeTab === 'pages' && (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
@@ -691,6 +697,8 @@ export default function CustomAdminCmsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {ALL_SITE_PAGES.map((pg) => {
                 const pageInfo = pagesData[pg.key] || {};
+                const pageFaqCount = allFlattenedFaqs.filter((f) => f.pageLocation === pg.path || f.pageLocation.startsWith(pg.path)).length;
+
                 return (
                   <div
                     key={pg.key}
@@ -699,9 +707,14 @@ export default function CustomAdminCmsPage() {
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
                         <span className="font-extrabold text-sm text-slate-900">{pg.name}</span>
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-purple-700 bg-purple-50 px-2 py-0.5 rounded">
-                          {pg.slug}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
+                            {pageFaqCount} FAQs
+                          </span>
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-purple-700 bg-purple-50 px-2 py-0.5 rounded">
+                            {pg.slug}
+                          </span>
+                        </div>
                       </div>
 
                       <p className="text-xs text-slate-600 font-medium line-clamp-2">
@@ -714,20 +727,30 @@ export default function CustomAdminCmsPage() {
                     </div>
 
                     <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+                      <button
+                        onClick={() => {
+                          setFaqLocationFilter(pg.path);
+                          setActiveTab('faqs');
+                        }}
+                        className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 text-xs font-bold inline-flex items-center gap-1 transition-colors"
+                      >
+                        <HelpCircle className="w-3.5 h-3.5" /> Filter FAQs ({pageFaqCount})
+                      </button>
+
                       <a
                         href={pg.path}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-3.5 py-1.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold inline-flex items-center gap-1.5 transition-colors"
+                        className="px-3 py-1.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold inline-flex items-center gap-1.5 transition-colors"
                       >
                         <Eye className="w-3.5 h-3.5 text-slate-500" /> View Page
                       </a>
 
                       <button
                         onClick={() => openPageEditor(pg.key, pg)}
-                        className="px-4 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-sm inline-flex items-center gap-1.5 transition-colors"
+                        className="px-3.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-sm inline-flex items-center gap-1.5 transition-colors"
                       >
-                        <Edit className="w-3.5 h-3.5" /> Edit Page Content & SEO
+                        <Edit className="w-3.5 h-3.5" /> Edit Page
                       </button>
                     </div>
                   </div>
@@ -737,14 +760,14 @@ export default function CustomAdminCmsPage() {
           </div>
         )}
 
-        {/* TAB 5: FAQS & DOCUMENTS CATALOGUE */}
+        {/* TAB 5: FAQS & DOCUMENTS CATALOGUE (SEPARATED BY PAGE LOCATION & EDITABLE) */}
         {activeTab === 'faqs' && (
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h1 className="text-2xl font-black text-slate-900">FAQs & Documents Catalogue</h1>
+                <h1 className="text-2xl font-black text-slate-900">Documents & FAQs Catalogue</h1>
                 <p className="text-xs text-slate-500">
-                  Manage all {allFlattenedFaqs.length} frequently asked questions and their target website page locations
+                  Manage and edit all {allFlattenedFaqs.length} frequently asked questions grouped separately by website page location
                 </p>
               </div>
 
@@ -770,32 +793,37 @@ export default function CustomAdminCmsPage() {
               </div>
             </div>
 
-            {/* CATEGORY FILTER PILLS */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-              {['All', ...faqsList.map((c) => c.category)].map((catName) => (
-                <button
-                  key={catName}
-                  type="button"
-                  onClick={() => setFaqCategoryFilter(catName)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-                    faqCategoryFilter === catName
-                      ? 'bg-purple-600 text-white shadow-sm'
-                      : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
-                  }`}
-                >
-                  {catName}
-                </button>
-              ))}
+            {/* PAGE LOCATION FILTER BUTTONS */}
+            <div className="space-y-2 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+              <span className="text-[11px] uppercase font-bold text-slate-400 tracking-wider flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-purple-600" /> Filter FAQs by Website Page Location:
+              </span>
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+                {uniquePageLocations.map((loc) => (
+                  <button
+                    key={loc}
+                    type="button"
+                    onClick={() => setFaqLocationFilter(loc)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                      faqLocationFilter === loc
+                        ? 'bg-purple-600 text-white shadow-sm'
+                        : 'bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100'
+                    }`}
+                  >
+                    {loc === 'All' ? 'All Locations' : loc}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            {/* FAQS DATA TABLE */}
+            {/* FAQS DATA TABLE WITH INLINE EDIT BUTTONS */}
             <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200 text-[11px] uppercase font-bold text-slate-500">
                     <th className="py-3.5 px-6">#</th>
                     <th className="py-3.5 px-6">Question</th>
-                    <th className="py-3.5 px-6">Answer Snippet</th>
+                    <th className="py-3.5 px-6">Answer Text</th>
                     <th className="py-3.5 px-6">Category</th>
                     <th className="py-3.5 px-6">Page Location</th>
                     <th className="py-3.5 px-6 text-right">Actions</th>
@@ -804,6 +832,10 @@ export default function CustomAdminCmsPage() {
                 <tbody className="divide-y divide-slate-100 text-xs">
                   {allFlattenedFaqs
                     .filter((item) => {
+                      const matchesLocation =
+                        faqLocationFilter === 'All' ||
+                        item.pageLocation === faqLocationFilter ||
+                        item.pageLocation.startsWith(faqLocationFilter);
                       const matchesCategory =
                         faqCategoryFilter === 'All' || item.category === faqCategoryFilter;
                       const matchesSearch =
@@ -811,14 +843,17 @@ export default function CustomAdminCmsPage() {
                         item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
                         item.answer.toLowerCase().includes(searchQuery.toLowerCase()) ||
                         item.pageLocation.toLowerCase().includes(searchQuery.toLowerCase());
-                      return matchesCategory && matchesSearch;
+                      return matchesLocation && matchesCategory && matchesSearch;
                     })
                     .map((item, idx) => (
                       <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
                         <td className="py-4 px-6 font-mono text-slate-400">
                           {String(idx + 1).padStart(2, '0')}
                         </td>
-                        <td className="py-4 px-6 font-bold text-slate-900 max-w-xs leading-snug">
+                        <td
+                          onClick={() => openFaqEditor(item.category, item)}
+                          className="py-4 px-6 font-bold text-slate-900 max-w-xs leading-snug cursor-pointer hover:text-purple-700 transition-colors"
+                        >
                           {item.question}
                         </td>
                         <td className="py-4 px-6 text-slate-500 max-w-sm truncate">
@@ -834,7 +869,7 @@ export default function CustomAdminCmsPage() {
                             href={item.pageLocation}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 font-mono text-[11px] text-purple-700 bg-purple-50/60 px-2 py-0.5 rounded hover:underline"
+                            className="inline-flex items-center gap-1 font-mono text-[11px] text-purple-700 bg-purple-50/80 px-2.5 py-1 rounded-lg border border-purple-200 hover:underline"
                           >
                             <span>{item.pageLocation}</span>
                             <ExternalLink className="w-3 h-3 text-purple-500" />
@@ -843,9 +878,9 @@ export default function CustomAdminCmsPage() {
                         <td className="py-4 px-6 text-right space-x-3 whitespace-nowrap">
                           <button
                             onClick={() => openFaqEditor(item.category, item)}
-                            className="text-purple-700 hover:text-purple-900 font-bold transition-colors inline-flex items-center gap-1"
+                            className="text-purple-700 hover:text-purple-900 font-bold transition-colors inline-flex items-center gap-1 bg-purple-50 px-2.5 py-1 rounded-lg border border-purple-200"
                           >
-                            <Edit className="w-3.5 h-3.5" /> Edit
+                            <Edit className="w-3.5 h-3.5" /> Edit FAQ
                           </button>
                           <button
                             onClick={() => handleDeleteFaq(item.category, item.question)}
@@ -1254,38 +1289,55 @@ export default function CustomAdminCmsPage() {
               </div>
             )}
 
-            {/* FAQ EDITOR MODAL */}
+            {/* FAQ EDITOR MODAL (WITH PAGE LOCATION SELECTOR) */}
             {editingItemType === 'faq' && (
               <div className="space-y-4 text-xs">
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">FAQ Category</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. General Questions, Tutoring, Professional Certifications"
-                    value={editFormData.category || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="font-bold text-slate-700 block mb-1">FAQ Category</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. General Questions, Tutoring, Professional Certifications"
+                      value={editFormData.category || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
+                      className="w-full px-3 py-2 border rounded-xl font-medium"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="font-bold text-slate-700 block mb-1">Target Page Location</label>
+                    <select
+                      value={editFormData.pageLocation || '/faq'}
+                      onChange={(e) => setEditFormData({ ...editFormData, pageLocation: e.target.value })}
+                      className="w-full px-3 py-2 border rounded-xl font-mono text-[11px] bg-white text-slate-800"
+                    >
+                      <option value="/">Homepage (/)</option>
+                      <option value="/about">About Us (/about)</option>
+                      <option value="/services">Services Directory (/services)</option>
+                      <option value="/services/one-on-one-tutoring">1-on-1 Tutoring Service (/services/one-on-one-tutoring)</option>
+                      <option value="/services/academic-exam-preparation">Academic Exam Prep (/services/academic-exam-preparation)</option>
+                      <option value="/services/practice-questions-mock-tests">Practice Questions (/services/practice-questions-mock-tests)</option>
+                      <option value="/services/software-technical-guidance">Software Technical Guidance (/services/software-technical-guidance)</option>
+                      <option value="/exam-platforms">Exam Platforms (/exam-platforms)</option>
+                      <option value="/exam-platforms/respondus-lockdown-browser">Respondus LockDown Browser (/exam-platforms/respondus-lockdown-browser)</option>
+                      <option value="/certifications">Certifications (/certifications)</option>
+                      <option value="/certifications/pmp">PMP Certification (/certifications/pmp)</option>
+                      <option value="/certifications/comptia">CompTIA Certifications (/certifications/comptia)</option>
+                      <option value="/study-resources">Study Resources (/study-resources)</option>
+                      <option value="/faq">Master FAQ Page (/faq)</option>
+                      <option value="/contact">Contact Page (/contact)</option>
+                    </select>
+                  </div>
                 </div>
 
                 <div>
-                  <label className="font-bold text-slate-700 block mb-1">Target Page Location / URL</label>
+                  <label className="font-bold text-slate-700 block mb-1">Question Text</label>
                   <input
                     type="text"
-                    placeholder="e.g. /faq, /services/one-on-one-tutoring, /certifications/pmp, /contact"
-                    value={editFormData.pageLocation || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, pageLocation: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl font-mono text-[11px]"
-                  />
-                </div>
-
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Question</label>
-                  <input
-                    type="text"
+                    placeholder="Enter the question..."
                     value={editFormData.question || ''}
                     onChange={(e) => setEditFormData({ ...editFormData, question: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
+                    className="w-full px-3 py-2 border rounded-xl font-bold text-slate-900"
                   />
                 </div>
 
@@ -1293,9 +1345,10 @@ export default function CustomAdminCmsPage() {
                   <label className="font-bold text-slate-700 block mb-1">Answer / Response Text</label>
                   <textarea
                     rows={4}
+                    placeholder="Enter the complete answer text..."
                     value={editFormData.answer || ''}
                     onChange={(e) => setEditFormData({ ...editFormData, answer: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl leading-relaxed"
+                    className="w-full px-3 py-2 border rounded-xl leading-relaxed text-slate-800"
                   />
                 </div>
               </div>
