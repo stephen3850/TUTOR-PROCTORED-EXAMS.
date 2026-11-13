@@ -15,6 +15,7 @@ import {
   MessageCircle,
   Send,
   Loader2,
+  ExternalLink,
 } from 'lucide-react';
 import PageContainer from '@/components/layout/PageContainer';
 import SectionHeading from '@/components/ui/SectionHeading';
@@ -232,6 +233,29 @@ export default function CertificationDetailPage({ params }) {
               <span className="text-sm font-extrabold text-[#0F172A]">{cert.examFormat.proctoring}</span>
             </div>
           </div>
+
+          {/* OFFICIAL GOVERNING BODY REFERENCE LINK */}
+          {cert.officialBodyUrl && (
+            <div className="pt-4 border-t border-slate-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="space-y-0.5">
+                <span className="text-xs font-bold text-[#0F172A] flex items-center gap-1.5">
+                  <Building2 className="w-4 h-4 text-[#2563EB]" /> Official Governing Body: {cert.governingBody}
+                </span>
+                <p className="text-xs text-slate-600">
+                  Review official examination policies, candidate handbooks, and registration details on the governing body site.
+                </p>
+              </div>
+              <a
+                href={cert.officialBodyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-xs font-bold text-[#2563EB] hover:underline bg-blue-50 px-3.5 py-2 rounded-xl border border-blue-200 transition-colors shrink-0"
+              >
+                <span>{cert.officialBodyLabel || `${cert.title} Official Site`}</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            </div>
+          )}
         </div>
 
         {/* 3. REVISION MATERIALS SECTION ("Explore Available Study Materials") */}
