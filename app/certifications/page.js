@@ -8,6 +8,9 @@ import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
 import { getCertificationsContent } from '@/lib/contentLoader';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export const metadata = {
   title: 'Professional Certification Preparation Directory | PMP, CompTIA, AAPC, CPC, CCMA, CNA, CPhT',
   description:

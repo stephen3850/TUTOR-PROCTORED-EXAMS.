@@ -8,6 +8,9 @@ import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
 import { getPlatformsContent } from '@/lib/contentLoader';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export const metadata = {
   title: 'Examination Platforms & Exam Prep Directory | System Requirements & Guides',
   description:

@@ -24,10 +24,8 @@ import { getBlogsContent, getBlogBySlug } from '@/lib/contentLoader';
 import { SITE_CONFIG } from '@/lib/utils';
 import { getWpPostBySlug, extractWpSeo } from '@/lib/wordpress';
 
-export async function generateStaticParams() {
-  const blogs = getBlogsContent();
-  return blogs.map((b) => ({ slug: b.slug }));
-}
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;

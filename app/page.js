@@ -25,6 +25,9 @@ import FaqAccordion from '@/components/ui/FaqAccordion';
 import TypewriterHeroHeadline from '@/components/ui/TypewriterHeroHeadline';
 import ProcessStepsSequentialReveal from '@/components/ui/ProcessStepsSequentialReveal';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export const metadata = {
   title: 'TUTOR PROCTORED EXAMS | Professional Tutoring & Exam Preparation',
   description:

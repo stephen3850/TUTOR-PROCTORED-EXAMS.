@@ -24,6 +24,9 @@ import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
 import { getServicesContent } from '@/lib/contentLoader';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export const metadata = {
   title: 'Our Educational Support Services | TUTOR PROCTORED EXAMS',
   description:

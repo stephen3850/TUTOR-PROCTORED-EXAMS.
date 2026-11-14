@@ -16,6 +16,9 @@ import Breadcrumb from '@/components/ui/Breadcrumb';
 import Badge from '@/components/ui/Badge';
 import { getStudyResourcesContent } from '@/lib/contentLoader';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export const metadata = {
   title: 'Study Materials & Revision Resources Sales Platform | TUTOR PROCTORED EXAMS',
   description:

@@ -28,10 +28,8 @@ import { getServicesContent, getServiceBySlug } from '@/lib/contentLoader';
 import { SITE_CONFIG } from '@/lib/utils';
 import { getWpPageBySlug, extractWpSeo } from '@/lib/wordpress';
 
-export async function generateStaticParams() {
-  const services = getServicesContent();
-  return services.map((s) => ({ slug: s.slug }));
-}
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
