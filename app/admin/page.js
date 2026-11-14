@@ -32,6 +32,33 @@ import {
   Navigation,
   Sparkles,
   MapPin,
+  Award,
+  Cpu,
+  FolderOpen,
+  Image as ImageIcon,
+  UploadCloud,
+  Check,
+  ToggleLeft,
+  ToggleRight,
+  ArrowUp,
+  ArrowDown,
+  Layers,
+  Clock,
+  ArrowRight,
+  Activity,
+  TrendingUp,
+  Zap,
+  BarChart3,
+  ChevronDown,
+  ChevronRight,
+  Menu,
+  PanelLeftClose,
+  PanelLeft,
+  Filter,
+  Tag,
+  Sliders,
+  RefreshCw,
+  AlertCircle,
 } from 'lucide-react';
 
 export default function CustomAdminCmsPage() {
@@ -43,6 +70,21 @@ export default function CustomAdminCmsPage() {
   // Active Navigation Tab
   const [activeTab, setActiveTab] = useState('dashboard');
 
+  // Sidebar & Navigation Layout States
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [expandedGroups, setExpandedGroups] = useState({
+    OVERVIEW: true,
+    WEBSITE: true,
+    CONTENT: true,
+    CUSTOMER: true,
+    CONFIG: true,
+  });
+
+  const toggleGroup = (groupKey) => {
+    setExpandedGroups((prev) => ({ ...prev, [groupKey]: !prev[groupKey] }));
+  };
+
   // Content States
   const [blogArticles, setBlogArticles] = useState([]);
   const [servicesList, setServicesList] = useState([]);
@@ -51,6 +93,16 @@ export default function CustomAdminCmsPage() {
   const [inquiriesList, setInquiriesList] = useState([]);
   const [pagesData, setPagesData] = useState({});
   const [navData, setNavData] = useState({ topBanner: {}, navLinks: [] });
+  const [certificationsList, setCertificationsList] = useState([]);
+  const [platformsList, setPlatformsList] = useState([]);
+  const [studyResourcesList, setStudyResourcesList] = useState([]);
+  const [partnershipsList, setPartnershipsList] = useState([]);
+
+  // Media Library State
+  const [mediaLibrary, setMediaLibrary] = useState([]);
+  const [isMediaPickerOpen, setIsMediaPickerOpen] = useState(false);
+  const [mediaPickerTargetField, setMediaPickerTargetField] = useState('');
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   // Loading & Notification States
   const [loading, setLoading] = useState(false);
@@ -60,9 +112,30 @@ export default function CustomAdminCmsPage() {
   const [faqCategoryFilter, setFaqCategoryFilter] = useState('All');
   const [faqLocationFilter, setFaqLocationFilter] = useState('All');
 
+  // Section-Specific Search & Filter States
+  const [blogSearchQuery, setBlogSearchQuery] = useState('');
+  const [blogCategoryFilter, setBlogCategoryFilter] = useState('All');
+
+  const [serviceSearchQuery, setServiceSearchQuery] = useState('');
+  const [serviceCategoryFilter, setServiceCategoryFilter] = useState('All');
+
+  const [certSearchQuery, setCertSearchQuery] = useState('');
+  const [certCategoryFilter, setCertCategoryFilter] = useState('All');
+
+  const [platformSearchQuery, setPlatformSearchQuery] = useState('');
+  const [resourceSearchQuery, setResourceSearchQuery] = useState('');
+  const [partnerSearchQuery, setPartnerSearchQuery] = useState('');
+  const [pageSearchQuery, setPageSearchQuery] = useState('');
+
+  const [faqSearchQuery, setFaqSearchQuery] = useState('');
+  const [faqLocationFilterState, setFaqLocationFilterState] = useState('All');
+
+  const [inquirySearchQuery, setInquirySearchQuery] = useState('');
+  const [inquiryFilterState, setInquiryFilterState] = useState('All');
+
   // Editor & View Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingItemType, setEditingItemType] = useState(''); // 'blog', 'service', 'faq', 'settings', 'inquiry', 'page', 'navigation'
+  const [editingItemType, setEditingItemType] = useState(''); // 'blog', 'service', 'faq', 'settings', 'inquiry', 'page', 'navigation', 'certification', 'platform', 'resource', 'partnership'
   const [editFormData, setEditFormData] = useState({});
 
   // Check stored auth session on mount
@@ -71,6 +144,7 @@ export default function CustomAdminCmsPage() {
     if (savedAuth === 'true') {
       setIsAuthenticated(true);
       fetchContentData();
+      fetchMediaLibrary();
     }
   }, []);
 
@@ -83,6 +157,7 @@ export default function CustomAdminCmsPage() {
       localStorage.setItem('cms_admin_pass', adminPasswordInput);
       setLoginError('');
       fetchContentData();
+      fetchMediaLibrary();
     } else {
       setLoginError('Invalid password. Default password is: admin12345');
     }
@@ -146,10 +221,107 @@ export default function CustomAdminCmsPage() {
       if (navJson.success && navJson.data) {
         setNavData(navJson.data);
       }
+
+      // Fetch Certifications
+      const certRes = await fetch('/api/admin/content?file=certifications.json');
+      const certJson = await certRes.json();
+      if (certJson.success && certJson.data?.certifications) {
+        setCertificationsList(certJson.data.certifications);
+      }
+
+      // Fetch Exam Platforms
+      const platRes = await fetch('/api/admin/content?file=platforms.json');
+      const platJson = await platRes.json();
+      if (platJson.success && platJson.data?.platforms) {
+        setPlatformsList(platJson.data.platforms);
+      }
+
+      // Fetch Study Resources
+      const resRes = await fetch('/api/admin/content?file=study-resources.json');
+      const resJson = await resRes.json();
+      if (resJson.success && resJson.data?.resources) {
+        setStudyResourcesList(resJson.data.resources);
+      }
+
+      // Fetch Partnerships & Logos
+      const partRes = await fetch('/api/admin/content?file=partnerships.json');
+      const partJson = await partRes.json();
+      if (partJson.success && partJson.data?.partners) {
+        setPartnershipsList(partJson.data.partners);
+      }
     } catch (err) {
       console.error('Failed to load content', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Fetch Media Library Images
+  const fetchMediaLibrary = async () => {
+    try {
+      const res = await fetch('/api/admin/upload');
+      const json = await res.json();
+      if (json.success && json.media) {
+        setMediaLibrary(json.media);
+      }
+    } catch (err) {
+      console.error('Failed to load media library', err);
+    }
+  };
+
+  // Upload New Image
+  const handleUploadImageFile = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    try {
+      const currentPass = localStorage.getItem('cms_admin_pass') || 'admin12345';
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('password', currentPass);
+
+      const res = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const json = await res.json();
+      if (json.success) {
+        setSaveStatus(`Image uploaded: ${json.filename}`);
+        fetchMediaLibrary();
+        if (mediaPickerTargetField) {
+          setEditFormData((prev) => ({ ...prev, [mediaPickerTargetField]: json.url }));
+          setIsMediaPickerOpen(false);
+        }
+      } else {
+        alert(`Upload error: ${json.error}`);
+      }
+    } catch (err) {
+      alert('Failed to upload image file.');
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  // Delete Media Image
+  const handleDeleteMediaImage = async (filename) => {
+    if (!confirm(`Are you sure you want to delete image "${filename}" from server storage?`)) return;
+
+    try {
+      const currentPass = localStorage.getItem('cms_admin_pass') || 'admin12345';
+      const res = await fetch(`/api/admin/upload?filename=${encodeURIComponent(filename)}&password=${encodeURIComponent(currentPass)}`, {
+        method: 'DELETE',
+      });
+      const json = await res.json();
+      if (json.success) {
+        setSaveStatus(`Image deleted: ${filename}`);
+        fetchMediaLibrary();
+      } else {
+        alert(`Delete error: ${json.error}`);
+      }
+    } catch (err) {
+      alert('Failed to delete media file.');
     }
   };
 
@@ -185,7 +357,22 @@ export default function CustomAdminCmsPage() {
     }
   };
 
-  // Modal Handlers
+  // Open Media Picker Modal for a specific field
+  const openMediaPickerFor = (fieldName) => {
+    setMediaPickerTargetField(fieldName);
+    fetchMediaLibrary();
+    setIsMediaPickerOpen(true);
+  };
+
+  // Select Image from Media Picker
+  const selectMediaImage = (url) => {
+    if (mediaPickerTargetField) {
+      setEditFormData((prev) => ({ ...prev, [mediaPickerTargetField]: url }));
+    }
+    setIsMediaPickerOpen(false);
+  };
+
+  // --- BLOG HANDLERS ---
   const openBlogEditor = (article = null) => {
     setEditingItemType('blog');
     setEditFormData(
@@ -198,6 +385,8 @@ export default function CustomAdminCmsPage() {
         intro: '',
         metaTitle: '',
         metaDescription: '',
+        published: true,
+        order: blogArticles.length + 1,
       }
     );
     setIsModalOpen(true);
@@ -222,17 +411,186 @@ export default function CustomAdminCmsPage() {
     }
   };
 
-  const openServiceEditor = (service) => {
+  // --- SERVICE HANDLERS ---
+  const openServiceEditor = (service = null) => {
     setEditingItemType('service');
-    setEditFormData(service);
+    setEditFormData(
+      service || {
+        slug: `new-service-${Date.now()}`,
+        title: '',
+        category: 'Academic Support',
+        tagline: '',
+        overview: '',
+        heroImage: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f',
+        published: true,
+        order: servicesList.length + 1,
+      }
+    );
     setIsModalOpen(true);
   };
 
   const handleSaveService = () => {
-    const updated = servicesList.map((s) => (s.slug === editFormData.slug ? editFormData : s));
+    let updated;
+    const existingIndex = servicesList.findIndex((s) => s.slug === editFormData.slug);
+    if (existingIndex >= 0) {
+      updated = [...servicesList];
+      updated[existingIndex] = editFormData;
+    } else {
+      updated = [...servicesList, editFormData];
+    }
     saveContentFile('services.json', { services: updated });
   };
 
+  const handleDeleteService = (slug) => {
+    if (confirm('Are you sure you want to delete this service?')) {
+      const updated = servicesList.filter((s) => s.slug !== slug);
+      saveContentFile('services.json', { services: updated });
+    }
+  };
+
+  // --- CERTIFICATION HANDLERS ---
+  const openCertEditor = (cert = null) => {
+    setEditingItemType('certification');
+    setEditFormData(
+      cert || {
+        slug: `new-cert-${Date.now()}`,
+        title: '',
+        category: 'Project Management',
+        description: '',
+        logo: '/logos/pmp.svg',
+        published: true,
+        order: certificationsList.length + 1,
+      }
+    );
+    setIsModalOpen(true);
+  };
+
+  const handleSaveCertification = () => {
+    let updated;
+    const existingIndex = certificationsList.findIndex((c) => c.slug === editFormData.slug);
+    if (existingIndex >= 0) {
+      updated = [...certificationsList];
+      updated[existingIndex] = editFormData;
+    } else {
+      updated = [...certificationsList, editFormData];
+    }
+    saveContentFile('certifications.json', { certifications: updated });
+  };
+
+  const handleDeleteCertification = (slug) => {
+    if (confirm('Are you sure you want to delete this certification?')) {
+      const updated = certificationsList.filter((c) => c.slug !== slug);
+      saveContentFile('certifications.json', { certifications: updated });
+    }
+  };
+
+  // --- EXAM PLATFORM HANDLERS ---
+  const openPlatformEditor = (platform = null) => {
+    setEditingItemType('platform');
+    setEditFormData(
+      platform || {
+        slug: `new-platform-${Date.now()}`,
+        title: '',
+        description: '',
+        logo: '/logos/respondus.svg',
+        published: true,
+        order: platformsList.length + 1,
+      }
+    );
+    setIsModalOpen(true);
+  };
+
+  const handleSavePlatform = () => {
+    let updated;
+    const existingIndex = platformsList.findIndex((p) => p.slug === editFormData.slug);
+    if (existingIndex >= 0) {
+      updated = [...platformsList];
+      updated[existingIndex] = editFormData;
+    } else {
+      updated = [...platformsList, editFormData];
+    }
+    saveContentFile('platforms.json', { platforms: updated });
+  };
+
+  const handleDeletePlatform = (slug) => {
+    if (confirm('Are you sure you want to delete this exam platform?')) {
+      const updated = platformsList.filter((p) => p.slug !== slug);
+      saveContentFile('platforms.json', { platforms: updated });
+    }
+  };
+
+  // --- STUDY RESOURCE HANDLERS ---
+  const openResourceEditor = (resource = null) => {
+    setEditingItemType('resource');
+    setEditFormData(
+      resource || {
+        slug: `new-resource-${Date.now()}`,
+        title: '',
+        category: 'Project Management',
+        description: '',
+        image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173',
+        published: true,
+        order: studyResourcesList.length + 1,
+      }
+    );
+    setIsModalOpen(true);
+  };
+
+  const handleSaveResource = () => {
+    let updated;
+    const existingIndex = studyResourcesList.findIndex((r) => r.slug === editFormData.slug);
+    if (existingIndex >= 0) {
+      updated = [...studyResourcesList];
+      updated[existingIndex] = editFormData;
+    } else {
+      updated = [...studyResourcesList, editFormData];
+    }
+    saveContentFile('study-resources.json', { resources: updated });
+  };
+
+  const handleDeleteResource = (slug) => {
+    if (confirm('Are you sure you want to delete this study resource?')) {
+      const updated = studyResourcesList.filter((r) => r.slug !== slug);
+      saveContentFile('study-resources.json', { resources: updated });
+    }
+  };
+
+  // --- PARTNERSHIP / LOGO HANDLERS ---
+  const openPartnershipEditor = (partner = null) => {
+    setEditingItemType('partnership');
+    setEditFormData(
+      partner || {
+        id: `partner-${Date.now()}`,
+        name: '',
+        logo: '/logos/pmp.svg',
+        url: '/',
+        published: true,
+        order: partnershipsList.length + 1,
+      }
+    );
+    setIsModalOpen(true);
+  };
+
+  const handleSavePartnership = () => {
+    let updated;
+    const existingIndex = partnershipsList.findIndex((p) => (p.id && p.id === editFormData.id) || p.name === editFormData.name);
+    if (existingIndex >= 0) {
+      updated = [...partnershipsList];
+      updated[existingIndex] = editFormData;
+    } else {
+      updated = [...partnershipsList, editFormData];
+    }
+    saveContentFile('partnerships.json', { partners: updated });
+  };
+
+  const handleDeletePartnership = (identifier) => {
+    if (confirm('Are you sure you want to delete this partner logo?')) {
+      const updated = partnershipsList.filter((p) => p.id !== identifier && p.name !== identifier);
+      saveContentFile('partnerships.json', { partners: updated });
+    }
+  };
+
+  // --- SETTINGS & INQUIRY HANDLERS ---
   const openSettingsEditor = () => {
     setEditingItemType('settings');
     setEditFormData({ ...siteSettings });
@@ -393,6 +751,86 @@ export default function CustomAdminCmsPage() {
 
   const newInquiriesCount = inquiriesList.filter((i) => i.status === 'New').length;
 
+  // Derive reliable recent website activity records from real data sources (Inquiries, Blogs, Media uploads)
+  const getRecentWebsiteActivity = () => {
+    const activities = [];
+
+    // Real Inquiry Activities
+    inquiriesList.forEach((inq) => {
+      if (inq.date) {
+        activities.push({
+          id: `act-inq-${inq.id || inq.date}`,
+          type: 'inquiry',
+          title: `Inquiry from ${inq.fullName || 'Client'}`,
+          subtitle: inq.service || inq.subject || 'Customer Inquiry Received',
+          timestamp: inq.date,
+          dateObj: new Date(inq.date.replace(' ', 'T')),
+          badge: inq.status || 'New',
+          badgeColor:
+            inq.status === 'New'
+              ? 'bg-amber-50 text-amber-800 border-amber-200'
+              : 'bg-emerald-50 text-emerald-800 border-emerald-200',
+          icon: Inbox,
+          iconBg: 'bg-purple-100 text-purple-700',
+          action: () => openInquiryViewer(inq),
+        });
+      }
+    });
+
+    // Real Blog Publication Activities
+    blogArticles.forEach((art) => {
+      if (art.publishDate) {
+        activities.push({
+          id: `act-blog-${art.slug}`,
+          type: 'blog',
+          title: `Blog Published: ${art.title}`,
+          subtitle: art.category || 'Article Published',
+          timestamp: art.publishDate,
+          dateObj: new Date(art.publishDate),
+          badge: art.published !== false ? 'Published' : 'Draft',
+          badgeColor:
+            art.published !== false
+              ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+              : 'bg-slate-100 text-slate-700 border-slate-200',
+          icon: BookOpen,
+          iconBg: 'bg-blue-100 text-blue-700',
+          action: () => openBlogEditor(art),
+        });
+      }
+    });
+
+    // Real Media Upload Activities
+    mediaLibrary.forEach((media) => {
+      if (media.updatedAt) {
+        const formattedDate = new Date(media.updatedAt).toISOString().split('T')[0];
+        activities.push({
+          id: `act-media-${media.filename}`,
+          type: 'media',
+          title: `Media Uploaded: ${media.filename}`,
+          subtitle: `${(media.size / 1024).toFixed(1)} KB`,
+          timestamp: formattedDate,
+          dateObj: new Date(media.updatedAt),
+          badge: 'Uploaded',
+          badgeColor: 'bg-indigo-50 text-indigo-800 border-indigo-200',
+          icon: ImageIcon,
+          iconBg: 'bg-indigo-100 text-indigo-700',
+          action: () => openMediaPickerFor(''),
+        });
+      }
+    });
+
+    // Sort by timestamp descending
+    activities.sort((a, b) => {
+      const timeA = isNaN(a.dateObj?.getTime()) ? 0 : a.dateObj.getTime();
+      const timeB = isNaN(b.dateObj?.getTime()) ? 0 : b.dateObj.getTime();
+      return timeB - timeA;
+    });
+
+    return activities.slice(0, 6);
+  };
+
+  const recentWebsiteActivities = getRecentWebsiteActivity();
+
   // Pages Directory Definition
   const ALL_SITE_PAGES = [
     { key: 'home', slug: '/', name: 'Homepage', path: '/' },
@@ -403,6 +841,146 @@ export default function CustomAdminCmsPage() {
     { key: 'study-resources', slug: '/study-resources', name: 'Study Resources', path: '/study-resources' },
     { key: 'faq', slug: '/faq', name: 'FAQ Page', path: '/faq' },
     { key: 'contact', slug: '/contact', name: 'Contact Page', path: '/contact' },
+  ];
+
+  // Grouped Navigation Definition
+  const NAV_GROUPS = [
+    {
+      key: 'OVERVIEW',
+      title: 'OVERVIEW',
+      items: [
+        {
+          id: 'dashboard',
+          label: 'Dashboard',
+          icon: LayoutDashboard,
+          onClick: () => setActiveTab('dashboard'),
+          isActive: activeTab === 'dashboard',
+          badge: null,
+        },
+      ],
+    },
+    {
+      key: 'WEBSITE',
+      title: 'WEBSITE MANAGEMENT',
+      items: [
+        {
+          id: 'pages',
+          label: 'Pages & Navbar',
+          icon: FileText,
+          onClick: () => setActiveTab('pages'),
+          isActive: activeTab === 'pages',
+          badge: ALL_SITE_PAGES.length,
+          badgeColor: 'bg-purple-900/60 text-purple-300',
+        },
+        {
+          id: 'services',
+          label: 'Services',
+          icon: Briefcase,
+          onClick: () => setActiveTab('services'),
+          isActive: activeTab === 'services',
+          badge: servicesList.length,
+          badgeColor: 'bg-purple-900/60 text-purple-300',
+        },
+        {
+          id: 'certifications',
+          label: 'Certifications',
+          icon: Award,
+          onClick: () => setActiveTab('certifications'),
+          isActive: activeTab === 'certifications',
+          badge: certificationsList.length,
+          badgeColor: 'bg-purple-900/60 text-purple-300',
+        },
+        {
+          id: 'platforms',
+          label: 'Exam Platforms',
+          icon: Cpu,
+          onClick: () => setActiveTab('platforms'),
+          isActive: activeTab === 'platforms',
+          badge: platformsList.length,
+          badgeColor: 'bg-purple-900/60 text-purple-300',
+        },
+        {
+          id: 'resources',
+          label: 'Study Resources',
+          icon: FolderOpen,
+          onClick: () => setActiveTab('resources'),
+          isActive: activeTab === 'resources',
+          badge: studyResourcesList.length,
+          badgeColor: 'bg-purple-900/60 text-purple-300',
+        },
+        {
+          id: 'partnerships',
+          label: 'Partnerships & Logos',
+          icon: Sparkles,
+          onClick: () => setActiveTab('partnerships'),
+          isActive: activeTab === 'partnerships',
+          badge: partnershipsList.length,
+          badgeColor: 'bg-purple-900/60 text-purple-300',
+        },
+      ],
+    },
+    {
+      key: 'CONTENT',
+      title: 'CONTENT MANAGEMENT',
+      items: [
+        {
+          id: 'blogs',
+          label: 'Blogs',
+          icon: BookOpen,
+          onClick: () => setActiveTab('blogs'),
+          isActive: activeTab === 'blogs',
+          badge: blogArticles.length,
+          badgeColor: 'bg-purple-900/60 text-purple-300',
+        },
+        {
+          id: 'faqs',
+          label: 'Documents & FAQs',
+          icon: HelpCircle,
+          onClick: () => setActiveTab('faqs'),
+          isActive: activeTab === 'faqs',
+          badge: allFlattenedFaqs.length,
+          badgeColor: 'bg-purple-900/60 text-purple-300',
+        },
+        {
+          id: 'media',
+          label: 'Media Library',
+          icon: ImageIcon,
+          onClick: () => openMediaPickerFor(''),
+          isActive: false,
+          badge: mediaLibrary.length,
+          badgeColor: 'bg-purple-900/60 text-purple-300',
+        },
+      ],
+    },
+    {
+      key: 'CUSTOMER',
+      title: 'CUSTOMER MANAGEMENT',
+      items: [
+        {
+          id: 'inquiries',
+          label: 'Inquiries',
+          icon: Inbox,
+          onClick: () => setActiveTab('inquiries'),
+          isActive: activeTab === 'inquiries',
+          badge: newInquiriesCount > 0 ? `${newInquiriesCount} New` : inquiriesList.length,
+          badgeColor: newInquiriesCount > 0 ? 'bg-rose-500 text-white font-black animate-pulse' : 'bg-purple-900/60 text-purple-300',
+        },
+      ],
+    },
+    {
+      key: 'CONFIG',
+      title: 'CONFIGURATION',
+      items: [
+        {
+          id: 'settings',
+          label: 'Site Settings & SEO',
+          icon: Settings,
+          onClick: () => setActiveTab('settings'),
+          isActive: activeTab === 'settings',
+          badge: null,
+        },
+      ],
+    },
   ];
 
   // 1. LOGIN SCREEN
@@ -457,150 +1035,368 @@ export default function CustomAdminCmsPage() {
 
   // 2. LOGGED IN CMS DASHBOARD UI
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex font-sans text-slate-800">
-      {/* DARK PURPLE SIDEBAR */}
-      <aside className="w-64 bg-[#1E1035] text-purple-200 shrink-0 flex flex-col justify-between p-6 shadow-xl">
-        <div className="space-y-8">
-          {/* Logo / Header */}
-          <div className="space-y-1">
-            <h2 className="text-lg font-black text-white tracking-tight leading-none">
-              TUTOR PROCTORED EXAMS
-            </h2>
-            <span className="text-[10px] uppercase font-bold text-purple-400 tracking-wider block">
-              CMS Control Panel
-            </span>
+    <div className="min-h-screen bg-[#F8FAFC] flex flex-col lg:flex-row font-sans text-slate-800">
+      {/* MOBILE HEADER BAR */}
+      <div className="lg:hidden bg-[#1E1035] border-b border-purple-900/50 px-4 py-3 flex items-center justify-between text-white sticky top-0 z-40 shadow-lg">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setIsMobileMenuOpen(true)}
+            className="p-2 rounded-xl bg-purple-900/50 border border-purple-800 text-purple-200 hover:text-white transition-colors"
+            aria-label="Open Navigation Drawer"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-purple-600/30 border border-purple-500/40 flex items-center justify-center text-purple-300">
+              <ShieldCheck className="w-4 h-4" />
+            </div>
+            <div>
+              <span className="font-black text-xs tracking-tight text-white block leading-none">TUTOR PROCTORED EXAMS</span>
+              <span className="text-[9px] uppercase font-bold text-purple-400 tracking-wider">CMS Control Panel</span>
+            </div>
+          </div>
+        </div>
+
+        <span className="text-[10px] uppercase font-extrabold px-2.5 py-1 rounded-full bg-purple-600/40 border border-purple-500/30 text-purple-200">
+          {activeTab}
+        </span>
+      </div>
+
+      {/* MOBILE SLIDE-OUT DRAWER */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden flex">
+          {/* Backdrop Overlay */}
+          <div
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200"
+          />
+
+          {/* Drawer Body */}
+          <aside className="relative w-80 max-w-[85vw] bg-[#1E1035] text-purple-200 flex flex-col justify-between p-5 shadow-2xl border-r border-purple-800/50 z-10 animate-in slide-in-from-left duration-300">
+            <div className="space-y-6">
+              {/* Drawer Header */}
+              <div className="flex items-center justify-between pb-4 border-b border-purple-900/50">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-purple-600/30 border border-purple-500/40 flex items-center justify-center text-purple-300 shadow-md">
+                    <ShieldCheck className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-xs font-black text-white tracking-tight leading-none uppercase">
+                      Tutor Proctored Exams
+                    </h2>
+                    <span className="text-[9px] uppercase font-bold text-purple-400 tracking-wider block mt-0.5">
+                      CMS Control Panel
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="p-1.5 rounded-lg bg-purple-900/40 text-purple-300 hover:text-white"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Drawer Navigation Links */}
+              <nav className="space-y-4 overflow-y-auto max-h-[calc(100vh-250px)] pr-1">
+                {NAV_GROUPS.map((group) => (
+                  <div key={group.key} className="space-y-1.5">
+                    <span className="text-[9px] font-black tracking-widest text-purple-400 uppercase px-2">
+                      {group.title}
+                    </span>
+
+                    <div className="space-y-1">
+                      {group.items.map((item) => {
+                        const IconComponent = item.icon;
+                        return (
+                          <button
+                            key={item.id}
+                            type="button"
+                            onClick={() => {
+                              item.onClick();
+                              setIsMobileMenuOpen(false);
+                            }}
+                            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-bold text-xs transition-all ${
+                              item.isActive
+                                ? 'bg-[#581C87] text-white shadow-lg shadow-purple-950/60 font-extrabold border-l-4 border-purple-400'
+                                : 'hover:bg-purple-900/40 text-purple-200 hover:text-white'
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <IconComponent className="w-4 h-4 shrink-0 text-purple-300" />
+                              <span>{item.label}</span>
+                            </div>
+
+                            {item.badge !== null && item.badge !== undefined && (
+                              <span
+                                className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                                  item.badgeColor || 'bg-purple-900/60 text-purple-300'
+                                }`}
+                              >
+                                {item.badge}
+                              </span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </nav>
+            </div>
+
+            {/* Mobile Drawer Profile & Bottom Actions */}
+            <div className="pt-4 border-t border-purple-900/50 space-y-3">
+              <div className="p-2.5 rounded-xl bg-purple-950/60 border border-purple-900/60 flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-purple-600/40 border border-purple-400/40 flex items-center justify-center font-black text-white text-xs shrink-0 shadow-sm">
+                  AD
+                </div>
+                <div className="min-w-0 flex-grow">
+                  <div className="text-xs font-bold text-white truncate flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                    <span>Admin User</span>
+                  </div>
+                  <span className="text-[10px] text-purple-300/80 font-medium truncate block">Super Administrator</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between gap-2 text-xs font-bold pt-1">
+                <a
+                  href="/"
+                  target="_blank"
+                  className="flex items-center gap-1.5 text-purple-300 hover:text-white transition-colors"
+                >
+                  <Globe className="w-3.5 h-3.5" />
+                  <span>Live Site</span>
+                </a>
+
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="flex items-center gap-1.5 text-rose-300 hover:text-rose-200 transition-colors"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span>Sign Out</span>
+                </button>
+              </div>
+            </div>
+          </aside>
+        </div>
+      )}
+
+      {/* DESKTOP SIDEBAR */}
+      <aside
+        className={`hidden lg:flex flex-col justify-between bg-[#1E1035] text-purple-200 shrink-0 shadow-2xl border-r border-purple-900/50 transition-all duration-300 relative z-30 ${
+          isSidebarCollapsed ? 'w-20 p-3' : 'w-64 p-5'
+        }`}
+      >
+        <div className="space-y-6">
+          {/* Desktop Sidebar Logo & Toggle Header */}
+          <div className="flex items-center justify-between pb-3 border-b border-purple-900/50">
+            {!isSidebarCollapsed && (
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-9 h-9 rounded-xl bg-purple-600/30 border border-purple-500/40 flex items-center justify-center text-purple-300 shadow-md shrink-0">
+                  <ShieldCheck className="w-5 h-5" />
+                </div>
+                <div className="min-w-0">
+                  <h2 className="text-xs font-black text-white tracking-tight leading-none uppercase truncate">
+                    TUTOR PROCTORED EXAMS
+                  </h2>
+                  <span className="text-[9px] uppercase font-bold text-purple-400 tracking-wider block mt-0.5 truncate">
+                    CMS Control Panel
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {isSidebarCollapsed && (
+              <div className="w-9 h-9 rounded-xl bg-purple-600/30 border border-purple-500/40 flex items-center justify-center text-purple-300 shadow-md mx-auto">
+                <ShieldCheck className="w-5 h-5" />
+              </div>
+            )}
+
+            <button
+              onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+              className="p-1.5 rounded-lg bg-purple-900/40 hover:bg-purple-800/60 text-purple-300 hover:text-white transition-colors shrink-0 ml-1"
+              title={isSidebarCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
+            >
+              {isSidebarCollapsed ? <PanelLeft className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
+            </button>
           </div>
 
-          {/* Navigation Links */}
-          <nav className="space-y-2">
-            <button
-              type="button"
-              onClick={() => setActiveTab('dashboard')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-xs transition-all ${
-                activeTab === 'dashboard'
-                  ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50'
-                  : 'hover:bg-purple-900/40 text-purple-300 hover:text-white'
-              }`}
-            >
-              <LayoutDashboard className="w-4 h-4" />
-              <span>Dashboard</span>
-            </button>
+          {/* Desktop Navigation Grouped Items */}
+          <nav className="space-y-4 overflow-y-auto max-h-[calc(100vh-230px)] pr-1 scrollbar-thin scrollbar-thumb-purple-900">
+            {NAV_GROUPS.map((group) => (
+              <div key={group.key} className="space-y-1.5">
+                {/* Section Header */}
+                {!isSidebarCollapsed ? (
+                  <button
+                    type="button"
+                    onClick={() => toggleGroup(group.key)}
+                    className="w-full flex items-center justify-between px-2 py-1 text-[9px] font-black tracking-widest text-purple-400 uppercase hover:text-purple-200 transition-colors"
+                  >
+                    <span>{group.title}</span>
+                    {expandedGroups[group.key] ? (
+                      <ChevronDown className="w-3 h-3 text-purple-400" />
+                    ) : (
+                      <ChevronRight className="w-3 h-3 text-purple-400" />
+                    )}
+                  </button>
+                ) : (
+                  <div className="h-px bg-purple-900/60 my-2" />
+                )}
 
-            {/* INQUIRIES TAB */}
-            <button
-              type="button"
-              onClick={() => setActiveTab('inquiries')}
-              className={`w-full flex items-center justify-between px-4 py-3 rounded-xl font-bold text-xs transition-all ${
-                activeTab === 'inquiries'
-                  ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50'
-                  : 'hover:bg-purple-900/40 text-purple-300 hover:text-white'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <Inbox className="w-4 h-4" />
-                <span>Inquiries</span>
+                {/* Section Items */}
+                {(expandedGroups[group.key] || isSidebarCollapsed) && (
+                  <div className="space-y-1">
+                    {group.items.map((item) => {
+                      const IconComponent = item.icon;
+                      return (
+                        <div key={item.id} className="relative group">
+                          <button
+                            type="button"
+                            onClick={item.onClick}
+                            className={`w-full flex items-center ${
+                              isSidebarCollapsed ? 'justify-center p-2.5' : 'justify-between px-3 py-2.5'
+                            } rounded-xl font-bold text-xs transition-all ${
+                              item.isActive
+                                ? 'bg-[#581C87] text-white shadow-lg shadow-purple-950/60 font-extrabold border-l-4 border-purple-400'
+                                : 'hover:bg-purple-900/40 text-purple-200 hover:text-white'
+                            }`}
+                          >
+                            <div className="flex items-center gap-3 min-w-0">
+                              <IconComponent className="w-4 h-4 shrink-0 text-purple-300" />
+                              {!isSidebarCollapsed && <span className="truncate">{item.label}</span>}
+                            </div>
+
+                            {!isSidebarCollapsed && item.badge !== null && item.badge !== undefined && (
+                              <span
+                                className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                                  item.badgeColor || 'bg-purple-900/60 text-purple-300'
+                                }`}
+                              >
+                                {item.badge}
+                              </span>
+                            )}
+                          </button>
+
+                          {/* Hover Tooltip in Collapsed Mode */}
+                          {isSidebarCollapsed && (
+                            <span className="absolute left-full ml-3 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-[#130924] text-white text-xs font-bold rounded-lg shadow-2xl opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap border border-purple-800 z-50 transition-opacity flex items-center gap-2">
+                              <span>{item.label}</span>
+                              {item.badge !== null && item.badge !== undefined && (
+                                <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-600 text-white font-extrabold">
+                                  {item.badge}
+                                </span>
+                              )}
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
-              {newInquiriesCount > 0 ? (
-                <span className="bg-rose-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full">
-                  {newInquiriesCount}
-                </span>
-              ) : (
-                <span className="text-[10px] text-purple-400 font-bold">{inquiriesList.length}</span>
-              )}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveTab('blogs')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-xs transition-all ${
-                activeTab === 'blogs'
-                  ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50'
-                  : 'hover:bg-purple-900/40 text-purple-300 hover:text-white'
-              }`}
-            >
-              <BookOpen className="w-4 h-4" />
-              <span>Blogs ({blogArticles.length})</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveTab('pages')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-xs transition-all ${
-                activeTab === 'pages'
-                  ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50'
-                  : 'hover:bg-purple-900/40 text-purple-300 hover:text-white'
-              }`}
-            >
-              <FileText className="w-4 h-4" />
-              <span>Pages & Navbar</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveTab('services')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-xs transition-all ${
-                activeTab === 'services'
-                  ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50'
-                  : 'hover:bg-purple-900/40 text-purple-300 hover:text-white'
-              }`}
-            >
-              <Briefcase className="w-4 h-4" />
-              <span>Services ({servicesList.length})</span>
-            </button>
-
-            {/* DOCUMENTS & FAQS TAB */}
-            <button
-              type="button"
-              onClick={() => setActiveTab('faqs')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-xs transition-all ${
-                activeTab === 'faqs'
-                  ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50'
-                  : 'hover:bg-purple-900/40 text-purple-300 hover:text-white'
-              }`}
-            >
-              <HelpCircle className="w-4 h-4" />
-              <span>Documents & FAQs ({allFlattenedFaqs.length})</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveTab('settings')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-xs transition-all ${
-                activeTab === 'settings'
-                  ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50'
-                  : 'hover:bg-purple-900/40 text-purple-300 hover:text-white'
-              }`}
-            >
-              <Settings className="w-4 h-4" />
-              <span>Site Settings & SEO</span>
-            </button>
+            ))}
           </nav>
         </div>
 
-        {/* Footer Actions */}
-        <div className="space-y-3 pt-6 border-t border-purple-900/40">
-          <a
-            href="/"
-            target="_blank"
-            className="flex items-center gap-2 text-xs font-bold text-purple-300 hover:text-white transition-colors"
-          >
-            <Globe className="w-4 h-4" />
-            <span>View Live Website</span>
-          </a>
+        {/* Desktop Sidebar Administrator Profile & Bottom Actions */}
+        <div className="pt-4 border-t border-purple-900/50 space-y-3">
+          {!isSidebarCollapsed ? (
+            <>
+              {/* Profile Card */}
+              <div className="p-2.5 rounded-xl bg-purple-950/60 border border-purple-900/60 flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-purple-600/40 border border-purple-400/40 flex items-center justify-center font-black text-white text-xs shrink-0 shadow-sm">
+                  AD
+                </div>
+                <div className="min-w-0 flex-grow">
+                  <div className="text-xs font-bold text-white truncate flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                    <span>Admin User</span>
+                  </div>
+                  <span className="text-[10px] text-purple-300/80 font-medium truncate block">Super Administrator</span>
+                </div>
+              </div>
 
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 text-xs font-bold transition-colors"
-          >
-            <LogOut className="w-4 h-4" />
-            <span>Sign Out</span>
-          </button>
+              <div className="flex items-center justify-between text-xs font-bold pt-1">
+                <a
+                  href="/"
+                  target="_blank"
+                  className="flex items-center gap-1.5 text-purple-300 hover:text-white transition-colors"
+                >
+                  <Globe className="w-3.5 h-3.5" />
+                  <span>Live Site</span>
+                </a>
+
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="flex items-center gap-1.5 text-rose-300 hover:text-rose-200 transition-colors"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span>Sign Out</span>
+                </button>
+              </div>
+            </>
+          ) : (
+            <div className="flex flex-col items-center gap-3">
+              <a
+                href="/"
+                target="_blank"
+                className="p-2 rounded-xl bg-purple-900/40 text-purple-300 hover:text-white hover:bg-purple-800/60 transition-colors group relative"
+                title="View Live Website"
+              >
+                <Globe className="w-4 h-4" />
+                <span className="absolute left-full ml-3 top-1/2 -translate-y-1/2 px-2.5 py-1 bg-[#130924] text-white text-xs font-bold rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap border border-purple-800 z-50">
+                  Live Website
+                </span>
+              </a>
+
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="p-2 rounded-xl bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 transition-colors group relative"
+                title="Sign Out"
+              >
+                <LogOut className="w-4 h-4" />
+                <span className="absolute left-full ml-3 top-1/2 -translate-y-1/2 px-2.5 py-1 bg-[#130924] text-white text-xs font-bold rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap border border-purple-800 z-50">
+                  Sign Out
+                </span>
+              </button>
+            </div>
+          )}
         </div>
       </aside>
 
       {/* MAIN CONTENT AREA */}
-      <main className="flex-grow p-8 space-y-6 overflow-y-auto">
+      <main className="flex-grow p-4 sm:p-6 lg:p-8 space-y-6 overflow-y-auto">
+        {/* TOP RIGHT USER & NOTIFICATION HEADER BAR */}
+        <div className="flex items-center justify-end gap-3 pb-1 border-b border-slate-200/50">
+          <button
+            onClick={() => setActiveTab('inquiries')}
+            className="p-2 rounded-xl text-slate-500 hover:bg-slate-100 hover:text-purple-700 relative transition-colors"
+            title="Notifications & Inquiries"
+          >
+            <Bell className="w-5 h-5" />
+            {newInquiriesCount > 0 && (
+              <span className="absolute top-1 right-1 w-4 h-4 bg-rose-500 text-white font-black text-[9px] rounded-full flex items-center justify-center shadow-xs">
+                {newInquiriesCount}
+              </span>
+            )}
+          </button>
+          <span className="w-px h-5 bg-slate-200" />
+          <div className="flex items-center gap-2 cursor-pointer group">
+            <div className="w-8 h-8 rounded-full bg-[#581C87] text-white font-extrabold text-xs flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+              AD
+            </div>
+            <span className="text-xs font-bold text-slate-700 hidden sm:inline group-hover:text-purple-700 transition-colors">
+              Admin User
+            </span>
+          </div>
+        </div>
+
         {saveStatus && (
           <div className="p-4 bg-emerald-50 border border-emerald-300 text-emerald-900 rounded-xl text-xs font-bold flex items-center justify-between shadow-sm animate-in fade-in">
             <span className="flex items-center gap-2">
@@ -611,113 +1407,1102 @@ export default function CustomAdminCmsPage() {
           </div>
         )}
 
-        {/* TAB 1: DASHBOARD OVERVIEW */}
+        {/* TAB 1: REDESIGNED PREMIUM MODERN DASHBOARD OVERVIEW */}
         {activeTab === 'dashboard' && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-black text-slate-900">CMS Overview Dashboard</h1>
-                <p className="text-xs text-slate-500">Manage all website content, FAQs, customer inquiries, pages, and SEO metadata</p>
+          <div className="space-y-8 animate-in fade-in duration-300">
+            {/* WELCOME HEADER BANNER */}
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#1B0D38] via-[#2D1258] to-[#581C87] text-white p-6 sm:p-8 shadow-xl border border-purple-900/50">
+              <div className="absolute -right-10 -bottom-10 w-64 h-64 rounded-full bg-purple-500/10 blur-3xl pointer-events-none" />
+              <div className="absolute right-40 -top-10 w-48 h-48 rounded-full bg-indigo-500/10 blur-2xl pointer-events-none" />
+
+              <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2.5">
+                    <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+                      Welcome back, Admin!
+                    </h1>
+                    <span className="px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-xs font-bold text-emerald-300 flex items-center gap-1.5 shrink-0">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                      <span>Operational</span>
+                    </span>
+                  </div>
+
+                  <p className="text-xs sm:text-sm text-purple-200/90 font-medium">
+                    Manage your Tutor Proctored Exams website with confidence.
+                  </p>
+
+                  <p className="text-xs text-purple-300/80 font-medium flex items-center gap-2 pt-1">
+                    <Calendar className="w-3.5 h-3.5 text-purple-300 shrink-0" />
+                    <span>
+                      {new Date().toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })}
+                    </span>
+                  </p>
+                </div>
+
+                {/* Header Quick Actions */}
+                <div className="flex flex-wrap items-center gap-3 shrink-0">
+                  <button
+                    onClick={() => openBlogEditor()}
+                    className="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold shadow-lg shadow-purple-950/60 flex items-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add Article</span>
+                  </button>
+
+                  <button
+                    onClick={() => setActiveTab('inquiries')}
+                    className="px-4 py-2.5 rounded-xl bg-purple-900/60 hover:bg-purple-800 border border-purple-700/50 text-white text-xs font-bold flex items-center gap-2 transition-all"
+                  >
+                    <Inbox className="w-4 h-4 text-purple-300" />
+                    <span>Inquiries</span>
+                    {newInquiriesCount > 0 && (
+                      <span className="bg-rose-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-xs">
+                        {newInquiriesCount}
+                      </span>
+                    )}
+                  </button>
+
+                  <button
+                    onClick={() => openMediaPickerFor('')}
+                    className="px-4 py-2.5 rounded-xl bg-purple-900/60 hover:bg-purple-800 border border-purple-700/50 text-white text-xs font-bold flex items-center gap-2 transition-all"
+                  >
+                    <ImageIcon className="w-4 h-4 text-purple-300" />
+                    <span>Media Library</span>
+                  </button>
+                </div>
               </div>
-              <button
-                onClick={() => openBlogEditor()}
-                className="px-5 py-2.5 rounded-xl bg-[#581C87] hover:bg-[#4C1D95] text-white text-xs font-bold shadow-md flex items-center gap-2"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Add New Article</span>
-              </button>
             </div>
 
-            {/* Metrics Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm space-y-2">
-                <span className="text-xs font-bold text-slate-400 uppercase">Customer Inquiries</span>
-                <div className="text-3xl font-black text-purple-900">{inquiriesList.length}</div>
-                <span className="text-[11px] text-rose-600 font-bold">{newInquiriesCount} Unread / New</span>
+            {/* REAL-DATA STATISTICS GRID (8 Cards, 2x4 Layout) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
+              {/* 1. Total Inquiries */}
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 transition-all space-y-3 group flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Inquiries</span>
+                  <div className="w-10 h-10 rounded-xl bg-[#E0F2FE] text-[#0284C7] flex items-center justify-center font-bold">
+                    <Inbox className="w-5 h-5" />
+                  </div>
+                </div>
+                <div>
+                  <div className="text-3xl font-black text-slate-900">{inquiriesList.length}</div>
+                </div>
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-end text-xs font-bold">
+                  <button onClick={() => setActiveTab('inquiries')} className="text-[#6D28D9] hover:underline inline-flex items-center gap-1">
+                    <span>View All</span> <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
 
-              <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm space-y-2">
-                <span className="text-xs font-bold text-slate-400 uppercase">Active FAQs</span>
-                <div className="text-3xl font-black text-purple-900">{allFlattenedFaqs.length}</div>
-                <span className="text-[11px] text-emerald-600 font-bold">Across {faqsList.length} Categories</span>
+              {/* 2. New Inquiries */}
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 transition-all space-y-3 group flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">New Inquiries</span>
+                  <div className="w-10 h-10 rounded-xl bg-[#FEF3C7] text-[#D97706] flex items-center justify-center font-bold">
+                    <Mail className="w-5 h-5" />
+                  </div>
+                </div>
+                <div>
+                  <div className="text-3xl font-black text-slate-900">{newInquiriesCount}</div>
+                </div>
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-end text-xs font-bold">
+                  <button onClick={() => setActiveTab('inquiries')} className="text-[#6D28D9] hover:underline inline-flex items-center gap-1">
+                    <span>View New</span> <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
 
-              <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm space-y-2">
-                <span className="text-xs font-bold text-slate-400 uppercase">Blog Articles</span>
-                <div className="text-3xl font-black text-purple-900">{blogArticles.length}</div>
-                <span className="text-[11px] text-emerald-600 font-bold">Live & Indexable</span>
+              {/* 3. Published Blogs */}
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 transition-all space-y-3 group flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Published Blogs</span>
+                  <div className="w-10 h-10 rounded-xl bg-[#DBEAFE] text-[#2563EB] flex items-center justify-center font-bold">
+                    <FileText className="w-5 h-5" />
+                  </div>
+                </div>
+                <div>
+                  <div className="text-3xl font-black text-slate-900">
+                    {blogArticles.filter((a) => a.published !== false).length}
+                  </div>
+                </div>
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-end text-xs font-bold">
+                  <button onClick={() => setActiveTab('blogs')} className="text-[#6D28D9] hover:underline inline-flex items-center gap-1">
+                    <span>Manage</span> <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
 
-              <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm space-y-2">
-                <span className="text-xs font-bold text-slate-400 uppercase">Active Services</span>
-                <div className="text-3xl font-black text-purple-900">{servicesList.length}</div>
-                <span className="text-[11px] text-emerald-600 font-bold">12 Active Programs</span>
+              {/* 4. Services */}
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 transition-all space-y-3 group flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Services</span>
+                  <div className="w-10 h-10 rounded-xl bg-[#F3E8FF] text-[#9333EA] flex items-center justify-center font-bold">
+                    <GraduationCap className="w-5 h-5" />
+                  </div>
+                </div>
+                <div>
+                  <div className="text-3xl font-black text-slate-900">{servicesList.length}</div>
+                </div>
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-end text-xs font-bold">
+                  <button onClick={() => setActiveTab('services')} className="text-[#6D28D9] hover:underline inline-flex items-center gap-1">
+                    <span>Manage</span> <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* 5. Website Pages */}
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 transition-all space-y-3 group flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Website Pages</span>
+                  <div className="w-10 h-10 rounded-xl bg-[#DBEAFE] text-[#2563EB] flex items-center justify-center font-bold">
+                    <Globe className="w-5 h-5" />
+                  </div>
+                </div>
+                <div>
+                  <div className="text-3xl font-black text-slate-900">{ALL_SITE_PAGES.length}</div>
+                </div>
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-bold">
+                  <span className="text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full text-[10px] font-extrabold flex items-center gap-1">
+                    SEO OK <Check className="w-3 h-3" />
+                  </span>
+                  <button onClick={() => setActiveTab('pages')} className="text-[#6D28D9] hover:underline inline-flex items-center gap-1">
+                    <span>Manage</span> <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* 6. Certifications */}
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 transition-all space-y-3 group flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Certifications</span>
+                  <div className="w-10 h-10 rounded-xl bg-[#F3E8FF] text-[#9333EA] flex items-center justify-center font-bold">
+                    <Award className="w-5 h-5" />
+                  </div>
+                </div>
+                <div>
+                  <div className="text-3xl font-black text-slate-900">{certificationsList.length}</div>
+                </div>
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-end text-xs font-bold">
+                  <button onClick={() => setActiveTab('certifications')} className="text-[#6D28D9] hover:underline inline-flex items-center gap-1">
+                    <span>Manage</span> <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* 7. Exam Platforms */}
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 transition-all space-y-3 group flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Exam Platforms</span>
+                  <div className="w-10 h-10 rounded-xl bg-[#FCE7F3] text-[#DB2777] flex items-center justify-center font-bold">
+                    <Monitor className="w-5 h-5" />
+                  </div>
+                </div>
+                <div>
+                  <div className="text-3xl font-black text-slate-900">{platformsList.length}</div>
+                </div>
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-end text-xs font-bold">
+                  <button onClick={() => setActiveTab('platforms')} className="text-[#6D28D9] hover:underline inline-flex items-center gap-1">
+                    <span>Manage</span> <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* 8. Study Resources */}
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 transition-all space-y-3 group flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Study Resources</span>
+                  <div className="w-10 h-10 rounded-xl bg-[#F3E8FF] text-[#7C3AED] flex items-center justify-center font-bold">
+                    <BookOpen className="w-5 h-5" />
+                  </div>
+                </div>
+                <div>
+                  <div className="text-3xl font-black text-slate-900">{studyResourcesList.length}</div>
+                </div>
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-end text-xs font-bold">
+                  <button onClick={() => setActiveTab('resources')} className="text-[#6D28D9] hover:underline inline-flex items-center gap-1">
+                    <span>Manage</span> <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* SPLIT SECTION 1: QUICK ACTIONS GRID & RECENT INQUIRIES TABLE */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              {/* QUICK ACTIONS GRID (Spans 5 cols on lg) */}
+              <div className="lg:col-span-5 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
+                <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-[#7C3AED]" /> Quick Actions
+                </h3>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <button
+                    onClick={() => openBlogEditor()}
+                    className="bg-[#F5F3FF] hover:bg-[#EDE9FE] border border-purple-100 rounded-2xl p-3.5 flex flex-col items-center justify-center text-center gap-2 transition-all group cursor-pointer"
+                  >
+                    <div className="w-8 h-8 rounded-xl bg-purple-200/60 text-[#6D28D9] flex items-center justify-center group-hover:bg-[#6D28D9] group-hover:text-white transition-colors">
+                      <Edit3 className="w-4 h-4" />
+                    </div>
+                    <span className="text-[11px] font-extrabold text-slate-900 leading-tight">Create Blog Article</span>
+                  </button>
+
+                  <button
+                    onClick={() => openServiceEditor()}
+                    className="bg-[#F5F3FF] hover:bg-[#EDE9FE] border border-purple-100 rounded-2xl p-3.5 flex flex-col items-center justify-center text-center gap-2 transition-all group cursor-pointer"
+                  >
+                    <div className="w-8 h-8 rounded-xl bg-purple-200/60 text-[#6D28D9] flex items-center justify-center group-hover:bg-[#6D28D9] group-hover:text-white transition-colors">
+                      <Plus className="w-4 h-4" />
+                    </div>
+                    <span className="text-[11px] font-extrabold text-slate-900 leading-tight">Add Service</span>
+                  </button>
+
+                  <button
+                    onClick={() => openCertEditor()}
+                    className="bg-[#F5F3FF] hover:bg-[#EDE9FE] border border-purple-100 rounded-2xl p-3.5 flex flex-col items-center justify-center text-center gap-2 transition-all group cursor-pointer"
+                  >
+                    <div className="w-8 h-8 rounded-xl bg-purple-200/60 text-[#6D28D9] flex items-center justify-center group-hover:bg-[#6D28D9] group-hover:text-white transition-colors">
+                      <Award className="w-4 h-4" />
+                    </div>
+                    <span className="text-[11px] font-extrabold text-slate-900 leading-tight">Add Certification</span>
+                  </button>
+
+                  <button
+                    onClick={() => openPlatformEditor()}
+                    className="bg-[#F5F3FF] hover:bg-[#EDE9FE] border border-purple-100 rounded-2xl p-3.5 flex flex-col items-center justify-center text-center gap-2 transition-all group cursor-pointer"
+                  >
+                    <div className="w-8 h-8 rounded-xl bg-purple-200/60 text-[#6D28D9] flex items-center justify-center group-hover:bg-[#6D28D9] group-hover:text-white transition-colors">
+                      <Monitor className="w-4 h-4" />
+                    </div>
+                    <span className="text-[11px] font-extrabold text-slate-900 leading-tight">Add Exam Platform</span>
+                  </button>
+
+                  <button
+                    onClick={() => openResourceEditor()}
+                    className="bg-[#F5F3FF] hover:bg-[#EDE9FE] border border-purple-100 rounded-2xl p-3.5 flex flex-col items-center justify-center text-center gap-2 transition-all group cursor-pointer"
+                  >
+                    <div className="w-8 h-8 rounded-xl bg-purple-200/60 text-[#6D28D9] flex items-center justify-center group-hover:bg-[#6D28D9] group-hover:text-white transition-colors">
+                      <BookOpen className="w-4 h-4" />
+                    </div>
+                    <span className="text-[11px] font-extrabold text-slate-900 leading-tight">Add Study Resource</span>
+                  </button>
+
+                  <button
+                    onClick={() => setActiveTab('pages')}
+                    className="bg-[#F5F3FF] hover:bg-[#EDE9FE] border border-purple-100 rounded-2xl p-3.5 flex flex-col items-center justify-center text-center gap-2 transition-all group cursor-pointer"
+                  >
+                    <div className="w-8 h-8 rounded-xl bg-purple-200/60 text-[#6D28D9] flex items-center justify-center group-hover:bg-[#6D28D9] group-hover:text-white transition-colors">
+                      <FileText className="w-4 h-4" />
+                    </div>
+                    <span className="text-[11px] font-extrabold text-slate-900 leading-tight">Manage Pages</span>
+                  </button>
+
+                  <button
+                    onClick={() => setActiveTab('inquiries')}
+                    className="bg-[#F5F3FF] hover:bg-[#EDE9FE] border border-purple-100 rounded-2xl p-3.5 flex flex-col items-center justify-center text-center gap-2 transition-all group cursor-pointer"
+                  >
+                    <div className="w-8 h-8 rounded-xl bg-purple-200/60 text-[#6D28D9] flex items-center justify-center group-hover:bg-[#6D28D9] group-hover:text-white transition-colors">
+                      <Mail className="w-4 h-4" />
+                    </div>
+                    <span className="text-[11px] font-extrabold text-slate-900 leading-tight">View Inquiries</span>
+                  </button>
+
+                  <button
+                    onClick={() => openMediaPickerFor('')}
+                    className="bg-[#F5F3FF] hover:bg-[#EDE9FE] border border-purple-100 rounded-2xl p-3.5 flex flex-col items-center justify-center text-center gap-2 transition-all group cursor-pointer"
+                  >
+                    <div className="w-8 h-8 rounded-xl bg-purple-200/60 text-[#6D28D9] flex items-center justify-center group-hover:bg-[#6D28D9] group-hover:text-white transition-colors">
+                      <ImageIcon className="w-4 h-4" />
+                    </div>
+                    <span className="text-[11px] font-extrabold text-slate-900 leading-tight">Open Media Library</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* RECENT INQUIRIES TABLE (Spans 7 cols on lg) */}
+              <div className="lg:col-span-7 bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden flex flex-col justify-between">
+                <div className="p-5 border-b border-slate-100 flex items-center justify-between">
+                  <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                    <Mail className="w-4 h-4 text-[#7C3AED]" /> Recent Inquiries
+                  </h3>
+
+                  <button
+                    onClick={() => setActiveTab('inquiries')}
+                    className="px-3.5 py-1.5 rounded-full bg-[#F3E8FF] hover:bg-[#E9D5FF] text-[#6D28D9] text-xs font-bold transition-colors inline-flex items-center gap-1"
+                  >
+                    <span>View All</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-slate-50/80 border-b border-slate-100 text-[11px] uppercase font-extrabold text-slate-400">
+                        <th className="py-3 px-5">Customer</th>
+                        <th className="py-3 px-5">Service</th>
+                        <th className="py-3 px-5">Date</th>
+                        <th className="py-3 px-5">Status</th>
+                        <th className="py-3 px-5 text-right">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 text-xs">
+                      {inquiriesList.slice(0, 4).map((inq) => (
+                        <tr key={inq.id || inq.date} className="hover:bg-purple-50/20 transition-colors">
+                          <td className="py-3.5 px-5 font-bold text-slate-900 whitespace-nowrap">
+                            {inq.fullName}
+                          </td>
+                          <td className="py-3.5 px-5 font-medium text-slate-700 whitespace-nowrap">
+                            {inq.service}
+                          </td>
+                          <td className="py-3.5 px-5 text-slate-500 font-medium whitespace-nowrap text-[11px]">
+                            {inq.date}
+                          </td>
+                          <td className="py-3.5 px-5 whitespace-nowrap">
+                            <span
+                              className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold flex items-center gap-1 w-fit ${
+                                inq.status === 'New'
+                                  ? 'bg-rose-100 text-rose-800 border border-rose-200'
+                                  : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                              }`}
+                            >
+                              <span className={`w-1.5 h-1.5 rounded-full ${inq.status === 'New' ? 'bg-rose-600' : 'bg-emerald-600'}`} />
+                              <span>{inq.status || 'New'}</span>
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-5 text-right whitespace-nowrap">
+                            <button
+                              onClick={() => openInquiryViewer(inq)}
+                              className="px-3.5 py-1.5 rounded-xl bg-[#581C87] hover:bg-[#4C1D95] text-white font-bold text-xs shadow-xs inline-flex items-center gap-1 transition-colors"
+                            >
+                              View
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            {/* SPLIT SECTION 2: RECENT ACTIVITY & "YOUR CMS IS ALL SET!" BANNER */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              {/* RECENT ACTIVITY (Spans 5 cols on lg) */}
+              <div className="lg:col-span-5 bg-white border border-slate-200/80 rounded-2xl shadow-sm p-6 flex flex-col justify-between space-y-4">
+                <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                  <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-[#7C3AED]" /> Recent Activity
+                  </h3>
+                  <span className="text-[10px] font-extrabold text-purple-700 bg-purple-50 border border-purple-200 px-2.5 py-1 rounded-full">
+                    Live Activity Feed
+                  </span>
+                </div>
+
+                <div className="space-y-3.5 flex-grow">
+                  {recentWebsiteActivities.slice(0, 3).map((act) => {
+                    const IconComp = act.icon || Clock;
+                    return (
+                      <div
+                        key={act.id}
+                        onClick={act.action}
+                        className="p-3 rounded-xl border border-slate-100 hover:border-purple-200 hover:bg-purple-50/40 cursor-pointer transition-all flex items-start gap-3 group"
+                      >
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${act.iconBg}`}>
+                          <IconComp className="w-4 h-4" />
+                        </div>
+                        <div className="flex-grow min-w-0">
+                          <div className="flex items-center justify-between gap-1">
+                            <h4 className="text-xs font-bold text-slate-800 truncate group-hover:text-purple-700 transition-colors">
+                              {act.title}
+                            </h4>
+                          </div>
+                          <span className="text-[10px] text-slate-400 font-mono mt-0.5 block">{act.timestamp}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* "YOUR CMS IS ALL SET!" BANNER (Spans 7 cols on lg) */}
+              <div className="lg:col-span-7 bg-gradient-to-r from-[#2E0B54] via-[#4C1D95] to-[#6D28D9] rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
+                <div className="space-y-4 max-w-md relative z-10">
+                  <div className="w-12 h-12 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-400 flex items-center justify-center shadow-inner">
+                    <Check className="w-6 h-6 stroke-[3]" />
+                  </div>
+
+                  <div className="space-y-1">
+                    <h3 className="text-2xl font-black text-white tracking-tight">Your CMS is all set!</h3>
+                    <p className="text-xs text-purple-200/90 font-medium leading-relaxed">
+                      Everything is running smoothly and ready to help you manage your content.
+                    </p>
+                  </div>
+
+                  <a
+                    href="/"
+                    target="_blank"
+                    className="inline-flex items-center gap-2 bg-white hover:bg-slate-100 text-[#581C87] font-black text-xs px-5 py-2.5 rounded-full shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    <span>Visit Your Website</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </a>
+                </div>
+
+                {/* Laptop Website Preview Mockup Illustration */}
+                <div className="relative z-10 w-48 sm:w-64 shrink-0">
+                  <div className="bg-slate-900 p-2 rounded-t-xl border-t-2 border-x-2 border-slate-700 shadow-2xl">
+                    <div className="bg-white rounded-lg p-3 text-center space-y-2 border border-slate-200">
+                      <div className="w-8 h-8 rounded-full bg-[#581C87] text-white flex items-center justify-center mx-auto shadow-sm">
+                        <GraduationCap className="w-4 h-4" />
+                      </div>
+                      <div className="text-[10px] font-black text-slate-900 tracking-tight uppercase leading-tight">
+                        TUTOR PROCTORED EXAMS
+                      </div>
+                      <div className="h-1 w-12 bg-purple-600 rounded-full mx-auto" />
+                    </div>
+                  </div>
+                  <div className="bg-slate-800 h-3 rounded-b-xl border-b border-slate-600 shadow-md flex items-center justify-center">
+                    <div className="w-8 h-1 bg-slate-600 rounded-full" />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* TAB 3: PAGES & NAVBAR MANAGEMENT */}
+        {/* SECTION 1: CERTIFICATIONS MANAGER */}
+        {activeTab === 'certifications' && (
+          <div className="space-y-6 animate-in fade-in duration-300">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Award className="w-5 h-5 text-purple-600" />
+                  <h1 className="text-2xl font-black text-slate-900">Certifications Manager</h1>
+                </div>
+                <p className="text-xs text-slate-500 font-medium">
+                  Manage professional certification preparation programs, badges, descriptions, and publish status
+                </p>
+              </div>
+
+              <button
+                onClick={() => openCertEditor()}
+                className="px-5 py-2.5 rounded-xl bg-[#581C87] hover:bg-[#4C1D95] text-white text-xs font-bold shadow-md flex items-center gap-2 shrink-0 transition-all"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Certification</span>
+              </button>
+            </div>
+
+            {/* Control Bar: Search & Filters */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm">
+              <div className="relative flex-grow max-w-md">
+                <input
+                  type="text"
+                  placeholder="Search certification title, category, description..."
+                  value={certSearchQuery}
+                  onChange={(e) => setCertSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50"
+                />
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+              </div>
+
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+                {['All', 'Project Management', 'Information Technology', 'Healthcare & Coding', 'Human Resources', 'Licensing & Real Estate'].map((cat) => (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setCertCategoryFilter(cat)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                      certCategoryFilter === cat
+                        ? 'bg-purple-600 text-white shadow-sm'
+                        : 'bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Table Surface */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-slate-200/80 text-[11px] uppercase font-bold text-slate-400">
+                      <th className="py-3.5 px-6">Program Title</th>
+                      <th className="py-3.5 px-6">Category</th>
+                      <th className="py-3.5 px-6">Description</th>
+                      <th className="py-3.5 px-6">Slug ID</th>
+                      <th className="py-3.5 px-6">Status</th>
+                      <th className="py-3.5 px-6 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-xs">
+                    {certificationsList
+                      .filter((cert) => {
+                        const matchesCategory = certCategoryFilter === 'All' || cert.category === certCategoryFilter;
+                        const matchesSearch =
+                          certSearchQuery.trim() === '' ||
+                          cert.title.toLowerCase().includes(certSearchQuery.toLowerCase()) ||
+                          cert.description?.toLowerCase().includes(certSearchQuery.toLowerCase()) ||
+                          cert.category?.toLowerCase().includes(certSearchQuery.toLowerCase());
+                        return matchesCategory && matchesSearch;
+                      })
+                      .map((cert) => (
+                        <tr key={cert.slug} className="hover:bg-purple-50/30 transition-colors group">
+                          <td className="py-4 px-6 font-bold text-slate-900">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-lg bg-purple-50 border border-purple-100 flex items-center justify-center text-purple-600 font-black text-xs shrink-0">
+                                <Award className="w-4 h-4" />
+                              </div>
+                              <span className="group-hover:text-purple-700 transition-colors">{cert.title}</span>
+                            </div>
+                          </td>
+                          <td className="py-4 px-6">
+                            <span className="px-2.5 py-1 rounded-full bg-blue-50 text-blue-800 font-bold text-[10px] border border-blue-100 whitespace-nowrap">
+                              {cert.category}
+                            </span>
+                          </td>
+                          <td className="py-4 px-6 text-slate-500 max-w-xs truncate">
+                            {cert.description || 'No description provided.'}
+                          </td>
+                          <td className="py-4 px-6 font-mono text-slate-400 text-[11px]">
+                            #{cert.slug}
+                          </td>
+                          <td className="py-4 px-6 whitespace-nowrap">
+                            <span
+                              className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold border ${
+                                cert.published !== false
+                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                  : 'bg-rose-50 text-rose-700 border-rose-200'
+                              }`}
+                            >
+                              {cert.published !== false ? 'Published' : 'Unpublished'}
+                            </span>
+                          </td>
+                          <td className="py-4 px-6 text-right space-x-2 whitespace-nowrap">
+                            <button
+                              onClick={() => openCertEditor(cert)}
+                              className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 font-bold text-[11px] inline-flex items-center gap-1 transition-colors border border-purple-200"
+                            >
+                              <Edit className="w-3.5 h-3.5" /> Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteCertification(cert.slug)}
+                              className="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-[11px] inline-flex items-center gap-1 transition-colors border border-rose-200"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" /> Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {certificationsList.filter((cert) => {
+                const matchesCategory = certCategoryFilter === 'All' || cert.category === certCategoryFilter;
+                const matchesSearch =
+                  certSearchQuery.trim() === '' ||
+                  cert.title.toLowerCase().includes(certSearchQuery.toLowerCase()) ||
+                  cert.description?.toLowerCase().includes(certSearchQuery.toLowerCase());
+                return matchesCategory && matchesSearch;
+              }).length === 0 && (
+                <div className="p-12 text-center text-xs text-slate-400 space-y-2">
+                  <Award className="w-8 h-8 text-slate-300 mx-auto" />
+                  <p className="font-bold text-slate-700">No certifications found matching search or filter criteria.</p>
+                  <button
+                    onClick={() => {
+                      setCertSearchQuery('');
+                      setCertCategoryFilter('All');
+                    }}
+                    className="text-purple-600 font-bold hover:underline"
+                  >
+                    Reset Filters
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* SECTION 2: EXAM PLATFORMS MANAGER */}
+        {activeTab === 'platforms' && (
+          <div className="space-y-6 animate-in fade-in duration-300">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Cpu className="w-5 h-5 text-purple-600" />
+                  <h1 className="text-2xl font-black text-slate-900">Exam Platforms Manager</h1>
+                </div>
+                <p className="text-xs text-slate-500 font-medium">
+                  Manage supported proctoring assessment software guides, technical requirements, and setup documentation
+                </p>
+              </div>
+
+              <button
+                onClick={() => openPlatformEditor()}
+                className="px-5 py-2.5 rounded-xl bg-[#581C87] hover:bg-[#4C1D95] text-white text-xs font-bold shadow-md flex items-center gap-2 shrink-0 transition-all"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Exam Platform</span>
+              </button>
+            </div>
+
+            {/* Control Bar */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm">
+              <div className="relative max-w-md">
+                <input
+                  type="text"
+                  placeholder="Search exam platform title, description..."
+                  value={platformSearchQuery}
+                  onChange={(e) => setPlatformSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50"
+                />
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+              </div>
+            </div>
+
+            {/* Table Surface */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-slate-200/80 text-[11px] uppercase font-bold text-slate-400">
+                      <th className="py-3.5 px-6">Software Title</th>
+                      <th className="py-3.5 px-6">Description / Technical Overview</th>
+                      <th className="py-3.5 px-6">Slug ID</th>
+                      <th className="py-3.5 px-6">Status</th>
+                      <th className="py-3.5 px-6 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-xs">
+                    {platformsList
+                      .filter((plat) => {
+                        return (
+                          platformSearchQuery.trim() === '' ||
+                          plat.title.toLowerCase().includes(platformSearchQuery.toLowerCase()) ||
+                          plat.description?.toLowerCase().includes(platformSearchQuery.toLowerCase())
+                        );
+                      })
+                      .map((plat) => (
+                        <tr key={plat.slug} className="hover:bg-purple-50/30 transition-colors group">
+                          <td className="py-4 px-6 font-bold text-slate-900">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-lg bg-teal-50 border border-teal-100 flex items-center justify-center text-teal-600 font-black text-xs shrink-0">
+                                <Cpu className="w-4 h-4" />
+                              </div>
+                              <span className="group-hover:text-purple-700 transition-colors">{plat.title}</span>
+                            </div>
+                          </td>
+                          <td className="py-4 px-6 text-slate-500 max-w-md truncate">
+                            {plat.description || 'No overview provided.'}
+                          </td>
+                          <td className="py-4 px-6 font-mono text-slate-400 text-[11px]">
+                            #{plat.slug}
+                          </td>
+                          <td className="py-4 px-6 whitespace-nowrap">
+                            <span
+                              className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold border ${
+                                plat.published !== false
+                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                  : 'bg-rose-50 text-rose-700 border-rose-200'
+                              }`}
+                            >
+                              {plat.published !== false ? 'Supported' : 'Unpublished'}
+                            </span>
+                          </td>
+                          <td className="py-4 px-6 text-right space-x-2 whitespace-nowrap">
+                            <button
+                              onClick={() => openPlatformEditor(plat)}
+                              className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 font-bold text-[11px] inline-flex items-center gap-1 transition-colors border border-purple-200"
+                            >
+                              <Edit className="w-3.5 h-3.5" /> Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeletePlatform(plat.slug)}
+                              className="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-[11px] inline-flex items-center gap-1 transition-colors border border-rose-200"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" /> Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {platformsList.filter((plat) => {
+                return (
+                  platformSearchQuery.trim() === '' ||
+                  plat.title.toLowerCase().includes(platformSearchQuery.toLowerCase()) ||
+                  plat.description?.toLowerCase().includes(platformSearchQuery.toLowerCase())
+                );
+              }).length === 0 && (
+                <div className="p-12 text-center text-xs text-slate-400 space-y-2">
+                  <Cpu className="w-8 h-8 text-slate-300 mx-auto" />
+                  <p className="font-bold text-slate-700">No exam platforms found matching query.</p>
+                  <button onClick={() => setPlatformSearchQuery('')} className="text-purple-600 font-bold hover:underline">
+                    Clear Search
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* SECTION 3: STUDY RESOURCES MANAGER */}
+        {activeTab === 'resources' && (
+          <div className="space-y-6 animate-in fade-in duration-300">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <FolderOpen className="w-5 h-5 text-purple-600" />
+                  <h1 className="text-2xl font-black text-slate-900">Study Resources Manager</h1>
+                </div>
+                <p className="text-xs text-slate-500 font-medium">
+                  Manage revision notes, study guides, formula sheets, and practice exam catalogues
+                </p>
+              </div>
+
+              <button
+                onClick={() => openResourceEditor()}
+                className="px-5 py-2.5 rounded-xl bg-[#581C87] hover:bg-[#4C1D95] text-white text-xs font-bold shadow-md flex items-center gap-2 shrink-0 transition-all"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Study Resource</span>
+              </button>
+            </div>
+
+            {/* Control Bar */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm">
+              <div className="relative max-w-md">
+                <input
+                  type="text"
+                  placeholder="Search study resource title, category, description..."
+                  value={resourceSearchQuery}
+                  onChange={(e) => setResourceSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50"
+                />
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+              </div>
+            </div>
+
+            {/* Table Surface */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-slate-200/80 text-[11px] uppercase font-bold text-slate-400">
+                      <th className="py-3.5 px-6">Resource Title</th>
+                      <th className="py-3.5 px-6">Category</th>
+                      <th className="py-3.5 px-6">Description</th>
+                      <th className="py-3.5 px-6">Slug ID</th>
+                      <th className="py-3.5 px-6">Status</th>
+                      <th className="py-3.5 px-6 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-xs">
+                    {studyResourcesList
+                      .filter((res) => {
+                        return (
+                          resourceSearchQuery.trim() === '' ||
+                          res.title.toLowerCase().includes(resourceSearchQuery.toLowerCase()) ||
+                          res.category?.toLowerCase().includes(resourceSearchQuery.toLowerCase()) ||
+                          res.description?.toLowerCase().includes(resourceSearchQuery.toLowerCase())
+                        );
+                      })
+                      .map((res) => (
+                        <tr key={res.slug} className="hover:bg-purple-50/30 transition-colors group">
+                          <td className="py-4 px-6 font-bold text-slate-900">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-lg bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600 font-black text-xs shrink-0">
+                                <FolderOpen className="w-4 h-4" />
+                              </div>
+                              <span className="group-hover:text-purple-700 transition-colors">{res.title}</span>
+                            </div>
+                          </td>
+                          <td className="py-4 px-6">
+                            <span className="px-2.5 py-1 rounded-full bg-blue-50 text-blue-800 font-bold text-[10px] border border-blue-100 whitespace-nowrap">
+                              {res.category}
+                            </span>
+                          </td>
+                          <td className="py-4 px-6 text-slate-500 max-w-xs truncate">
+                            {res.description || 'No description provided.'}
+                          </td>
+                          <td className="py-4 px-6 font-mono text-slate-400 text-[11px]">
+                            #{res.slug}
+                          </td>
+                          <td className="py-4 px-6 whitespace-nowrap">
+                            <span
+                              className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold border ${
+                                res.published !== false
+                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                  : 'bg-rose-50 text-rose-700 border-rose-200'
+                              }`}
+                            >
+                              {res.published !== false ? 'Published' : 'Draft'}
+                            </span>
+                          </td>
+                          <td className="py-4 px-6 text-right space-x-2 whitespace-nowrap">
+                            <button
+                              onClick={() => openResourceEditor(res)}
+                              className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 font-bold text-[11px] inline-flex items-center gap-1 transition-colors border border-purple-200"
+                            >
+                              <Edit className="w-3.5 h-3.5" /> Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteResource(res.slug)}
+                              className="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-[11px] inline-flex items-center gap-1 transition-colors border border-rose-200"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" /> Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {studyResourcesList.filter((res) => {
+                return (
+                  resourceSearchQuery.trim() === '' ||
+                  res.title.toLowerCase().includes(resourceSearchQuery.toLowerCase()) ||
+                  res.category?.toLowerCase().includes(resourceSearchQuery.toLowerCase())
+                );
+              }).length === 0 && (
+                <div className="p-12 text-center text-xs text-slate-400 space-y-2">
+                  <FolderOpen className="w-8 h-8 text-slate-300 mx-auto" />
+                  <p className="font-bold text-slate-700">No study resources found matching query.</p>
+                  <button onClick={() => setResourceSearchQuery('')} className="text-purple-600 font-bold hover:underline">
+                    Clear Search
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* SECTION 4: PARTNERSHIPS & LOGOS MANAGER */}
+        {activeTab === 'partnerships' && (
+          <div className="space-y-6 animate-in fade-in duration-300">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-purple-600" />
+                  <h1 className="text-2xl font-black text-slate-900">Partnerships & Logos Manager</h1>
+                </div>
+                <p className="text-xs text-slate-500 font-medium">
+                  Manage partner logos, order, target URLs, and homepage slider visibility
+                </p>
+              </div>
+
+              <button
+                onClick={() => openPartnershipEditor()}
+                className="px-5 py-2.5 rounded-xl bg-[#581C87] hover:bg-[#4C1D95] text-white text-xs font-bold shadow-md flex items-center gap-2 shrink-0 transition-all"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Partner Logo</span>
+              </button>
+            </div>
+
+            {/* Control Bar */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm">
+              <div className="relative max-w-md">
+                <input
+                  type="text"
+                  placeholder="Search partner name or URL..."
+                  value={partnerSearchQuery}
+                  onChange={(e) => setPartnerSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50"
+                />
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+              </div>
+            </div>
+
+            {/* Grid of Partner Logo Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {partnershipsList
+                .filter((p) => {
+                  return (
+                    partnerSearchQuery.trim() === '' ||
+                    p.name.toLowerCase().includes(partnerSearchQuery.toLowerCase()) ||
+                    p.url?.toLowerCase().includes(partnerSearchQuery.toLowerCase())
+                  );
+                })
+                .map((partner, idx) => (
+                  <div
+                    key={partner.id || idx}
+                    className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4 hover:border-purple-300 hover:shadow-md transition-all flex flex-col justify-between group"
+                  >
+                    <div className="space-y-3">
+                      <div className="w-20 h-14 rounded-xl bg-slate-50 border border-slate-200 p-2.5 flex items-center justify-center mx-auto group-hover:scale-105 transition-transform">
+                        <img src={partner.logo} alt={partner.name} className="max-h-full max-w-full object-contain" />
+                      </div>
+                      <div className="text-center space-y-1">
+                        <h4 className="font-extrabold text-sm text-slate-900 group-hover:text-purple-700 transition-colors">
+                          {partner.name}
+                        </h4>
+                        <a
+                          href={partner.url || '/'}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-mono text-[11px] text-purple-600 hover:underline block truncate"
+                        >
+                          {partner.url || '/'}
+                        </a>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs font-bold">
+                      <span
+                        className={`px-2.5 py-0.5 rounded-full text-[10px] border ${
+                          partner.published !== false
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                            : 'bg-rose-50 text-rose-700 border-rose-200'
+                        }`}
+                      >
+                        {partner.published !== false ? 'Published' : 'Unpublished'}
+                      </span>
+
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => openPartnershipEditor(partner)}
+                          className="px-2.5 py-1 rounded-lg bg-purple-50 text-purple-800 hover:bg-purple-100 text-[11px] border border-purple-200 transition-colors"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeletePartnership(partner.id || partner.name)}
+                          className="px-2.5 py-1 rounded-lg bg-rose-50 text-rose-700 hover:bg-rose-100 text-[11px] border border-rose-200 transition-colors"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+
+            {partnershipsList.filter((p) => {
+              return (
+                partnerSearchQuery.trim() === '' ||
+                p.name.toLowerCase().includes(partnerSearchQuery.toLowerCase()) ||
+                p.url?.toLowerCase().includes(partnerSearchQuery.toLowerCase())
+              );
+            }).length === 0 && (
+              <div className="p-12 text-center text-xs text-slate-400 bg-white border border-slate-200/80 rounded-2xl space-y-2">
+                <Sparkles className="w-8 h-8 text-slate-300 mx-auto" />
+                <p className="font-bold text-slate-700">No partner logos found matching search query.</p>
+                <button onClick={() => setPartnerSearchQuery('')} className="text-purple-600 font-bold hover:underline">
+                  Clear Search
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* SECTION 5: PAGES & NAVBAR MANAGEMENT */}
         {activeTab === 'pages' && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-black text-slate-900">Website Pages & Navigation Manager</h1>
-                <p className="text-xs text-slate-500">Edit titles, subtitles, hero text, SEO metadata, and top navigation bar links</p>
+          <div className="space-y-6 animate-in fade-in duration-300">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-purple-600" />
+                  <h1 className="text-2xl font-black text-slate-900">Website Pages & Navigation Manager</h1>
+                </div>
+                <p className="text-xs text-slate-500 font-medium">
+                  Configure page titles, hero text, SEO metadata, top navigation bar links, and site announcement banner
+                </p>
               </div>
 
               <button
                 onClick={openNavEditor}
-                className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md flex items-center gap-2"
+                className="px-5 py-2.5 rounded-xl bg-[#581C87] hover:bg-[#4C1D95] text-white text-xs font-bold shadow-md flex items-center gap-2 shrink-0 transition-all"
               >
                 <Navigation className="w-4 h-4" />
                 <span>Edit Navigation Bar</span>
               </button>
             </div>
 
-            {/* TOP NAVBAR ANNOUNCEMENT MANAGER SUMMARY CARD */}
-            <div className="bg-gradient-to-r from-[#1E1035] to-purple-900 text-white p-6 rounded-2xl shadow-md space-y-3">
+            {/* Announcement Banner Highlight */}
+            <div className="bg-gradient-to-r from-[#1E1035] via-[#2D1654] to-purple-900 text-white p-6 rounded-2xl shadow-md space-y-3 border border-purple-800/50">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-xs font-bold text-purple-300 uppercase tracking-wider">
-                  <Sparkles className="w-4 h-4 text-purple-400" /> Top Navigation & Announcement Bar
+                  <Sparkles className="w-4 h-4 text-purple-400" /> Active Top Navigation Announcement Banner
                 </div>
                 <button
                   onClick={openNavEditor}
-                  className="px-3.5 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-bold transition-all"
+                  className="px-3.5 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs font-bold transition-all border border-white/20"
                 >
                   Edit Header Navbar
                 </button>
               </div>
               <p className="text-xs text-purple-100 font-medium leading-relaxed">
-                <strong>Announcement Banner:</strong> &ldquo;{navData.topBanner?.mainAnnouncement || 'Ethical Educational Support & Proctoring Software Technical Guidance for Students Worldwide'}&rdquo;
+                <strong>Main Announcement:</strong> &ldquo;{navData.topBanner?.mainAnnouncement || 'Ethical Educational Support & Proctoring Software Technical Guidance for Students Worldwide'}&rdquo;
               </p>
             </div>
 
-            {/* PAGES CARDS GRID WITH EDIT CONTENT & SEO BUTTONS */}
+            {/* Control Bar */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm">
+              <div className="relative max-w-md">
+                <input
+                  type="text"
+                  placeholder="Search page by title, route, or subtitle..."
+                  value={pageSearchQuery}
+                  onChange={(e) => setPageSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50"
+                />
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+              </div>
+            </div>
+
+            {/* Grid of Page Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {ALL_SITE_PAGES.map((pg) => {
+              {ALL_SITE_PAGES.filter((pg) => {
                 const pageInfo = pagesData[pg.key] || {};
-                const pageFaqCount = allFlattenedFaqs.filter((f) => f.pageLocation === pg.path || f.pageLocation.startsWith(pg.path)).length;
+                return (
+                  pageSearchQuery.trim() === '' ||
+                  pg.name.toLowerCase().includes(pageSearchQuery.toLowerCase()) ||
+                  pg.slug.toLowerCase().includes(pageSearchQuery.toLowerCase()) ||
+                  pageInfo.subtitle?.toLowerCase().includes(pageSearchQuery.toLowerCase())
+                );
+              }).map((pg) => {
+                const pageInfo = pagesData[pg.key] || {};
+                const pageFaqCount = allFlattenedFaqs.filter(
+                  (f) => f.pageLocation === pg.path || f.pageLocation.startsWith(pg.path)
+                ).length;
 
                 return (
                   <div
                     key={pg.key}
-                    className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4 hover:border-purple-300 transition-all flex flex-col justify-between"
+                    className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4 hover:border-purple-300 transition-all flex flex-col justify-between group"
                   >
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                       <div className="flex items-center justify-between">
-                        <span className="font-extrabold text-sm text-slate-900">{pg.name}</span>
+                        <span className="font-extrabold text-sm text-slate-900 group-hover:text-purple-700 transition-colors">
+                          {pg.name}
+                        </span>
                         <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
+                          <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
                             {pageFaqCount} FAQs
                           </span>
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-purple-700 bg-purple-50 px-2 py-0.5 rounded">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded-full border border-purple-200">
                             {pg.slug}
                           </span>
                         </div>
                       </div>
 
-                      <p className="text-xs text-slate-600 font-medium line-clamp-2">
+                      <p className="text-xs text-slate-600 font-medium line-clamp-2 leading-relaxed">
                         {pageInfo.subtitle || pageInfo.metaDescription || `Content manager for ${pg.name}`}
                       </p>
 
@@ -729,10 +2514,10 @@ export default function CustomAdminCmsPage() {
                     <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
                       <button
                         onClick={() => {
-                          setFaqLocationFilter(pg.path);
+                          setFaqLocationFilterState(pg.path);
                           setActiveTab('faqs');
                         }}
-                        className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 text-xs font-bold inline-flex items-center gap-1 transition-colors"
+                        className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 text-xs font-bold inline-flex items-center gap-1 transition-colors border border-purple-200"
                       >
                         <HelpCircle className="w-3.5 h-3.5" /> Filter FAQs ({pageFaqCount})
                       </button>
@@ -743,7 +2528,7 @@ export default function CustomAdminCmsPage() {
                         rel="noopener noreferrer"
                         className="px-3 py-1.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold inline-flex items-center gap-1.5 transition-colors"
                       >
-                        <Eye className="w-3.5 h-3.5 text-slate-500" /> View Page
+                        <Eye className="w-3.5 h-3.5 text-slate-500" /> View Live Page
                       </a>
 
                       <button
@@ -760,52 +2545,71 @@ export default function CustomAdminCmsPage() {
           </div>
         )}
 
-        {/* TAB 5: FAQS & DOCUMENTS CATALOGUE (SEPARATED BY PAGE LOCATION & EDITABLE) */}
+        {/* SECTION 6: DOCUMENTS & FAQS CATALOGUE */}
         {activeTab === 'faqs' && (
-          <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <h1 className="text-2xl font-black text-slate-900">Documents & FAQs Catalogue</h1>
-                <p className="text-xs text-slate-500">
-                  Manage and edit all {allFlattenedFaqs.length} frequently asked questions grouped separately by website page location
+          <div className="space-y-6 animate-in fade-in duration-300">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <HelpCircle className="w-5 h-5 text-purple-600" />
+                  <h1 className="text-2xl font-black text-slate-900">Documents & FAQs Catalogue</h1>
+                </div>
+                <p className="text-xs text-slate-500 font-medium">
+                  Manage all {allFlattenedFaqs.length} frequently asked questions grouped separately by website page location
                 </p>
               </div>
 
-              <div className="flex items-center gap-3">
-                <div className="relative">
+              <button
+                onClick={() => openFaqEditor()}
+                className="px-5 py-2.5 rounded-xl bg-[#581C87] hover:bg-[#4C1D95] text-white text-xs font-bold shadow-md flex items-center gap-2 shrink-0 transition-all"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add New FAQ</span>
+              </button>
+            </div>
+
+            {/* Control Bar & Page Location Pills */}
+            <div className="space-y-3 bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="relative flex-grow max-w-md">
                   <input
                     type="text"
-                    placeholder="Search question, page URL..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-9 pr-4 py-2 rounded-xl border border-slate-200 bg-white text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    placeholder="Search question, answer content, page URL..."
+                    value={faqSearchQuery}
+                    onChange={(e) => setFaqSearchQuery(e.target.value)}
+                    className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50"
                   />
                   <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
                 </div>
 
-                <button
-                  onClick={() => openFaqEditor()}
-                  className="px-5 py-2.5 rounded-xl bg-[#581C87] hover:bg-[#4C1D95] text-white text-xs font-bold shadow-md flex items-center gap-2 shrink-0"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Add New FAQ</span>
-                </button>
+                <span className="text-xs text-slate-400 font-bold shrink-0">
+                  Showing {allFlattenedFaqs.filter((item) => {
+                    const matchesLocation =
+                      faqLocationFilterState === 'All' ||
+                      item.pageLocation === faqLocationFilterState ||
+                      item.pageLocation.startsWith(faqLocationFilterState);
+                    const matchesSearch =
+                      faqSearchQuery.trim() === '' ||
+                      item.question.toLowerCase().includes(faqSearchQuery.toLowerCase()) ||
+                      item.answer.toLowerCase().includes(faqSearchQuery.toLowerCase()) ||
+                      item.pageLocation.toLowerCase().includes(faqSearchQuery.toLowerCase());
+                    return matchesLocation && matchesSearch;
+                  }).length} FAQs
+                </span>
               </div>
-            </div>
 
-            {/* PAGE LOCATION FILTER BUTTONS */}
-            <div className="space-y-2 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-              <span className="text-[11px] uppercase font-bold text-slate-400 tracking-wider flex items-center gap-1.5">
-                <MapPin className="w-3.5 h-3.5 text-purple-600" /> Filter FAQs by Website Page Location:
-              </span>
-              <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+              <div className="pt-2 border-t border-slate-100 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+                <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider shrink-0 flex items-center gap-1">
+                  <MapPin className="w-3 h-3 text-purple-600" /> Location:
+                </span>
                 {uniquePageLocations.map((loc) => (
                   <button
                     key={loc}
                     type="button"
-                    onClick={() => setFaqLocationFilter(loc)}
+                    onClick={() => setFaqLocationFilterState(loc)}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-                      faqLocationFilter === loc
+                      faqLocationFilterState === loc
                         ? 'bg-purple-600 text-white shadow-sm'
                         : 'bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100'
                     }`}
@@ -816,760 +2620,1881 @@ export default function CustomAdminCmsPage() {
               </div>
             </div>
 
-            {/* FAQS DATA TABLE WITH INLINE EDIT BUTTONS */}
-            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200 text-[11px] uppercase font-bold text-slate-500">
-                    <th className="py-3.5 px-6">#</th>
-                    <th className="py-3.5 px-6">Question</th>
-                    <th className="py-3.5 px-6">Answer Text</th>
-                    <th className="py-3.5 px-6">Category</th>
-                    <th className="py-3.5 px-6">Page Location</th>
-                    <th className="py-3.5 px-6 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 text-xs">
-                  {allFlattenedFaqs
-                    .filter((item) => {
-                      const matchesLocation =
-                        faqLocationFilter === 'All' ||
-                        item.pageLocation === faqLocationFilter ||
-                        item.pageLocation.startsWith(faqLocationFilter);
-                      const matchesCategory =
-                        faqCategoryFilter === 'All' || item.category === faqCategoryFilter;
-                      const matchesSearch =
-                        searchQuery.trim() === '' ||
-                        item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                        item.answer.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                        item.pageLocation.toLowerCase().includes(searchQuery.toLowerCase());
-                      return matchesLocation && matchesCategory && matchesSearch;
-                    })
-                    .map((item, idx) => (
-                      <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
-                        <td className="py-4 px-6 font-mono text-slate-400">
-                          {String(idx + 1).padStart(2, '0')}
-                        </td>
-                        <td
-                          onClick={() => openFaqEditor(item.category, item)}
-                          className="py-4 px-6 font-bold text-slate-900 max-w-xs leading-snug cursor-pointer hover:text-purple-700 transition-colors"
-                        >
-                          {item.question}
-                        </td>
-                        <td className="py-4 px-6 text-slate-500 max-w-sm truncate">
-                          {item.answer}
-                        </td>
-                        <td className="py-4 px-6">
-                          <span className="px-2.5 py-1 rounded-full bg-purple-50 text-purple-800 font-bold text-[10px] whitespace-nowrap">
-                            {item.category}
-                          </span>
-                        </td>
-                        <td className="py-4 px-6">
-                          <a
-                            href={item.pageLocation}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 font-mono text-[11px] text-purple-700 bg-purple-50/80 px-2.5 py-1 rounded-lg border border-purple-200 hover:underline"
-                          >
-                            <span>{item.pageLocation}</span>
-                            <ExternalLink className="w-3 h-3 text-purple-500" />
-                          </a>
-                        </td>
-                        <td className="py-4 px-6 text-right space-x-3 whitespace-nowrap">
-                          <button
+            {/* Table Surface */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-slate-200/80 text-[11px] uppercase font-bold text-slate-400">
+                      <th className="py-3.5 px-6">#</th>
+                      <th className="py-3.5 px-6">Question</th>
+                      <th className="py-3.5 px-6">Answer Text</th>
+                      <th className="py-3.5 px-6">Category</th>
+                      <th className="py-3.5 px-6">Page Location</th>
+                      <th className="py-3.5 px-6 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-xs">
+                    {allFlattenedFaqs
+                      .filter((item) => {
+                        const matchesLocation =
+                          faqLocationFilterState === 'All' ||
+                          item.pageLocation === faqLocationFilterState ||
+                          item.pageLocation.startsWith(faqLocationFilterState);
+                        const matchesSearch =
+                          faqSearchQuery.trim() === '' ||
+                          item.question.toLowerCase().includes(faqSearchQuery.toLowerCase()) ||
+                          item.answer.toLowerCase().includes(faqSearchQuery.toLowerCase()) ||
+                          item.pageLocation.toLowerCase().includes(faqSearchQuery.toLowerCase());
+                        return matchesLocation && matchesSearch;
+                      })
+                      .map((item, idx) => (
+                        <tr key={idx} className="hover:bg-purple-50/30 transition-colors group">
+                          <td className="py-4 px-6 font-mono text-slate-400">
+                            {String(idx + 1).padStart(2, '0')}
+                          </td>
+                          <td
                             onClick={() => openFaqEditor(item.category, item)}
-                            className="text-purple-700 hover:text-purple-900 font-bold transition-colors inline-flex items-center gap-1 bg-purple-50 px-2.5 py-1 rounded-lg border border-purple-200"
+                            className="py-4 px-6 font-bold text-slate-900 max-w-xs leading-snug cursor-pointer group-hover:text-purple-700 transition-colors"
                           >
-                            <Edit className="w-3.5 h-3.5" /> Edit FAQ
-                          </button>
-                          <button
-                            onClick={() => handleDeleteFaq(item.category, item.question)}
-                            className="text-rose-600 hover:text-rose-800 font-bold transition-colors inline-flex items-center gap-1"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" /> Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
+                            {item.question}
+                          </td>
+                          <td className="py-4 px-6 text-slate-500 max-w-sm truncate">
+                            {item.answer}
+                          </td>
+                          <td className="py-4 px-6">
+                            <span className="px-2.5 py-1 rounded-full bg-purple-50 text-purple-800 font-bold text-[10px] border border-purple-100 whitespace-nowrap">
+                              {item.category}
+                            </span>
+                          </td>
+                          <td className="py-4 px-6 whitespace-nowrap">
+                            <a
+                              href={item.pageLocation}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 font-mono text-[11px] text-purple-700 bg-purple-50/80 px-2.5 py-1 rounded-lg border border-purple-200 hover:underline"
+                            >
+                              <span>{item.pageLocation}</span>
+                              <ExternalLink className="w-3 h-3 text-purple-500" />
+                            </a>
+                          </td>
+                          <td className="py-4 px-6 text-right space-x-2 whitespace-nowrap">
+                            <button
+                              onClick={() => openFaqEditor(item.category, item)}
+                              className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 font-bold text-[11px] inline-flex items-center gap-1 transition-colors border border-purple-200"
+                            >
+                              <Edit className="w-3.5 h-3.5" /> Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteFaq(item.category, item.question)}
+                              className="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-[11px] inline-flex items-center gap-1 transition-colors border border-rose-200"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" /> Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {allFlattenedFaqs.filter((item) => {
+                const matchesLocation =
+                  faqLocationFilterState === 'All' ||
+                  item.pageLocation === faqLocationFilterState ||
+                  item.pageLocation.startsWith(faqLocationFilterState);
+                const matchesSearch =
+                  faqSearchQuery.trim() === '' ||
+                  item.question.toLowerCase().includes(faqSearchQuery.toLowerCase()) ||
+                  item.answer.toLowerCase().includes(faqSearchQuery.toLowerCase());
+                return matchesLocation && matchesSearch;
+              }).length === 0 && (
+                <div className="p-12 text-center text-xs text-slate-400 space-y-2">
+                  <HelpCircle className="w-8 h-8 text-slate-300 mx-auto" />
+                  <p className="font-bold text-slate-700">No FAQ questions found matching query or location filter.</p>
+                  <button
+                    onClick={() => {
+                      setFaqSearchQuery('');
+                      setFaqLocationFilterState('All');
+                    }}
+                    className="text-purple-600 font-bold hover:underline"
+                  >
+                    Reset FAQ Filters
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
 
-        {/* TAB: INQUIRIES CATALOGUE */}
+        {/* SECTION 7: CUSTOMER INQUIRIES DIRECTORY */}
         {activeTab === 'inquiries' && (
-          <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <h1 className="text-2xl font-black text-slate-900">Website Form Inquiries</h1>
-                <p className="text-xs text-slate-500">View and respond to all student and customer inquiries submitted from website forms</p>
+          <div className="space-y-6 animate-in fade-in duration-300">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Inbox className="w-5 h-5 text-purple-600" />
+                  <h1 className="text-2xl font-black text-slate-900">Customer Inquiries Directory</h1>
+                </div>
+                <p className="text-xs text-slate-500 font-medium">
+                  Review, manage, and respond to incoming customer form submissions and lead requests
+                </p>
               </div>
 
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1 bg-slate-200/60 p-1 rounded-xl">
-                  {['All', 'New', 'Responded'].map((st) => (
-                    <button
-                      key={st}
-                      type="button"
-                      onClick={() => setInquiryFilter(st)}
-                      className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                        inquiryFilter === st ? 'bg-white text-purple-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'
-                      }`}
-                    >
-                      {st}
-                    </button>
-                  ))}
-                </div>
-
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Search name, email..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-9 pr-4 py-2 rounded-xl border border-slate-200 bg-white text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-600"
-                  />
-                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
-                </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1.5 rounded-xl">
+                  Total: <strong className="text-slate-900">{inquiriesList.length}</strong>
+                </span>
+                {newInquiriesCount > 0 && (
+                  <span className="text-xs font-black text-white bg-rose-500 px-3 py-1.5 rounded-xl shadow-sm animate-pulse">
+                    {newInquiriesCount} Unread
+                  </span>
+                )}
               </div>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200 text-[11px] uppercase font-bold text-slate-500">
-                    <th className="py-3.5 px-6">Date</th>
-                    <th className="py-3.5 px-6">Customer Name</th>
-                    <th className="py-3.5 px-6">Email / Phone</th>
-                    <th className="py-3.5 px-6">Service Requested</th>
-                    <th className="py-3.5 px-6">Status</th>
-                    <th className="py-3.5 px-6 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 text-xs">
-                  {inquiriesList
-                    .filter((inq) => {
-                      const matchesStatus = inquiryFilter === 'All' || inq.status === inquiryFilter;
-                      const matchesSearch =
-                        searchQuery.trim() === '' ||
-                        inq.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                        inq.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                        inq.service.toLowerCase().includes(searchQuery.toLowerCase());
-                      return matchesStatus && matchesSearch;
-                    })
-                    .map((inq) => (
-                      <tr key={inq.id} className="hover:bg-slate-50/80 transition-colors">
-                        <td className="py-4 px-6 text-slate-500 font-mono text-[11px] whitespace-nowrap">
-                          {inq.date}
-                        </td>
-                        <td className="py-4 px-6 font-bold text-slate-900">{inq.fullName}</td>
-                        <td className="py-4 px-6 text-slate-600">
-                          <div>{inq.email}</div>
-                          <div className="text-[11px] text-slate-400">{inq.phone}</div>
-                        </td>
-                        <td className="py-4 px-6 font-semibold text-slate-700">{inq.service}</td>
-                        <td className="py-4 px-6">
-                          <span
-                            className={`px-2.5 py-1 rounded-full font-bold text-[10px] ${
-                              inq.status === 'New'
-                                ? 'bg-rose-50 text-rose-700 border border-rose-200'
-                                : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                            }`}
-                          >
-                            {inq.status}
-                          </span>
-                        </td>
-                        <td className="py-4 px-6 text-right space-x-3 whitespace-nowrap">
-                          <button
-                            onClick={() => openInquiryViewer(inq)}
-                            className="text-purple-700 hover:text-purple-900 font-bold transition-colors inline-flex items-center gap-1"
-                          >
-                            <Eye className="w-3.5 h-3.5" /> View Message
-                          </button>
-                          <button
-                            onClick={() => handleDeleteInquiry(inq.id)}
-                            className="text-rose-600 hover:text-rose-800 font-bold transition-colors inline-flex items-center gap-1"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" /> Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
+            {/* Control Bar */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm">
+              <div className="flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl">
+                {['All', 'New', 'Responded'].map((st) => (
+                  <button
+                    key={st}
+                    type="button"
+                    onClick={() => setInquiryFilterState(st)}
+                    className={`px-3.5 py-1.5 rounded-lg text-xs font-extrabold transition-all ${
+                      inquiryFilterState === st
+                        ? 'bg-white text-purple-900 shadow-sm border border-slate-200/60'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    {st === 'New' && newInquiriesCount > 0 ? (
+                      <span className="flex items-center gap-1.5">
+                        <span>New</span>
+                        <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
+                      </span>
+                    ) : (
+                      st
+                    )}
+                  </button>
+                ))}
+              </div>
+
+              <div className="relative flex-grow max-w-md">
+                <input
+                  type="text"
+                  placeholder="Search by client name, email, phone, service, subject..."
+                  value={inquirySearchQuery}
+                  onChange={(e) => setInquirySearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50"
+                />
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+              </div>
+            </div>
+
+            {/* Table Surface */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-slate-200/80 text-[11px] uppercase font-bold text-slate-400">
+                      <th className="py-3.5 px-6">Date & Time</th>
+                      <th className="py-3.5 px-6">Client Name</th>
+                      <th className="py-3.5 px-6">Email / Phone</th>
+                      <th className="py-3.5 px-6">Service Requested & Subject</th>
+                      <th className="py-3.5 px-6">Status</th>
+                      <th className="py-3.5 px-6 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-xs">
+                    {inquiriesList
+                      .filter((inq) => {
+                        const matchesStatus = inquiryFilterState === 'All' || inq.status === inquiryFilterState;
+                        const matchesSearch =
+                          inquirySearchQuery.trim() === '' ||
+                          inq.fullName.toLowerCase().includes(inquirySearchQuery.toLowerCase()) ||
+                          inq.email.toLowerCase().includes(inquirySearchQuery.toLowerCase()) ||
+                          inq.phone?.toLowerCase().includes(inquirySearchQuery.toLowerCase()) ||
+                          inq.service?.toLowerCase().includes(inquirySearchQuery.toLowerCase()) ||
+                          inq.subject?.toLowerCase().includes(inquirySearchQuery.toLowerCase());
+                        return matchesStatus && matchesSearch;
+                      })
+                      .map((inq) => (
+                        <tr
+                          key={inq.id}
+                          className={`transition-colors ${
+                            inq.status === 'New'
+                              ? 'bg-amber-50/40 hover:bg-amber-50/80 border-l-4 border-amber-500'
+                              : 'hover:bg-purple-50/30'
+                          }`}
+                        >
+                          <td className="py-4 px-6 text-slate-500 font-mono text-[11px] whitespace-nowrap">
+                            {inq.date}
+                          </td>
+                          <td className="py-4 px-6">
+                            <div className="font-extrabold text-slate-900 flex items-center gap-2">
+                              {inq.status === 'New' && <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />}
+                              <span>{inq.fullName}</span>
+                            </div>
+                          </td>
+                          <td className="py-4 px-6 text-slate-600">
+                            <div className="font-medium text-slate-800">{inq.email}</div>
+                            <div className="text-[11px] text-slate-400 font-mono">{inq.phone || 'N/A'}</div>
+                          </td>
+                          <td className="py-4 px-6 max-w-xs">
+                            <div className="font-bold text-slate-800 truncate">{inq.service}</div>
+                            <div className="text-[11px] text-purple-600 font-medium truncate">{inq.subject || inq.message}</div>
+                          </td>
+                          <td className="py-4 px-6 whitespace-nowrap">
+                            <span
+                              className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold border ${
+                                inq.status === 'New'
+                                  ? 'bg-amber-100 text-amber-900 border-amber-300'
+                                  : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                              }`}
+                            >
+                              {inq.status || 'New'}
+                            </span>
+                          </td>
+                          <td className="py-4 px-6 text-right space-x-2 whitespace-nowrap">
+                            <button
+                              onClick={() => openInquiryViewer(inq)}
+                              className="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-[11px] shadow-sm inline-flex items-center gap-1 transition-colors"
+                            >
+                              <Eye className="w-3.5 h-3.5" /> View Message
+                            </button>
+                            <button
+                              onClick={() => handleToggleInquiryStatus(inq.id)}
+                              className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] inline-flex items-center gap-1 transition-colors border border-slate-200"
+                            >
+                              <RefreshCw className="w-3.5 h-3.5" /> {inq.status === 'New' ? 'Mark Responded' : 'Mark New'}
+                            </button>
+                            <button
+                              onClick={() => handleDeleteInquiry(inq.id)}
+                              className="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-[11px] inline-flex items-center gap-1 transition-colors border border-rose-200"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" /> Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {inquiriesList.filter((inq) => {
+                const matchesStatus = inquiryFilterState === 'All' || inq.status === inquiryFilterState;
+                const matchesSearch =
+                  inquirySearchQuery.trim() === '' ||
+                  inq.fullName.toLowerCase().includes(inquirySearchQuery.toLowerCase()) ||
+                  inq.email.toLowerCase().includes(inquirySearchQuery.toLowerCase());
+                return matchesStatus && matchesSearch;
+              }).length === 0 && (
+                <div className="p-12 text-center text-xs text-slate-400 space-y-2">
+                  <Inbox className="w-8 h-8 text-slate-300 mx-auto" />
+                  <p className="font-bold text-slate-700">No customer inquiries found matching filter criteria.</p>
+                  <button
+                    onClick={() => {
+                      setInquirySearchQuery('');
+                      setInquiryFilterState('All');
+                    }}
+                    className="text-purple-600 font-bold hover:underline"
+                  >
+                    Reset Filters
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
 
-        {/* TAB 2: BLOGS CATALOGUE */}
+        {/* SECTION 8: BLOG ARTICLES CATALOGUE */}
         {activeTab === 'blogs' && (
-          <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <h1 className="text-2xl font-black text-slate-900">Blog Catalogue</h1>
-                <p className="text-xs text-slate-500">Edit, add, or delete blog posts and SEO meta descriptions</p>
+          <div className="space-y-6 animate-in fade-in duration-300">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <BookOpen className="w-5 h-5 text-purple-600" />
+                  <h1 className="text-2xl font-black text-slate-900">Blog Articles Catalogue</h1>
+                </div>
+                <p className="text-xs text-slate-500 font-medium">
+                  Create, edit, or publish educational blog articles, study guides, and SEO meta descriptions
+                </p>
               </div>
 
-              <div className="flex items-center gap-3">
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Search articles..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-9 pr-4 py-2 rounded-xl border border-slate-200 bg-white text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-600"
-                  />
-                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
-                </div>
+              <button
+                onClick={() => openBlogEditor()}
+                className="px-5 py-2.5 rounded-xl bg-[#581C87] hover:bg-[#4C1D95] text-white text-xs font-bold shadow-md flex items-center gap-2 shrink-0 transition-all"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add New Article</span>
+              </button>
+            </div>
 
+            {/* Control Bar: Search & Category Filters */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm">
+              <div className="relative flex-grow max-w-md">
+                <input
+                  type="text"
+                  placeholder="Search articles by title, category, or excerpt..."
+                  value={blogSearchQuery}
+                  onChange={(e) => setBlogSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50"
+                />
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+              </div>
+
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+                {['All', 'Examination Preparation', 'Professional Certifications', 'Study Strategies', 'Examination Software Guidance', 'Nursing Exam Preparation'].map((cat) => (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setBlogCategoryFilter(cat)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                      blogCategoryFilter === cat
+                        ? 'bg-purple-600 text-white shadow-sm'
+                        : 'bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Table Surface */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-slate-200/80 text-[11px] uppercase font-bold text-slate-400">
+                      <th className="py-3.5 px-6">#</th>
+                      <th className="py-3.5 px-6">Article Title</th>
+                      <th className="py-3.5 px-6">Category</th>
+                      <th className="py-3.5 px-6">Publish Date</th>
+                      <th className="py-3.5 px-6">Slug ID</th>
+                      <th className="py-3.5 px-6">Status</th>
+                      <th className="py-3.5 px-6 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-xs">
+                    {blogArticles
+                      .filter((article) => {
+                        const matchesCategory = blogCategoryFilter === 'All' || article.category === blogCategoryFilter;
+                        const matchesSearch =
+                          blogSearchQuery.trim() === '' ||
+                          article.title.toLowerCase().includes(blogSearchQuery.toLowerCase()) ||
+                          article.category?.toLowerCase().includes(blogSearchQuery.toLowerCase()) ||
+                          article.excerpt?.toLowerCase().includes(blogSearchQuery.toLowerCase());
+                        return matchesCategory && matchesSearch;
+                      })
+                      .map((article, idx) => (
+                        <tr key={article.slug} className="hover:bg-purple-50/30 transition-colors group">
+                          <td className="py-4 px-6 font-mono text-slate-400">
+                            {String(idx + 1).padStart(2, '0')}
+                          </td>
+                          <td className="py-4 px-6 font-bold text-slate-900 max-w-xs">
+                            <span className="line-clamp-1 group-hover:text-purple-700 transition-colors">{article.title}</span>
+                          </td>
+                          <td className="py-4 px-6">
+                            <span className="px-2.5 py-1 rounded-full bg-purple-50 text-purple-800 font-bold text-[10px] border border-purple-100 whitespace-nowrap">
+                              {article.category}
+                            </span>
+                          </td>
+                          <td className="py-4 px-6 text-slate-600 whitespace-nowrap font-mono text-[11px]">
+                            {article.publishDate}
+                          </td>
+                          <td className="py-4 px-6 font-mono text-slate-400 text-[11px]">
+                            #{article.slug}
+                          </td>
+                          <td className="py-4 px-6 whitespace-nowrap">
+                            <span
+                              className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold border ${
+                                article.published !== false
+                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                  : 'bg-rose-50 text-rose-700 border-rose-200'
+                              }`}
+                            >
+                              {article.published !== false ? 'Published' : 'Draft'}
+                            </span>
+                          </td>
+                          <td className="py-4 px-6 text-right space-x-2 whitespace-nowrap">
+                            <a
+                              href={`/blog/${article.slug}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="px-2.5 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-[11px] inline-flex items-center gap-1 transition-colors border border-slate-200"
+                            >
+                              <Eye className="w-3.5 h-3.5 text-slate-500" /> View
+                            </a>
+                            <button
+                              onClick={() => openBlogEditor(article)}
+                              className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 font-bold text-[11px] inline-flex items-center gap-1 transition-colors border border-purple-200"
+                            >
+                              <Edit className="w-3.5 h-3.5" /> Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteBlog(article.slug)}
+                              className="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-[11px] inline-flex items-center gap-1 transition-colors border border-rose-200"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" /> Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {blogArticles.filter((article) => {
+                const matchesCategory = blogCategoryFilter === 'All' || article.category === blogCategoryFilter;
+                const matchesSearch =
+                  blogSearchQuery.trim() === '' ||
+                  article.title.toLowerCase().includes(blogSearchQuery.toLowerCase());
+                return matchesCategory && matchesSearch;
+              }).length === 0 && (
+                <div className="p-12 text-center text-xs text-slate-400 space-y-2">
+                  <BookOpen className="w-8 h-8 text-slate-300 mx-auto" />
+                  <p className="font-bold text-slate-700">No blog articles found matching search criteria.</p>
+                  <button
+                    onClick={() => {
+                      setBlogSearchQuery('');
+                      setBlogCategoryFilter('All');
+                    }}
+                    className="text-purple-600 font-bold hover:underline"
+                  >
+                    Reset Article Filters
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* SECTION 9: SERVICES DIRECTORY */}
+        {activeTab === 'services' && (
+          <div className="space-y-6 animate-in fade-in duration-300">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Briefcase className="w-5 h-5 text-purple-600" />
+                  <h1 className="text-2xl font-black text-slate-900">Services Directory</h1>
+                </div>
+                <p className="text-xs text-slate-500 font-medium">
+                  Manage learning support programs, descriptions, hero images, and service offerings
+                </p>
+              </div>
+
+              <button
+                onClick={() => openServiceEditor()}
+                className="px-5 py-2.5 rounded-xl bg-[#581C87] hover:bg-[#4C1D95] text-white text-xs font-bold shadow-md flex items-center gap-2 shrink-0 transition-all"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Service</span>
+              </button>
+            </div>
+
+            {/* Control Bar: Search & Category Filters */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm">
+              <div className="relative flex-grow max-w-md">
+                <input
+                  type="text"
+                  placeholder="Search services by title, category, or tagline..."
+                  value={serviceSearchQuery}
+                  onChange={(e) => setServiceSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50"
+                />
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+              </div>
+
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+                {['All', 'Academic Support', 'Examination Support', 'Assessment Practice', 'Career Credentials', 'Academic Strategy', 'Technical Assistance'].map((cat) => (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setServiceCategoryFilter(cat)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                      serviceCategoryFilter === cat
+                        ? 'bg-purple-600 text-white shadow-sm'
+                        : 'bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Grid of Service Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {servicesList
+                .filter((service) => {
+                  const matchesCategory = serviceCategoryFilter === 'All' || service.category === serviceCategoryFilter;
+                  const matchesSearch =
+                    serviceSearchQuery.trim() === '' ||
+                    service.title.toLowerCase().includes(serviceSearchQuery.toLowerCase()) ||
+                    service.category?.toLowerCase().includes(serviceSearchQuery.toLowerCase()) ||
+                    service.tagline?.toLowerCase().includes(serviceSearchQuery.toLowerCase());
+                  return matchesCategory && matchesSearch;
+                })
+                .map((service) => (
+                  <div
+                    key={service.slug}
+                    className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-sm hover:border-purple-300 hover:shadow-md transition-all flex flex-col justify-between group"
+                  >
+                    <div>
+                      {/* Hero Image Thumbnail */}
+                      <div className="h-36 bg-slate-100 relative overflow-hidden">
+                        <img
+                          src={service.heroImage || 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f'}
+                          alt={service.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                        <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-slate-900/80 backdrop-blur-sm text-white font-bold text-[10px] border border-white/20">
+                          {service.category}
+                        </span>
+                      </div>
+
+                      <div className="p-5 space-y-2">
+                        <h3 className="font-extrabold text-sm text-slate-900 group-hover:text-purple-700 transition-colors">
+                          {service.title}
+                        </h3>
+                        <p className="text-xs text-slate-500 font-medium line-clamp-2 leading-relaxed">
+                          {service.tagline || service.overview}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="p-4 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between text-xs font-bold">
+                      <span
+                        className={`px-2.5 py-0.5 rounded-full text-[10px] border ${
+                          service.published !== false
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                            : 'bg-rose-50 text-rose-700 border-rose-200'
+                        }`}
+                      >
+                        {service.published !== false ? 'Published' : 'Unpublished'}
+                      </span>
+
+                      <div className="flex items-center gap-2">
+                        <a
+                          href={`/services/${service.slug}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-2.5 py-1 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 text-[11px] transition-colors"
+                        >
+                          View
+                        </a>
+                        <button
+                          onClick={() => openServiceEditor(service)}
+                          className="px-2.5 py-1 rounded-xl bg-purple-50 text-purple-800 hover:bg-purple-100 text-[11px] border border-purple-200 transition-colors"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteService(service.slug)}
+                          className="px-2.5 py-1 rounded-xl bg-rose-50 text-rose-700 hover:bg-rose-100 text-[11px] border border-rose-200 transition-colors"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+
+            {servicesList.filter((service) => {
+              const matchesCategory = serviceCategoryFilter === 'All' || service.category === serviceCategoryFilter;
+              const matchesSearch =
+                serviceSearchQuery.trim() === '' ||
+                service.title.toLowerCase().includes(serviceSearchQuery.toLowerCase());
+              return matchesCategory && matchesSearch;
+            }).length === 0 && (
+              <div className="p-12 text-center text-xs text-slate-400 bg-white border border-slate-200/80 rounded-2xl space-y-2">
+                <Briefcase className="w-8 h-8 text-slate-300 mx-auto" />
+                <p className="font-bold text-slate-700">No services found matching search query.</p>
                 <button
-                  onClick={() => openBlogEditor()}
-                  className="px-5 py-2.5 rounded-xl bg-[#581C87] hover:bg-[#4C1D95] text-white text-xs font-bold shadow-md flex items-center gap-2"
+                  onClick={() => {
+                    setServiceSearchQuery('');
+                    setServiceCategoryFilter('All');
+                  }}
+                  className="text-purple-600 font-bold hover:underline"
                 >
-                  <Plus className="w-4 h-4" />
-                  <span>Add new</span>
+                  Reset Filters
                 </button>
               </div>
-            </div>
-
-            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200 text-[11px] uppercase font-bold text-slate-500">
-                    <th className="py-3.5 px-6">#</th>
-                    <th className="py-3.5 px-6">Title</th>
-                    <th className="py-3.5 px-6">Slug ID</th>
-                    <th className="py-3.5 px-6">Date</th>
-                    <th className="py-3.5 px-6">Category</th>
-                    <th className="py-3.5 px-6 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 text-xs">
-                  {blogArticles
-                    .filter((a) => a.title.toLowerCase().includes(searchQuery.toLowerCase()))
-                    .map((article, idx) => (
-                      <tr key={article.slug} className="hover:bg-slate-50/80 transition-colors">
-                        <td className="py-4 px-6 font-mono text-slate-400">
-                          {String(idx + 1).padStart(2, '0')}
-                        </td>
-                        <td className="py-4 px-6 font-bold text-slate-900 max-w-xs truncate">
-                          {article.title}
-                        </td>
-                        <td className="py-4 px-6 font-mono text-slate-500 text-[11px]">
-                          #{article.slug}
-                        </td>
-                        <td className="py-4 px-6 text-slate-600 whitespace-nowrap">
-                          {article.publishDate}
-                        </td>
-                        <td className="py-4 px-6">
-                          <span className="px-2.5 py-1 rounded-full bg-purple-50 text-purple-800 font-bold text-[10px]">
-                            {article.category}
-                          </span>
-                        </td>
-                        <td className="py-4 px-6 text-right space-x-3 whitespace-nowrap">
-                          <button
-                            onClick={() => openBlogEditor(article)}
-                            className="text-purple-700 hover:text-purple-900 font-bold transition-colors inline-flex items-center gap-1"
-                          >
-                            <Edit className="w-3.5 h-3.5" /> Edit
-                          </button>
-                          <button
-                            onClick={() => handleDeleteBlog(article.slug)}
-                            className="text-rose-600 hover:text-rose-800 font-bold transition-colors inline-flex items-center gap-1"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" /> Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-            </div>
+            )}
           </div>
         )}
 
-        {/* TAB 4: SERVICES CATALOGUE */}
-        {activeTab === 'services' && (
-          <div className="space-y-6">
-            <h1 className="text-2xl font-black text-slate-900">Services Directory</h1>
-            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200 text-[11px] uppercase font-bold text-slate-500">
-                    <th className="py-3.5 px-6">Title</th>
-                    <th className="py-3.5 px-6">Category</th>
-                    <th className="py-3.5 px-6">Tagline</th>
-                    <th className="py-3.5 px-6 text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 text-xs">
-                  {servicesList.map((service) => (
-                    <tr key={service.slug} className="hover:bg-slate-50/80 transition-colors">
-                      <td className="py-4 px-6 font-bold text-slate-900">{service.title}</td>
-                      <td className="py-4 px-6"><span className="px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-bold text-[10px]">{service.category}</span></td>
-                      <td className="py-4 px-6 text-slate-500 max-w-sm truncate">{service.tagline || service.overview}</td>
-                      <td className="py-4 px-6 text-right">
-                        <button onClick={() => openServiceEditor(service)} className="text-purple-700 font-bold inline-flex items-center gap-1">
-                          <Edit className="w-3.5 h-3.5" /> Edit
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-
-        {/* TAB 6: SITE SETTINGS & SEO */}
+        {/* SECTION 10: SITE SETTINGS & SEO */}
         {activeTab === 'settings' && (
-          <div className="space-y-6 max-w-3xl">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-black text-slate-900">Site Settings & SEO</h1>
-                <p className="text-xs text-slate-500">Global Website Metadata, Contact Information, and Google Analytics</p>
+          <div className="space-y-6 max-w-4xl animate-in fade-in duration-300">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Settings className="w-5 h-5 text-purple-600" />
+                  <h1 className="text-2xl font-black text-slate-900">Global Site Settings & SEO</h1>
+                </div>
+                <p className="text-xs text-slate-500 font-medium">
+                  Manage site-wide metadata, contact details, Google Analytics tracking, and global SEO defaults
+                </p>
               </div>
+
               <button
                 onClick={openSettingsEditor}
-                className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md flex items-center gap-2"
+                className="px-5 py-2.5 rounded-xl bg-[#581C87] hover:bg-[#4C1D95] text-white text-xs font-bold shadow-md flex items-center gap-2 shrink-0 transition-all"
               >
                 <Edit className="w-4 h-4" />
                 <span>Edit Settings</span>
               </button>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4 text-xs">
-              <div className="grid grid-cols-2 gap-4 border-b pb-4">
-                <div><span className="text-slate-400 font-bold uppercase block">Site Name</span> <span className="font-bold text-slate-800">{siteSettings.siteName}</span></div>
-                <div><span className="text-slate-400 font-bold uppercase block">Site URL</span> <span className="font-mono text-purple-700">{siteSettings.siteUrl}</span></div>
+            {/* Overview Surfaces */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* General Site Information */}
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
+                <div className="flex items-center justify-between border-b pb-3">
+                  <h3 className="font-extrabold text-sm text-slate-900 flex items-center gap-2">
+                    <Globe className="w-4 h-4 text-purple-600" /> General Information
+                  </h3>
+                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                    Active Production
+                  </span>
+                </div>
+
+                <div className="space-y-3 text-xs">
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">Site Name</span>
+                    <span className="font-extrabold text-slate-900">{siteSettings.siteName || 'Tutor Proctored Exams'}</span>
+                  </div>
+
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">Primary Site Domain URL</span>
+                    <span className="font-mono text-purple-700 font-bold">{siteSettings.siteUrl || 'https://tutorproctoredexams.com'}</span>
+                  </div>
+
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">Support Email Contact</span>
+                    <span className="font-mono text-slate-700">{siteSettings.contactEmail || 'support@tutorproctoredexams.com'}</span>
+                  </div>
+                </div>
               </div>
-              <div className="space-y-1 border-b pb-4">
-                <span className="text-slate-400 font-bold uppercase block">Default SEO Title</span>
-                <span className="font-bold text-slate-800">{siteSettings.defaultMetaTitle}</span>
+
+              {/* Global SEO Default Metadata */}
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
+                <div className="flex items-center justify-between border-b pb-3">
+                  <h3 className="font-extrabold text-sm text-slate-900 flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-purple-600" /> Default SEO Meta Tags
+                  </h3>
+                  <span className="text-[10px] font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded border border-purple-200">
+                    SEO Configured
+                  </span>
+                </div>
+
+                <div className="space-y-3 text-xs">
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">Default SEO Meta Title</span>
+                    <span className="font-bold text-slate-900 line-clamp-1">{siteSettings.defaultMetaTitle || 'Tutor Proctored Exams — Educational Support'}</span>
+                  </div>
+
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">Default Meta Description</span>
+                    <span className="text-slate-600 line-clamp-2 leading-relaxed">{siteSettings.defaultMetaDescription || 'Ethical Educational Support & Proctoring Software Guidance'}</span>
+                  </div>
+                </div>
               </div>
-              <div className="space-y-1">
-                <span className="text-slate-400 font-bold uppercase block">Default Meta Description</span>
-                <span className="text-slate-600 leading-relaxed">{siteSettings.defaultMetaDescription}</span>
+            </div>
+
+            {/* Bottom Edit Trigger Bar */}
+            <div className="p-6 bg-slate-900 text-white rounded-2xl shadow-md flex items-center justify-between">
+              <div className="space-y-0.5">
+                <h4 className="font-black text-sm text-white">Update Global Configuration</h4>
+                <p className="text-xs text-purple-200/80 font-medium">Modify site metadata, default title, description, and contact info</p>
               </div>
+
+              <button
+                onClick={openSettingsEditor}
+                className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold shadow-lg transition-all"
+              >
+                Edit Settings Payload
+              </button>
             </div>
           </div>
         )}
       </main>
 
-      {/* EDITING / VIEWING MODAL */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 max-w-2xl w-full shadow-2xl space-y-6 my-8">
+      {/* MEDIA LIBRARY & IMAGE PICKER MODAL */}
+      {isMediaPickerOpen && (
+        <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 max-w-3xl w-full shadow-2xl space-y-6 my-8">
             <div className="flex items-center justify-between border-b pb-4">
-              <h2 className="text-lg font-black text-slate-900">
-                {editingItemType === 'blog' && (editFormData.slug ? 'Edit Article' : 'Create New Article')}
-                {editingItemType === 'service' && 'Edit Service Details'}
-                {editingItemType === 'settings' && 'Edit Site Settings & SEO'}
-                {editingItemType === 'inquiry' && 'Customer Form Inquiry Details'}
-                {editingItemType === 'faq' && 'Edit / Add FAQ Item'}
-                {editingItemType === 'page' && `Edit Page Content & SEO (${editFormData.name || editFormData.pageKey})`}
-                {editingItemType === 'navigation' && 'Edit Navigation Bar & Announcement Header'}
+              <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
+                <ImageIcon className="w-5 h-5 text-purple-600" />
+                <span>Media Library & Image Upload</span>
               </h2>
-              <button onClick={() => setIsModalOpen(false)} className="p-1 rounded-lg text-slate-400 hover:bg-slate-100">
+              <button onClick={() => setIsMediaPickerOpen(false)} className="p-1 rounded-lg text-slate-400 hover:bg-slate-100">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* PAGE CONTENT & SEO EDITOR MODAL */}
-            {editingItemType === 'page' && (
-              <div className="space-y-4 text-xs">
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Page Name / Identifier</label>
-                  <input
-                    type="text"
-                    value={editFormData.name || editFormData.pageKey || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
-                  />
-                </div>
-
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Page Headline / H1 Title</label>
-                  <input
-                    type="text"
-                    value={editFormData.title || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
-                  />
-                </div>
-
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Page Subtitle / Hero Tagline</label>
-                  <textarea
-                    rows={3}
-                    value={editFormData.subtitle || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, subtitle: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl leading-relaxed"
-                  />
-                </div>
-
-                <div className="border-t pt-3 space-y-3">
-                  <span className="font-extrabold text-[#2563EB] block text-xs">SEO Metadata Overrides</span>
-
-                  <div>
-                    <label className="font-bold text-slate-700 block mb-1">SEO Meta Title Tag</label>
-                    <input
-                      type="text"
-                      value={editFormData.metaTitle || ''}
-                      onChange={(e) => setEditFormData({ ...editFormData, metaTitle: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-xl font-medium text-slate-800"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="font-bold text-slate-700 block mb-1">SEO Meta Description</label>
-                    <textarea
-                      rows={2}
-                      value={editFormData.metaDescription || ''}
-                      onChange={(e) => setEditFormData({ ...editFormData, metaDescription: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-xl leading-relaxed text-slate-800"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="font-bold text-slate-700 block mb-1">SEO Keywords</label>
-                    <input
-                      type="text"
-                      value={editFormData.keywords || ''}
-                      onChange={(e) => setEditFormData({ ...editFormData, keywords: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-xl text-slate-600"
-                    />
-                  </div>
-                </div>
+            {/* UPLOAD NEW IMAGE DROPZONE */}
+            <div className="p-6 border-2 border-dashed border-purple-300 bg-purple-50/50 rounded-2xl text-center space-y-3">
+              <UploadCloud className="w-10 h-10 text-purple-600 mx-auto" />
+              <div>
+                <span className="font-extrabold text-sm text-slate-900 block">Upload New Image File</span>
+                <span className="text-xs text-slate-500">Supports PNG, JPG, WEBP, SVG, GIF (Max file size: 5MB)</span>
               </div>
-            )}
 
-            {/* NAVIGATION BAR & ANNOUNCEMENT HEADER MODAL */}
-            {editingItemType === 'navigation' && (
-              <div className="space-y-4 text-xs">
-                <div className="space-y-3 border-b pb-4">
-                  <span className="font-extrabold text-[#2563EB] block text-xs">Top Announcement Bar Text</span>
-                  <div>
-                    <label className="font-bold text-slate-700 block mb-1">Main Announcement Banner Text</label>
-                    <input
-                      type="text"
-                      value={editFormData.topBanner?.mainAnnouncement || ''}
-                      onChange={(e) =>
-                        setEditFormData({
-                          ...editFormData,
-                          topBanner: { ...editFormData.topBanner, mainAnnouncement: e.target.value },
-                        })
-                      }
-                      className="w-full px-3 py-2 border rounded-xl"
-                    />
-                  </div>
-                </div>
+              <label className="inline-block px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs rounded-xl cursor-pointer shadow-md transition-colors">
+                {uploadingImage ? 'Uploading Image...' : 'Choose File to Upload'}
+                <input
+                  type="file"
+                  accept="image/*,.svg"
+                  onChange={handleUploadImageFile}
+                  className="hidden"
+                  disabled={uploadingImage}
+                />
+              </label>
+            </div>
 
-                <div className="space-y-2">
-                  <span className="font-extrabold text-slate-900 block text-xs">Main Navigation Links</span>
-                  <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
-                    {(editFormData.navLinks || []).map((linkItem, idx) => (
-                      <div key={idx} className="flex items-center gap-2 p-2 bg-slate-50 border rounded-xl">
-                        <input
-                          type="text"
-                          value={linkItem.label}
-                          onChange={(e) => {
-                            const updatedLinks = [...editFormData.navLinks];
-                            updatedLinks[idx].label = e.target.value;
-                            setEditFormData({ ...editFormData, navLinks: updatedLinks });
-                          }}
-                          className="flex-grow px-2 py-1 border rounded text-xs font-bold text-slate-800"
-                        />
-                        <span className="font-mono text-[10px] text-slate-400">{linkItem.href}</span>
-                      </div>
-                    ))}
+            {/* MEDIA GALLERY GRID */}
+            <div className="space-y-2">
+              <span className="font-extrabold text-xs text-slate-700 block">Server Storage Gallery ({mediaLibrary.length} files)</span>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-h-64 overflow-y-auto p-1">
+                {mediaLibrary.map((item) => (
+                  <div key={item.filename} className="group border border-slate-200 rounded-xl p-2 bg-slate-50 hover:border-purple-500 flex flex-col justify-between space-y-2">
+                    <div className="h-20 bg-white rounded-lg border flex items-center justify-center p-1 overflow-hidden">
+                      <img src={item.url} alt={item.filename} className="max-h-full max-w-full object-contain" />
+                    </div>
+                    <span className="font-mono text-[10px] text-slate-600 truncate block">{item.filename}</span>
+                    <div className="flex items-center justify-between pt-1 border-t">
+                      <button
+                        onClick={() => selectMediaImage(item.url)}
+                        className="text-[10px] font-bold text-purple-700 hover:underline inline-flex items-center gap-1"
+                      >
+                        <Check className="w-3 h-3" /> Select
+                      </button>
+                      <button
+                        onClick={() => handleDeleteMediaImage(item.filename)}
+                        className="text-[10px] font-bold text-rose-600 hover:underline"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
-                </div>
+                ))}
               </div>
-            )}
+            </div>
 
-            {/* FAQ EDITOR MODAL (WITH PAGE LOCATION SELECTOR) */}
-            {editingItemType === 'faq' && (
-              <div className="space-y-4 text-xs">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="font-bold text-slate-700 block mb-1">FAQ Category</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. General Questions, Tutoring, Professional Certifications"
-                      value={editFormData.category || ''}
-                      onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-xl font-medium"
-                    />
-                  </div>
+            <div className="flex justify-end pt-4 border-t">
+              <button onClick={() => setIsMediaPickerOpen(false)} className="px-4 py-2 border rounded-xl text-xs font-bold text-slate-600">
+                Close Media Library
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
-                  <div>
-                    <label className="font-bold text-slate-700 block mb-1">Target Page Location</label>
-                    <select
-                      value={editFormData.pageLocation || '/faq'}
-                      onChange={(e) => setEditFormData({ ...editFormData, pageLocation: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-xl font-mono text-[11px] bg-white text-slate-800"
-                    >
-                      <option value="/">Homepage (/)</option>
-                      <option value="/about">About Us (/about)</option>
-                      <option value="/services">Services Directory (/services)</option>
-                      <option value="/services/one-on-one-tutoring">1-on-1 Tutoring Service (/services/one-on-one-tutoring)</option>
-                      <option value="/services/academic-exam-preparation">Academic Exam Prep (/services/academic-exam-preparation)</option>
-                      <option value="/services/practice-questions-mock-tests">Practice Questions (/services/practice-questions-mock-tests)</option>
-                      <option value="/services/software-technical-guidance">Software Technical Guidance (/services/software-technical-guidance)</option>
-                      <option value="/exam-platforms">Exam Platforms (/exam-platforms)</option>
-                      <option value="/exam-platforms/respondus-lockdown-browser">Respondus LockDown Browser (/exam-platforms/respondus-lockdown-browser)</option>
-                      <option value="/certifications">Certifications (/certifications)</option>
-                      <option value="/certifications/pmp">PMP Certification (/certifications/pmp)</option>
-                      <option value="/certifications/comptia">CompTIA Certifications (/certifications/comptia)</option>
-                      <option value="/study-resources">Study Resources (/study-resources)</option>
-                      <option value="/faq">Master FAQ Page (/faq)</option>
-                      <option value="/contact">Contact Page (/contact)</option>
-                    </select>
-                  </div>
+      {/* EDITING / VIEWING MODAL */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-200">
+          <div className="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 max-w-2xl lg:max-w-3xl w-full shadow-2xl space-y-6 my-8 max-h-[90vh] flex flex-col justify-between">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b pb-4 shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-purple-50 border border-purple-100 flex items-center justify-center text-purple-600 font-black text-sm shadow-sm">
+                  {editingItemType === 'blog' && <BookOpen className="w-5 h-5" />}
+                  {editingItemType === 'service' && <Briefcase className="w-5 h-5" />}
+                  {editingItemType === 'certification' && <Award className="w-5 h-5" />}
+                  {editingItemType === 'platform' && <Cpu className="w-5 h-5" />}
+                  {editingItemType === 'resource' && <FolderOpen className="w-5 h-5" />}
+                  {editingItemType === 'partnership' && <Sparkles className="w-5 h-5" />}
+                  {editingItemType === 'settings' && <Settings className="w-5 h-5" />}
+                  {editingItemType === 'inquiry' && <Inbox className="w-5 h-5" />}
+                  {editingItemType === 'faq' && <HelpCircle className="w-5 h-5" />}
+                  {editingItemType === 'page' && <FileText className="w-5 h-5" />}
+                  {editingItemType === 'navigation' && <Navigation className="w-5 h-5" />}
                 </div>
 
                 <div>
-                  <label className="font-bold text-slate-700 block mb-1">Question Text</label>
-                  <input
-                    type="text"
-                    placeholder="Enter the question..."
-                    value={editFormData.question || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, question: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl font-bold text-slate-900"
-                  />
-                </div>
-
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Answer / Response Text</label>
-                  <textarea
-                    rows={4}
-                    placeholder="Enter the complete answer text..."
-                    value={editFormData.answer || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, answer: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl leading-relaxed text-slate-800"
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* INQUIRY VIEWER MODAL */}
-            {editingItemType === 'inquiry' && (
-              <div className="space-y-5 text-xs">
-                <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
-                  <div>
-                    <span className="text-slate-400 font-bold uppercase block">Customer Name</span>
-                    <span className="font-bold text-slate-900 text-sm">{editFormData.fullName}</span>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 font-bold uppercase block">Submission Date</span>
-                    <span className="font-mono text-slate-700">{editFormData.date}</span>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 font-bold uppercase block">Email Address</span>
-                    <a href={`mailto:${editFormData.email}`} className="font-bold text-purple-700 hover:underline">{editFormData.email}</a>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 font-bold uppercase block">Phone / WhatsApp</span>
-                    <span className="font-semibold text-slate-800">{editFormData.phone || 'N/A'}</span>
-                  </div>
-                </div>
-
-                <div>
-                  <span className="text-slate-400 font-bold uppercase block mb-1">Service Requested</span>
-                  <span className="inline-block bg-purple-100 text-purple-900 font-extrabold px-3 py-1 rounded-lg text-xs">
-                    {editFormData.service}
+                  <h2 className="text-lg font-black text-slate-900 leading-tight">
+                    {editingItemType === 'blog' && (editFormData.slug ? 'Edit Blog Article' : 'Create New Article')}
+                    {editingItemType === 'service' && (editFormData.slug ? 'Edit Service Program' : 'Add New Service')}
+                    {editingItemType === 'certification' && (editFormData.slug ? 'Edit Certification Program' : 'Add Certification')}
+                    {editingItemType === 'platform' && (editFormData.slug ? 'Edit Exam Platform' : 'Add Exam Platform')}
+                    {editingItemType === 'resource' && (editFormData.slug ? 'Edit Study Resource' : 'Add Study Resource')}
+                    {editingItemType === 'partnership' && (editFormData.id ? 'Edit Partner Logo' : 'Add Partner Logo')}
+                    {editingItemType === 'settings' && 'Global Site Settings & SEO'}
+                    {editingItemType === 'inquiry' && 'Customer Form Submission Details'}
+                    {editingItemType === 'faq' && 'Edit / Add FAQ Item'}
+                    {editingItemType === 'page' && `Edit Page Content & SEO (${editFormData.name || editFormData.pageKey})`}
+                    {editingItemType === 'navigation' && 'Edit Navigation Bar & Header Announcement'}
+                  </h2>
+                  <span className="text-[10px] font-bold text-purple-600 uppercase tracking-widest block mt-0.5">
+                    CMS Executive Content Editor
                   </span>
                 </div>
-
-                <div className="space-y-1">
-                  <span className="text-slate-400 font-bold uppercase block">Message & Learning Goals</span>
-                  <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 text-slate-800 leading-relaxed whitespace-pre-wrap font-sans text-xs">
-                    {editFormData.message}
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between pt-4 border-t">
-                  <button
-                    type="button"
-                    onClick={() => handleToggleInquiryStatus(editFormData.id)}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
-                      editFormData.status === 'New'
-                        ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
-                        : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
-                    }`}
-                  >
-                    {editFormData.status === 'New' ? 'Mark as Responded' : 'Mark as New'}
-                  </button>
-
-                  <a
-                    href={`mailto:${editFormData.email}?subject=RE: ${encodeURIComponent(editFormData.service)} Inquiry`}
-                    className="px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-md inline-flex items-center gap-2"
-                  >
-                    <Mail className="w-4 h-4" />
-                    <span>Reply via Email</span>
-                  </a>
-                </div>
               </div>
-            )}
 
-            {/* BLOG FORM FIELDS */}
-            {editingItemType === 'blog' && (
-              <div className="space-y-4 text-xs">
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Article Title</label>
-                  <input
-                    type="text"
-                    value={editFormData.title || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="font-bold text-slate-700 block mb-1">Category</label>
-                    <input
-                      type="text"
-                      value={editFormData.category || ''}
-                      onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-xl"
-                    />
-                  </div>
-                  <div>
-                    <label className="font-bold text-slate-700 block mb-1">Publish Date</label>
-                    <input
-                      type="date"
-                      value={editFormData.publishDate || ''}
-                      onChange={(e) => setEditFormData({ ...editFormData, publishDate: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-xl"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Article Excerpt</label>
-                  <textarea
-                    rows={3}
-                    value={editFormData.excerpt || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, excerpt: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
-                  />
-                </div>
-
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">SEO Meta Title (Optional Override)</label>
-                  <input
-                    type="text"
-                    value={editFormData.metaTitle || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, metaTitle: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
-                  />
-                </div>
-
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">SEO Meta Description (Optional Override)</label>
-                  <textarea
-                    rows={2}
-                    value={editFormData.metaDescription || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, metaDescription: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* SERVICE FORM FIELDS */}
-            {editingItemType === 'service' && (
-              <div className="space-y-4 text-xs">
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Service Title</label>
-                  <input
-                    type="text"
-                    value={editFormData.title || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
-                  />
-                </div>
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Tagline</label>
-                  <input
-                    type="text"
-                    value={editFormData.tagline || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, tagline: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
-                  />
-                </div>
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Overview Description</label>
-                  <textarea
-                    rows={4}
-                    value={editFormData.overview || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, overview: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* SETTINGS FORM FIELDS */}
-            {editingItemType === 'settings' && (
-              <div className="space-y-4 text-xs">
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Website Name</label>
-                  <input
-                    type="text"
-                    value={editFormData.siteName || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, siteName: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
-                  />
-                </div>
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Default SEO Meta Title</label>
-                  <input
-                    type="text"
-                    value={editFormData.defaultMetaTitle || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, defaultMetaTitle: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
-                  />
-                </div>
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Default Meta Description</label>
-                  <textarea
-                    rows={3}
-                    value={editFormData.defaultMetaDescription || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, defaultMetaDescription: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* MODAL ACTION BUTTONS */}
-            <div className="flex items-center justify-end gap-3 pt-4 border-t">
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="px-4 py-2 rounded-xl border text-xs font-bold text-slate-600 hover:bg-slate-50"
+                className="p-1.5 rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors"
+                title="Close Editor"
               >
-                Close
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body Container */}
+            <div className="space-y-5 overflow-y-auto pr-1 max-h-[calc(90vh-170px)] flex-grow scrollbar-thin scrollbar-thumb-purple-200">
+              {/* CERTIFICATION FORM FIELDS */}
+              {editingItemType === 'certification' && (
+                <div className="space-y-4 text-xs">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                        Certification Title <span className="text-rose-500 font-bold">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. PMP, CompTIA Security+, AAPC CPC"
+                        value={editFormData.title || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                        Category <span className="text-rose-500 font-bold">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Project Management, Information Technology"
+                        value={editFormData.category || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Slug Identifier <span className="text-rose-500 font-bold">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. pmp, comptia, aapc"
+                      value={editFormData.slug || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, slug: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono text-purple-700 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    />
+                  </div>
+
+                  {/* Logo Image Preview & Media Picker */}
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Certification Logo / Emblem Badge Image
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="/logos/pmp.svg or image URL"
+                        value={editFormData.logo || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, logo: e.target.value })}
+                        className="flex-grow px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono text-slate-700 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => openMediaPickerFor('logo')}
+                        className="px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-xs shadow-md transition-colors flex items-center gap-1.5 shrink-0"
+                      >
+                        <ImageIcon className="w-4 h-4" /> Choose Media
+                      </button>
+                    </div>
+
+                    {editFormData.logo && (
+                      <div className="flex items-center gap-3 p-2.5 bg-slate-50 rounded-xl border border-slate-200 mt-2">
+                        <img
+                          src={editFormData.logo}
+                          alt="Preview"
+                          className="w-10 h-10 rounded-lg object-contain bg-white border p-1"
+                        />
+                        <div className="flex-grow min-w-0">
+                          <span className="font-mono text-[10px] text-slate-600 truncate block">{editFormData.logo}</span>
+                          <span className="text-[9px] font-bold text-emerald-600">Logo Image Selected</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setEditFormData({ ...editFormData, logo: '' })}
+                          className="text-[10px] text-rose-600 font-bold hover:underline"
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Program Overview Description
+                    </label>
+                    <textarea
+                      rows={3}
+                      placeholder="Enter detailed description of certification prep..."
+                      value={editFormData.description || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-800 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600 leading-relaxed"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-3 border-t pt-3">
+                    <label className="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
+                      <input
+                        type="checkbox"
+                        checked={editFormData.published !== false}
+                        onChange={(e) => setEditFormData({ ...editFormData, published: e.target.checked })}
+                        className="w-4 h-4 rounded text-purple-600 focus:ring-purple-500"
+                      />
+                      <span>Published on Public Website</span>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {/* EXAM PLATFORM FORM FIELDS */}
+              {editingItemType === 'platform' && (
+                <div className="space-y-4 text-xs">
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Software Platform Title <span className="text-rose-500 font-bold">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Respondus LockDown Browser, Examplify"
+                      value={editFormData.title || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Slug Identifier <span className="text-rose-500 font-bold">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. respondus-lockdown-browser, examplify"
+                      value={editFormData.slug || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, slug: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono text-purple-700 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    />
+                  </div>
+
+                  {/* Logo Image Preview & Media Picker */}
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Platform Logo Image URL
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="/logos/respondus.svg or image URL"
+                        value={editFormData.logo || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, logo: e.target.value })}
+                        className="flex-grow px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono text-slate-700 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => openMediaPickerFor('logo')}
+                        className="px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-xs shadow-md transition-colors flex items-center gap-1.5 shrink-0"
+                      >
+                        <ImageIcon className="w-4 h-4" /> Choose Media
+                      </button>
+                    </div>
+
+                    {editFormData.logo && (
+                      <div className="flex items-center gap-3 p-2.5 bg-slate-50 rounded-xl border border-slate-200 mt-2">
+                        <img
+                          src={editFormData.logo}
+                          alt="Preview"
+                          className="w-10 h-10 rounded-lg object-contain bg-white border p-1"
+                        />
+                        <div className="flex-grow min-w-0">
+                          <span className="font-mono text-[10px] text-slate-600 truncate block">{editFormData.logo}</span>
+                          <span className="text-[9px] font-bold text-emerald-600">Logo Image Selected</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setEditFormData({ ...editFormData, logo: '' })}
+                          className="text-[10px] text-rose-600 font-bold hover:underline"
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Technical Overview & Description
+                    </label>
+                    <textarea
+                      rows={3}
+                      placeholder="Enter software technical overview and setup guidance..."
+                      value={editFormData.description || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-800 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600 leading-relaxed"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-3 border-t pt-3">
+                    <label className="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
+                      <input
+                        type="checkbox"
+                        checked={editFormData.published !== false}
+                        onChange={(e) => setEditFormData({ ...editFormData, published: e.target.checked })}
+                        className="w-4 h-4 rounded text-purple-600 focus:ring-purple-500"
+                      />
+                      <span>Published on Public Website</span>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {/* STUDY RESOURCE FORM FIELDS */}
+              {editingItemType === 'resource' && (
+                <div className="space-y-4 text-xs">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                        Resource Title <span className="text-rose-500 font-bold">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. PMP Certification Prep Study Materials"
+                        value={editFormData.title || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                        Category <span className="text-rose-500 font-bold">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Project Management, Information Technology"
+                        value={editFormData.category || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Slug Identifier <span className="text-rose-500 font-bold">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. pmp, comptia, aapc"
+                      value={editFormData.slug || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, slug: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono text-purple-700 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    />
+                  </div>
+
+                  {/* Cover Image Preview & Media Picker */}
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Cover Image URL
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="https://images.unsplash.com/... or image URL"
+                        value={editFormData.image || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, image: e.target.value })}
+                        className="flex-grow px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono text-slate-700 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => openMediaPickerFor('image')}
+                        className="px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-xs shadow-md transition-colors flex items-center gap-1.5 shrink-0"
+                      >
+                        <ImageIcon className="w-4 h-4" /> Choose Media
+                      </button>
+                    </div>
+
+                    {editFormData.image && (
+                      <div className="flex items-center gap-3 p-2.5 bg-slate-50 rounded-xl border border-slate-200 mt-2">
+                        <img
+                          src={editFormData.image}
+                          alt="Preview"
+                          className="w-12 h-12 rounded-lg object-cover bg-white border p-0.5"
+                        />
+                        <div className="flex-grow min-w-0">
+                          <span className="font-mono text-[10px] text-slate-600 truncate block">{editFormData.image}</span>
+                          <span className="text-[9px] font-bold text-emerald-600">Cover Image Loaded</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setEditFormData({ ...editFormData, image: '' })}
+                          className="text-[10px] text-rose-600 font-bold hover:underline"
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Description & Revision Material Overview
+                    </label>
+                    <textarea
+                      rows={3}
+                      placeholder="Enter revision materials breakdown..."
+                      value={editFormData.description || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-800 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600 leading-relaxed"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-3 border-t pt-3">
+                    <label className="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
+                      <input
+                        type="checkbox"
+                        checked={editFormData.published !== false}
+                        onChange={(e) => setEditFormData({ ...editFormData, published: e.target.checked })}
+                        className="w-4 h-4 rounded text-purple-600 focus:ring-purple-500"
+                      />
+                      <span>Published on Public Website</span>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {/* PARTNERSHIP FORM FIELDS */}
+              {editingItemType === 'partnership' && (
+                <div className="space-y-4 text-xs">
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Partner Institution Name <span className="text-rose-500 font-bold">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. PMI, CompTIA, AAPC"
+                      value={editFormData.name || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      required
+                    />
+                  </div>
+
+                  {/* Logo Image Preview & Media Picker */}
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Partner Logo URL <span className="text-rose-500 font-bold">*</span>
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="/logos/pmp.svg or image URL"
+                        value={editFormData.logo || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, logo: e.target.value })}
+                        className="flex-grow px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono text-slate-700 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => openMediaPickerFor('logo')}
+                        className="px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-xs shadow-md transition-colors flex items-center gap-1.5 shrink-0"
+                      >
+                        <ImageIcon className="w-4 h-4" /> Choose Media
+                      </button>
+                    </div>
+
+                    {editFormData.logo && (
+                      <div className="flex items-center gap-3 p-2.5 bg-slate-50 rounded-xl border border-slate-200 mt-2">
+                        <img
+                          src={editFormData.logo}
+                          alt="Preview"
+                          className="w-12 h-10 rounded-lg object-contain bg-white border p-1"
+                        />
+                        <div className="flex-grow min-w-0">
+                          <span className="font-mono text-[10px] text-slate-600 truncate block">{editFormData.logo}</span>
+                          <span className="text-[9px] font-bold text-emerald-600">Logo Image Selected</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setEditFormData({ ...editFormData, logo: '' })}
+                          className="text-[10px] text-rose-600 font-bold hover:underline"
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Target Web Link / URL
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. https://pmi.org or /certifications"
+                      value={editFormData.url || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, url: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono text-purple-700 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-3 border-t pt-3">
+                    <label className="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
+                      <input
+                        type="checkbox"
+                        checked={editFormData.published !== false}
+                        onChange={(e) => setEditFormData({ ...editFormData, published: e.target.checked })}
+                        className="w-4 h-4 rounded text-purple-600 focus:ring-purple-500"
+                      />
+                      <span>Published in Homepage Slider</span>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {/* PAGE CONTENT & SEO EDITOR MODAL */}
+              {editingItemType === 'page' && (
+                <div className="space-y-4 text-xs">
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Page Display Name / Title
+                    </label>
+                    <input
+                      type="text"
+                      value={editFormData.name || editFormData.pageKey || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Page Hero Headline (H1 Title)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Professional Educational Support & Proctoring Guidance"
+                      value={editFormData.title || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Page Subtitle / Hero Tagline
+                    </label>
+                    <textarea
+                      rows={3}
+                      placeholder="Enter hero section subtitle description..."
+                      value={editFormData.subtitle || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, subtitle: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-800 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600 leading-relaxed"
+                    />
+                  </div>
+
+                  <div className="border-t pt-4 space-y-3 bg-purple-50/40 p-4 rounded-2xl border border-purple-100">
+                    <span className="font-extrabold text-purple-900 block text-xs flex items-center gap-1.5">
+                      <Sparkles className="w-4 h-4 text-purple-600" /> SEO Metadata Overrides
+                    </span>
+
+                    <div>
+                      <label className="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider block mb-1">
+                        SEO Meta Title Tag
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Meta title for Google search results"
+                        value={editFormData.metaTitle || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, metaTitle: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider block mb-1">
+                        SEO Meta Description
+                      </label>
+                      <textarea
+                        rows={2}
+                        placeholder="Meta description for search engine snippets"
+                        value={editFormData.metaDescription || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, metaDescription: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs leading-relaxed text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider block mb-1">
+                        SEO Keywords (comma-separated)
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="proctored exams, tutoring, certification prep"
+                        value={editFormData.keywords || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, keywords: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* NAVIGATION BAR & ANNOUNCEMENT HEADER MODAL */}
+              {editingItemType === 'navigation' && (
+                <div className="space-y-4 text-xs">
+                  <div className="space-y-3 bg-purple-50/50 p-4 rounded-2xl border border-purple-100">
+                    <span className="font-extrabold text-purple-900 block text-xs flex items-center gap-1.5">
+                      <Sparkles className="w-4 h-4 text-purple-600" /> Top Announcement Bar Banner
+                    </span>
+                    <div>
+                      <label className="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider block mb-1">
+                        Main Announcement Banner Text
+                      </label>
+                      <input
+                        type="text"
+                        value={editFormData.topBanner?.mainAnnouncement || ''}
+                        onChange={(e) =>
+                          setEditFormData({
+                            ...editFormData,
+                            topBanner: { ...editFormData.topBanner, mainAnnouncement: e.target.value },
+                          })
+                        }
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <span className="font-extrabold text-slate-900 block text-xs">Header Navbar Links</span>
+                    <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                      {(editFormData.navLinks || []).map((linkItem, idx) => (
+                        <div key={idx} className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                          <input
+                            type="text"
+                            value={linkItem.label}
+                            onChange={(e) => {
+                              const updatedLinks = [...editFormData.navLinks];
+                              updatedLinks[idx].label = e.target.value;
+                              setEditFormData({ ...editFormData, navLinks: updatedLinks });
+                            }}
+                            className="flex-grow px-3 py-1.5 border border-slate-200 rounded-lg text-xs font-bold text-slate-900 bg-white"
+                          />
+                          <span className="font-mono text-[11px] text-purple-700 font-bold bg-purple-50 px-2.5 py-1 rounded-md border border-purple-200">
+                            {linkItem.href}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* FAQ EDITOR MODAL */}
+              {editingItemType === 'faq' && (
+                <div className="space-y-4 text-xs">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                        FAQ Category <span className="text-rose-500 font-bold">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. General Questions, Tutoring, Professional Certifications"
+                        value={editFormData.category || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                        Target Website Page Location
+                      </label>
+                      <select
+                        value={editFormData.pageLocation || '/faq'}
+                        onChange={(e) => setEditFormData({ ...editFormData, pageLocation: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono font-bold bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      >
+                        <option value="/">Homepage (/)</option>
+                        <option value="/about">About Us (/about)</option>
+                        <option value="/services">Services Directory (/services)</option>
+                        <option value="/services/one-on-one-tutoring">1-on-1 Tutoring Service (/services/one-on-one-tutoring)</option>
+                        <option value="/services/academic-exam-preparation">Academic Exam Prep (/services/academic-exam-preparation)</option>
+                        <option value="/services/practice-questions-mock-tests">Practice Questions (/services/practice-questions-mock-tests)</option>
+                        <option value="/services/software-technical-guidance">Software Technical Guidance (/services/software-technical-guidance)</option>
+                        <option value="/exam-platforms">Exam Platforms (/exam-platforms)</option>
+                        <option value="/exam-platforms/respondus-lockdown-browser">Respondus LockDown Browser (/exam-platforms/respondus-lockdown-browser)</option>
+                        <option value="/certifications">Certifications (/certifications)</option>
+                        <option value="/certifications/pmp">PMP Certification (/certifications/pmp)</option>
+                        <option value="/certifications/comptia">CompTIA Certifications (/certifications/comptia)</option>
+                        <option value="/study-resources">Study Resources (/study-resources)</option>
+                        <option value="/faq">Master FAQ Page (/faq)</option>
+                        <option value="/contact">Contact Page (/contact)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Question Text <span className="text-rose-500 font-bold">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Enter the complete question text..."
+                      value={editFormData.question || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, question: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Answer / Response Text <span className="text-rose-500 font-bold">*</span>
+                    </label>
+                    <textarea
+                      rows={4}
+                      placeholder="Enter the complete detailed answer text..."
+                      value={editFormData.answer || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, answer: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium leading-relaxed text-slate-800 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      required
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* INQUIRY VIEWER MODAL */}
+              {editingItemType === 'inquiry' && (
+                <div className="space-y-5 text-xs">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200/80">
+                    <div>
+                      <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block mb-0.5">
+                        Client Full Name
+                      </span>
+                      <span className="font-extrabold text-slate-900 text-sm flex items-center gap-1.5">
+                        {editFormData.status === 'New' && <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />}
+                        <span>{editFormData.fullName}</span>
+                      </span>
+                    </div>
+
+                    <div>
+                      <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block mb-0.5">
+                        Submission Timestamp
+                      </span>
+                      <span className="font-mono text-slate-700 font-medium">{editFormData.date}</span>
+                    </div>
+
+                    <div>
+                      <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block mb-0.5">
+                        Email Address
+                      </span>
+                      <a href={`mailto:${editFormData.email}`} className="font-bold text-purple-700 hover:underline">
+                        {editFormData.email}
+                      </a>
+                    </div>
+
+                    <div>
+                      <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block mb-0.5">
+                        Phone / WhatsApp
+                      </span>
+                      <span className="font-mono text-slate-800 font-medium">{editFormData.phone || 'N/A'}</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block mb-1.5">
+                      Service Program Requested
+                    </span>
+                    <span className="inline-block bg-purple-100 text-purple-900 font-extrabold px-3 py-1 rounded-xl text-xs border border-purple-200">
+                      {editFormData.service}
+                    </span>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">
+                      Message & Learning Goals
+                    </span>
+                    <div className="p-4 bg-slate-50/80 rounded-2xl border border-slate-200 text-slate-800 leading-relaxed whitespace-pre-wrap font-sans text-xs">
+                      {editFormData.message}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t">
+                    <button
+                      type="button"
+                      onClick={() => handleToggleInquiryStatus(editFormData.id)}
+                      className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                        editFormData.status === 'New'
+                          ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm'
+                          : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
+                      }`}
+                    >
+                      {editFormData.status === 'New' ? 'Mark as Responded' : 'Mark as New'}
+                    </button>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteInquiry(editFormData.id)}
+                        className="px-4 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold border border-rose-200 transition-colors"
+                      >
+                        Delete Inquiry
+                      </button>
+
+                      <a
+                        href={`mailto:${editFormData.email}?subject=RE: ${encodeURIComponent(editFormData.service)} Inquiry`}
+                        className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-md inline-flex items-center gap-2 transition-colors"
+                      >
+                        <Mail className="w-4 h-4" />
+                        <span>Reply via Email</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* BLOG FORM FIELDS */}
+              {editingItemType === 'blog' && (
+                <div className="space-y-4 text-xs">
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Article Title <span className="text-rose-500 font-bold">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. How to Prepare for a Proctored Online Examination"
+                      value={editFormData.title || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      required
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                        Category <span className="text-rose-500 font-bold">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Examination Preparation, Professional Certifications"
+                        value={editFormData.category || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                        Publication Date
+                      </label>
+                      <input
+                        type="date"
+                        value={editFormData.publishDate || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, publishDate: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Cover Image Preview & Media Picker */}
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Cover Image URL
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="https://images.unsplash.com/... or image URL"
+                        value={editFormData.heroImage || editFormData.image || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, heroImage: e.target.value, image: e.target.value })}
+                        className="flex-grow px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono text-slate-700 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => openMediaPickerFor('heroImage')}
+                        className="px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-xs shadow-md transition-colors flex items-center gap-1.5 shrink-0"
+                      >
+                        <ImageIcon className="w-4 h-4" /> Choose Media
+                      </button>
+                    </div>
+
+                    {(editFormData.heroImage || editFormData.image) && (
+                      <div className="flex items-center gap-3 p-2.5 bg-slate-50 rounded-xl border border-slate-200 mt-2">
+                        <img
+                          src={editFormData.heroImage || editFormData.image}
+                          alt="Preview"
+                          className="w-12 h-12 rounded-lg object-cover bg-white border p-0.5"
+                        />
+                        <div className="flex-grow min-w-0">
+                          <span className="font-mono text-[10px] text-slate-600 truncate block">
+                            {editFormData.heroImage || editFormData.image}
+                          </span>
+                          <span className="text-[9px] font-bold text-emerald-600">Cover Image Loaded</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setEditFormData({ ...editFormData, heroImage: '', image: '' })}
+                          className="text-[10px] text-rose-600 font-bold hover:underline"
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Article Excerpt / Summary
+                    </label>
+                    <textarea
+                      rows={3}
+                      placeholder="Enter short summary excerpt for article cards..."
+                      value={editFormData.excerpt || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, excerpt: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-800 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600 leading-relaxed"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-3 border-t pt-3">
+                    <label className="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
+                      <input
+                        type="checkbox"
+                        checked={editFormData.published !== false}
+                        onChange={(e) => setEditFormData({ ...editFormData, published: e.target.checked })}
+                        className="w-4 h-4 rounded text-purple-600 focus:ring-purple-500"
+                      />
+                      <span>Published on Public Website</span>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {/* SERVICE FORM FIELDS */}
+              {editingItemType === 'service' && (
+                <div className="space-y-4 text-xs">
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Service Program Title <span className="text-rose-500 font-bold">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. 1-on-1 Online Tutoring, Academic Exam Preparation"
+                      value={editFormData.title || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Category <span className="text-rose-500 font-bold">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Academic Support, Examination Support"
+                      value={editFormData.category || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    />
+                  </div>
+
+                  {/* Hero Image Preview & Media Picker */}
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Hero Image URL
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="https://images.unsplash.com/... or image URL"
+                        value={editFormData.heroImage || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, heroImage: e.target.value })}
+                        className="flex-grow px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono text-slate-700 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => openMediaPickerFor('heroImage')}
+                        className="px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-xs shadow-md transition-colors flex items-center gap-1.5 shrink-0"
+                      >
+                        <ImageIcon className="w-4 h-4" /> Choose Media
+                      </button>
+                    </div>
+
+                    {editFormData.heroImage && (
+                      <div className="flex items-center gap-3 p-2.5 bg-slate-50 rounded-xl border border-slate-200 mt-2">
+                        <img
+                          src={editFormData.heroImage}
+                          alt="Preview"
+                          className="w-12 h-12 rounded-lg object-cover bg-white border p-0.5"
+                        />
+                        <div className="flex-grow min-w-0">
+                          <span className="font-mono text-[10px] text-slate-600 truncate block">{editFormData.heroImage}</span>
+                          <span className="text-[9px] font-bold text-emerald-600">Hero Image Loaded</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setEditFormData({ ...editFormData, heroImage: '' })}
+                          className="text-[10px] text-rose-600 font-bold hover:underline"
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Service Tagline / Short Summary
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Enter short tagline summary..."
+                      value={editFormData.tagline || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, tagline: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Overview Description
+                    </label>
+                    <textarea
+                      rows={4}
+                      placeholder="Enter comprehensive overview description..."
+                      value={editFormData.overview || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, overview: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-800 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600 leading-relaxed"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-3 border-t pt-3">
+                    <label className="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
+                      <input
+                        type="checkbox"
+                        checked={editFormData.published !== false}
+                        onChange={(e) => setEditFormData({ ...editFormData, published: e.target.checked })}
+                        className="w-4 h-4 rounded text-purple-600 focus:ring-purple-500"
+                      />
+                      <span>Published on Public Website</span>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {/* SETTINGS FORM FIELDS */}
+              {editingItemType === 'settings' && (
+                <div className="space-y-4 text-xs">
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Website Brand Name <span className="text-rose-500 font-bold">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={editFormData.siteName || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, siteName: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Primary Website Domain URL
+                    </label>
+                    <input
+                      type="text"
+                      value={editFormData.siteUrl || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, siteUrl: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono text-purple-700 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Default Global SEO Meta Title
+                    </label>
+                    <input
+                      type="text"
+                      value={editFormData.defaultMetaTitle || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, defaultMetaTitle: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Default Global Meta Description
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={editFormData.defaultMetaDescription || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, defaultMetaDescription: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-800 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600 leading-relaxed"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Action Buttons Footer */}
+            <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 shrink-0">
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors"
+              >
+                Cancel
               </button>
 
               {editingItemType !== 'inquiry' && (
                 <button
+                  type="button"
                   onClick={() => {
                     if (editingItemType === 'blog') handleSaveBlog();
                     if (editingItemType === 'service') handleSaveService();
+                    if (editingItemType === 'certification') handleSaveCertification();
+                    if (editingItemType === 'platform') handleSavePlatform();
+                    if (editingItemType === 'resource') handleSaveResource();
+                    if (editingItemType === 'partnership') handleSavePartnership();
                     if (editingItemType === 'settings') handleSaveSettings();
                     if (editingItemType === 'faq') handleSaveFaq();
                     if (editingItemType === 'page') handleSavePage();
                     if (editingItemType === 'navigation') handleSaveNavigation();
                   }}
                   disabled={loading}
-                  className="px-6 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md flex items-center gap-2"
+                  className="px-6 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md flex items-center gap-2 transition-colors disabled:opacity-50"
                 >
-                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                  <span>Save Changes</span>
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Saving Changes...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-4 h-4" />
+                      <span>Save Changes</span>
+                    </>
+                  )}
                 </button>
               )}
             </div>

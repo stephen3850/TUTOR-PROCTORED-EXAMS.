@@ -24,20 +24,19 @@ import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
 import FaqAccordion from '@/components/ui/FaqAccordion';
 import JsonLd from '@/components/seo/JsonLd';
-import { SERVICES_DATA } from '@/lib/data/servicesData';
+import { getServicesContent, getServiceBySlug } from '@/lib/contentLoader';
 import { SITE_CONFIG } from '@/lib/utils';
 import { getWpPageBySlug, extractWpSeo } from '@/lib/wordpress';
 
 export async function generateStaticParams() {
-  return Object.keys(SERVICES_DATA).map((slug) => ({
-    slug,
-  }));
+  const services = getServicesContent();
+  return services.map((s) => ({ slug: s.slug }));
 }
 
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
   const slug = resolvedParams?.slug;
-  const service = SERVICES_DATA[slug];
+  const service = getServiceBySlug(slug);
 
   const defaultTitle = service ? `${service.title} | Educational Services | TUTOR PROCTORED EXAMS` : 'Service | TUTOR PROCTORED EXAMS';
   const defaultDescription = service?.tagline || service?.overview || 'Educational support services and 1-on-1 tutoring.';
@@ -79,14 +78,14 @@ export async function generateMetadata({ params }) {
 
 export default async function ServiceDetailPage({ params }) {
   const resolvedParams = await params;
-  const service = SERVICES_DATA[resolvedParams?.slug];
+  const service = getServiceBySlug(resolvedParams?.slug);
 
   if (!service) {
     notFound();
   }
 
   // Related services excluding current
-  const relatedServices = Object.values(SERVICES_DATA)
+  const relatedServices = getServicesContent()
     .filter((s) => s.slug !== service.slug)
     .slice(0, 3);
 
@@ -107,7 +106,7 @@ export default async function ServiceDetailPage({ params }) {
       },
       {
         '@type': 'FAQPage',
-        mainEntity: service.faqs.map((faq) => ({
+        mainEntity: (service.faqs || []).map((faq) => ({
           '@type': 'Question',
           name: faq.question,
           acceptedAnswer: {
@@ -192,99 +191,111 @@ export default async function ServiceDetailPage({ params }) {
               {service.overview}
             </p>
 
-            <div className="pt-4 border-t border-brand-border/60">
-              <h3 className="text-lg font-bold text-brand-navy mb-3">Relevant Platforms & Certifications</h3>
-              <div className="flex flex-wrap gap-2">
-                {service.relatedPlatformsOrCerts.map((item, idx) => (
-                  <span key={idx} className="px-3 py-1 rounded-full bg-brand-bg text-brand-navy text-xs font-semibold border border-brand-border">
-                    {item}
-                  </span>
-                ))}
+            {(service.relatedPlatformsOrCerts || []).length > 0 && (
+              <div className="pt-4 border-t border-brand-border/60">
+                <h3 className="text-lg font-bold text-brand-navy mb-3">Relevant Platforms & Certifications</h3>
+                <div className="flex flex-wrap gap-2">
+                  {service.relatedPlatformsOrCerts.map((item, idx) => (
+                    <span key={idx} className="px-3 py-1 rounded-full bg-brand-bg text-brand-navy text-xs font-semibold border border-brand-border">
+                      {item}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
-          <div className="bg-white border border-brand-border rounded-2xl p-8 space-y-4 shadow-sm">
-            <h3 className="text-xl font-bold text-brand-navy flex items-center gap-2">
-              <Users className="w-5 h-5 text-brand-blue" />
-              Who This Service Is Suitable For
-            </h3>
-            <ul className="space-y-3">
-              {service.suitableFor.map((item, idx) => (
-                <li key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-brand-muted leading-relaxed">
-                  <CheckCircle2 className="w-4 h-4 text-brand-blue shrink-0 mt-0.5" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {(service.suitableFor || []).length > 0 && (
+            <div className="bg-white border border-brand-border rounded-2xl p-8 space-y-4 shadow-sm">
+              <h3 className="text-xl font-bold text-brand-navy flex items-center gap-2">
+                <Users className="w-5 h-5 text-brand-blue" />
+                Who This Service Is Suitable For
+              </h3>
+              <ul className="space-y-3">
+                {service.suitableFor.map((item, idx) => (
+                  <li key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-brand-muted leading-relaxed">
+                    <CheckCircle2 className="w-4 h-4 text-brand-blue shrink-0 mt-0.5" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
 
         {/* 3. WHAT IT INCLUDES & BENEFITS */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 my-8">
-          <div className="bg-white border border-brand-border rounded-2xl p-8 space-y-4">
-            <h3 className="text-xl font-bold text-brand-navy flex items-center gap-2">
-              <Layers className="w-5 h-5 text-brand-blue" />
-              What This Service Includes
-            </h3>
-            <ul className="space-y-3">
-              {service.whatItIncludes.map((inc, idx) => (
-                <li key={idx} className="p-3 rounded-xl bg-brand-bg border border-brand-border flex items-start gap-3 text-xs sm:text-sm text-brand-text font-medium leading-relaxed">
-                  <div className="w-5 h-5 rounded-full bg-brand-lightBlue text-brand-blue font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
-                    ✓
-                  </div>
-                  <span>{inc}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {(service.whatItIncludes || []).length > 0 && (
+            <div className="bg-white border border-brand-border rounded-2xl p-8 space-y-4">
+              <h3 className="text-xl font-bold text-brand-navy flex items-center gap-2">
+                <Layers className="w-5 h-5 text-brand-blue" />
+                What This Service Includes
+              </h3>
+              <ul className="space-y-3">
+                {service.whatItIncludes.map((inc, idx) => (
+                  <li key={idx} className="p-3 rounded-xl bg-brand-bg border border-brand-border flex items-start gap-3 text-xs sm:text-sm text-brand-text font-medium leading-relaxed">
+                    <div className="w-5 h-5 rounded-full bg-brand-lightBlue text-brand-blue font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+                      ✓
+                    </div>
+                    <span>{inc}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
-          <div className="bg-white border border-brand-border rounded-2xl p-8 space-y-4">
-            <h3 className="text-xl font-bold text-brand-navy flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-brand-blue" />
-              Key Student Benefits
-            </h3>
-            <ul className="space-y-3">
-              {service.benefits.map((ben, idx) => (
-                <li key={idx} className="p-3 rounded-xl bg-brand-bg border border-brand-border flex items-start gap-3 text-xs sm:text-sm text-brand-text font-medium leading-relaxed">
-                  <div className="w-5 h-5 rounded-full bg-brand-lightBlue text-brand-blue font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
-                    ★
-                  </div>
-                  <span>{ben}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {(service.benefits || []).length > 0 && (
+            <div className="bg-white border border-brand-border rounded-2xl p-8 space-y-4">
+              <h3 className="text-xl font-bold text-brand-navy flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-brand-blue" />
+                Key Student Benefits
+              </h3>
+              <ul className="space-y-3">
+                {service.benefits.map((ben, idx) => (
+                  <li key={idx} className="p-3 rounded-xl bg-brand-bg border border-brand-border flex items-start gap-3 text-xs sm:text-sm text-brand-text font-medium leading-relaxed">
+                    <div className="w-5 h-5 rounded-full bg-brand-lightBlue text-brand-blue font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+                      ★
+                    </div>
+                    <span>{ben}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
 
         {/* 4. HOW THE SERVICE WORKS (4 STEPS) */}
-        <div className="bg-white border border-brand-border rounded-2xl p-8 sm:p-10 space-y-6 my-10">
-          <SectionHeading
-            badge="Process Workflow"
-            title={`How ${service.title} Works`}
-            subtitle="A clear, four-step framework designed to achieve measurable learning results."
-          />
+        {(service.howItWorks || []).length > 0 && (
+          <div className="bg-white border border-brand-border rounded-2xl p-8 sm:p-10 space-y-6 my-10">
+            <SectionHeading
+              badge="Process Workflow"
+              title={`How ${service.title} Works`}
+              subtitle="A clear, four-step framework designed to achieve measurable learning results."
+            />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-2">
-            {service.howItWorks.map((step, idx) => (
-              <div key={idx} className="p-5 rounded-xl border border-brand-border bg-brand-bg space-y-3">
-                <div className="text-2xl font-extrabold text-brand-blue/40 font-mono">{step.step}</div>
-                <h4 className="font-bold text-brand-navy text-base">{step.name}</h4>
-                <p className="text-xs text-brand-muted leading-relaxed">{step.desc}</p>
-              </div>
-            ))}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-2">
+              {service.howItWorks.map((step, idx) => (
+                <div key={idx} className="p-5 rounded-xl border border-brand-border bg-brand-bg space-y-3">
+                  <div className="text-2xl font-extrabold text-brand-blue/40 font-mono">{step.step}</div>
+                  <h4 className="font-bold text-brand-navy text-base">{step.name}</h4>
+                  <p className="text-xs text-brand-muted leading-relaxed">{step.desc}</p>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* 5. FREQUENTLY ASKED QUESTIONS */}
-        <div className="bg-white border border-brand-border rounded-2xl p-8 sm:p-10 space-y-6 my-10">
-          <SectionHeading
-            badge="Common Questions"
-            title={`Frequently Asked Questions About ${service.title}`}
-            subtitle="Clear answers regarding session formats, subject coverage, and study planning."
-          />
-          <FaqAccordion items={service.faqs} />
-        </div>
+        {(service.faqs || []).length > 0 && (
+          <div className="bg-white border border-brand-border rounded-2xl p-8 sm:p-10 space-y-6 my-10">
+            <SectionHeading
+              badge="Common Questions"
+              title={`Frequently Asked Questions About ${service.title}`}
+              subtitle="Clear answers regarding session formats, subject coverage, and study planning."
+            />
+            <FaqAccordion items={service.faqs} />
+          </div>
+        )}
 
         {/* 6. RELATED SERVICES NAVIGATION */}
         <div className="space-y-6 my-12">
@@ -306,7 +317,7 @@ export default async function ServiceDetailPage({ params }) {
           </div>
         </div>
 
-        {/* 7. CONVERSION CTA (CLEAR VIBRANT GREEN BACKGROUND) */}
+        {/* 7. CONVERSION CTA */}
         <div className="bg-[#05B851] text-white rounded-2xl p-6 sm:p-8 space-y-4 text-center shadow-xl max-w-3xl mx-auto">
           <h2 className="text-xl sm:text-3xl font-black text-white">
             Ready to Begin Your {service.title} Journey?
