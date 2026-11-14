@@ -43,6 +43,12 @@ import {
   ArrowUp,
   ArrowDown,
   Layers,
+  Clock,
+  ArrowRight,
+  Activity,
+  TrendingUp,
+  Zap,
+  BarChart3,
 } from 'lucide-react';
 
 export default function CustomAdminCmsPage() {
@@ -699,6 +705,86 @@ export default function CustomAdminCmsPage() {
 
   const newInquiriesCount = inquiriesList.filter((i) => i.status === 'New').length;
 
+  // Derive reliable recent website activity records from real data sources (Inquiries, Blogs, Media uploads)
+  const getRecentWebsiteActivity = () => {
+    const activities = [];
+
+    // Real Inquiry Activities
+    inquiriesList.forEach((inq) => {
+      if (inq.date) {
+        activities.push({
+          id: `act-inq-${inq.id || inq.date}`,
+          type: 'inquiry',
+          title: `Inquiry from ${inq.fullName || 'Client'}`,
+          subtitle: inq.service || inq.subject || 'Customer Inquiry Received',
+          timestamp: inq.date,
+          dateObj: new Date(inq.date.replace(' ', 'T')),
+          badge: inq.status || 'New',
+          badgeColor:
+            inq.status === 'New'
+              ? 'bg-amber-50 text-amber-800 border-amber-200'
+              : 'bg-emerald-50 text-emerald-800 border-emerald-200',
+          icon: Inbox,
+          iconBg: 'bg-purple-100 text-purple-700',
+          action: () => openInquiryViewer(inq),
+        });
+      }
+    });
+
+    // Real Blog Publication Activities
+    blogArticles.forEach((art) => {
+      if (art.publishDate) {
+        activities.push({
+          id: `act-blog-${art.slug}`,
+          type: 'blog',
+          title: `Blog Published: ${art.title}`,
+          subtitle: art.category || 'Article Published',
+          timestamp: art.publishDate,
+          dateObj: new Date(art.publishDate),
+          badge: art.published !== false ? 'Published' : 'Draft',
+          badgeColor:
+            art.published !== false
+              ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+              : 'bg-slate-100 text-slate-700 border-slate-200',
+          icon: BookOpen,
+          iconBg: 'bg-blue-100 text-blue-700',
+          action: () => openBlogEditor(art),
+        });
+      }
+    });
+
+    // Real Media Upload Activities
+    mediaLibrary.forEach((media) => {
+      if (media.updatedAt) {
+        const formattedDate = new Date(media.updatedAt).toISOString().split('T')[0];
+        activities.push({
+          id: `act-media-${media.filename}`,
+          type: 'media',
+          title: `Media Uploaded: ${media.filename}`,
+          subtitle: `${(media.size / 1024).toFixed(1)} KB`,
+          timestamp: formattedDate,
+          dateObj: new Date(media.updatedAt),
+          badge: 'Uploaded',
+          badgeColor: 'bg-indigo-50 text-indigo-800 border-indigo-200',
+          icon: ImageIcon,
+          iconBg: 'bg-indigo-100 text-indigo-700',
+          action: () => openMediaPickerFor(''),
+        });
+      }
+    });
+
+    // Sort by timestamp descending
+    activities.sort((a, b) => {
+      const timeA = isNaN(a.dateObj?.getTime()) ? 0 : a.dateObj.getTime();
+      const timeB = isNaN(b.dateObj?.getTime()) ? 0 : b.dateObj.getTime();
+      return timeB - timeA;
+    });
+
+    return activities.slice(0, 6);
+  };
+
+  const recentWebsiteActivities = getRecentWebsiteActivity();
+
   // Pages Directory Definition
   const ALL_SITE_PAGES = [
     { key: 'home', slug: '/', name: 'Homepage', path: '/' },
@@ -983,47 +1069,508 @@ export default function CustomAdminCmsPage() {
           </div>
         )}
 
-        {/* TAB 1: DASHBOARD OVERVIEW */}
+        {/* TAB 1: REDESIGNED PREMIUM MODERN DASHBOARD OVERVIEW */}
         {activeTab === 'dashboard' && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-black text-slate-900">CMS Overview Dashboard</h1>
-                <p className="text-xs text-slate-500">Manage all website content, FAQs, customer inquiries, pages, and SEO metadata</p>
+          <div className="space-y-8 animate-in fade-in duration-300">
+            {/* WELCOME HEADER BANNER */}
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#1E1035] via-[#2D1654] to-[#581C87] text-white p-6 sm:p-8 shadow-xl border border-purple-900/50">
+              <div className="absolute -right-10 -bottom-10 w-64 h-64 rounded-full bg-purple-500/10 blur-3xl pointer-events-none" />
+              <div className="absolute right-40 -top-10 w-48 h-48 rounded-full bg-indigo-500/10 blur-2xl pointer-events-none" />
+
+              <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span className="px-3 py-1 rounded-full bg-purple-500/20 border border-purple-400/30 text-[11px] font-bold text-purple-200 uppercase tracking-widest flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-purple-300" /> Executive Control Center
+                    </span>
+                    <span className="text-xs text-purple-300/80 font-medium hidden sm:inline">
+                      • System Status: <span className="text-emerald-400 font-bold">Operational</span>
+                    </span>
+                  </div>
+
+                  <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+                    Welcome Back, CMS Administrator 👋
+                  </h1>
+
+                  <p className="text-xs sm:text-sm text-purple-200/90 font-medium flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-purple-300 shrink-0" />
+                    <span>
+                      {new Date().toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })}
+                    </span>
+                  </p>
+                </div>
+
+                {/* Header Quick Actions */}
+                <div className="flex flex-wrap items-center gap-3 shrink-0">
+                  <button
+                    onClick={() => openBlogEditor()}
+                    className="px-4 py-2.5 rounded-xl bg-purple-500 hover:bg-purple-400 text-white text-xs font-bold shadow-lg shadow-purple-900/50 flex items-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add Article</span>
+                  </button>
+
+                  <button
+                    onClick={() => setActiveTab('inquiries')}
+                    className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-bold flex items-center gap-2 transition-all"
+                  >
+                    <Inbox className="w-4 h-4 text-purple-300" />
+                    <span>Inquiries ({newInquiriesCount} New)</span>
+                  </button>
+
+                  <button
+                    onClick={() => openMediaPickerFor('')}
+                    className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-bold flex items-center gap-2 transition-all"
+                  >
+                    <ImageIcon className="w-4 h-4 text-purple-300" />
+                    <span>Media Library</span>
+                  </button>
+                </div>
               </div>
-              <button
-                onClick={() => openBlogEditor()}
-                className="px-5 py-2.5 rounded-xl bg-[#581C87] hover:bg-[#4C1D95] text-white text-xs font-bold shadow-md flex items-center gap-2"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Add New Article</span>
-              </button>
             </div>
 
-            {/* Metrics Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm space-y-2">
-                <span className="text-xs font-bold text-slate-400 uppercase">Customer Inquiries</span>
-                <div className="text-3xl font-black text-purple-900">{inquiriesList.length}</div>
-                <span className="text-[11px] text-rose-600 font-bold">{newInquiriesCount} Unread / New</span>
+            {/* REAL-DATA STATISTICS GRID */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <h2 className="text-sm font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                  <BarChart3 className="w-4 h-4 text-purple-600" /> Live Content Metrics & System Data
+                </h2>
+                <span className="text-[11px] text-slate-400 font-medium">Real-time CMS JSON Stats</span>
               </div>
 
-              <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm space-y-2">
-                <span className="text-xs font-bold text-slate-400 uppercase">Certifications</span>
-                <div className="text-3xl font-black text-purple-900">{certificationsList.length}</div>
-                <span className="text-[11px] text-emerald-600 font-bold">10 Active Programs</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
+                {/* 1. Total Inquiries */}
+                <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 transition-all space-y-3 group">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Inquiries</span>
+                    <div className="w-10 h-10 rounded-xl bg-purple-50 border border-purple-100 flex items-center justify-center text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                      <Inbox className="w-5 h-5" />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-black text-slate-900">{inquiriesList.length}</div>
+                    <p className="text-[11px] text-slate-500 mt-1 font-medium">Customer contact submissions</p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                    <span className="text-amber-700 font-bold bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+                      {newInquiriesCount} Unread / New
+                    </span>
+                    <button onClick={() => setActiveTab('inquiries')} className="text-purple-600 font-bold hover:underline flex items-center gap-0.5">
+                      View <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* 2. New Inquiries */}
+                <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 transition-all space-y-3 group">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">New Inquiries</span>
+                    <div className="w-10 h-10 rounded-xl bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600 group-hover:bg-rose-600 group-hover:text-white transition-colors">
+                      <Mail className="w-5 h-5" />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-black text-slate-900">{newInquiriesCount}</div>
+                    <p className="text-[11px] text-slate-500 mt-1 font-medium">Awaiting administrator response</p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                    <span className="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                      {inquiriesList.length - newInquiriesCount} Responded
+                    </span>
+                    <button onClick={() => setActiveTab('inquiries')} className="text-purple-600 font-bold hover:underline flex items-center gap-0.5">
+                      Review <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* 3. Published Blogs */}
+                <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 transition-all space-y-3 group">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Published Blogs</span>
+                    <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                      <BookOpen className="w-5 h-5" />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-black text-slate-900">
+                      {blogArticles.filter((a) => a.published !== false).length}
+                    </div>
+                    <p className="text-[11px] text-slate-500 mt-1 font-medium">Live articles on site</p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                    <span className="text-blue-700 font-bold bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
+                      {blogArticles.length} Total Articles
+                    </span>
+                    <button onClick={() => setActiveTab('blogs')} className="text-purple-600 font-bold hover:underline flex items-center gap-0.5">
+                      Manage <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* 4. Services */}
+                <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 transition-all space-y-3 group">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Services</span>
+                    <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                      <Briefcase className="w-5 h-5" />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-black text-slate-900">{servicesList.length}</div>
+                    <p className="text-[11px] text-slate-500 mt-1 font-medium">Educational support offerings</p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                    <span className="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                      {servicesList.filter((s) => s.published !== false).length} Active Services
+                    </span>
+                    <button onClick={() => setActiveTab('services')} className="text-purple-600 font-bold hover:underline flex items-center gap-0.5">
+                      Configure <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* 5. Website Pages */}
+                <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 transition-all space-y-3 group">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Website Pages</span>
+                    <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                      <FileText className="w-5 h-5" />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-black text-slate-900">{ALL_SITE_PAGES.length}</div>
+                    <p className="text-[11px] text-slate-500 mt-1 font-medium">Configured page routes</p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                    <span className="text-indigo-700 font-bold bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-200">
+                      Navbar Enabled
+                    </span>
+                    <button onClick={() => setActiveTab('pages')} className="text-purple-600 font-bold hover:underline flex items-center gap-0.5">
+                      Edit Pages <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* 6. Certifications */}
+                <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 transition-all space-y-3 group">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Certifications</span>
+                    <div className="w-10 h-10 rounded-xl bg-violet-50 border border-violet-100 flex items-center justify-center text-violet-600 group-hover:bg-violet-600 group-hover:text-white transition-colors">
+                      <Award className="w-5 h-5" />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-black text-slate-900">{certificationsList.length}</div>
+                    <p className="text-[11px] text-slate-500 mt-1 font-medium">Prep programs catalogued</p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                    <span className="text-violet-700 font-bold bg-violet-50 px-2 py-0.5 rounded-full border border-violet-200">
+                      {certificationsList.filter((c) => c.published !== false).length} Active Programs
+                    </span>
+                    <button onClick={() => setActiveTab('certifications')} className="text-purple-600 font-bold hover:underline flex items-center gap-0.5">
+                      Manage <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* 7. Exam Platforms */}
+                <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 transition-all space-y-3 group">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Exam Platforms</span>
+                    <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-100 flex items-center justify-center text-teal-600 group-hover:bg-teal-600 group-hover:text-white transition-colors">
+                      <Cpu className="w-5 h-5" />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-black text-slate-900">{platformsList.length}</div>
+                    <p className="text-[11px] text-slate-500 mt-1 font-medium">Proctoring software guides</p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                    <span className="text-teal-700 font-bold bg-teal-50 px-2 py-0.5 rounded-full border border-teal-200">
+                      {platformsList.filter((p) => p.published !== false).length} Supported
+                    </span>
+                    <button onClick={() => setActiveTab('platforms')} className="text-purple-600 font-bold hover:underline flex items-center gap-0.5">
+                      View <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* 8. Study Resources */}
+                <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 transition-all space-y-3 group">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Study Resources</span>
+                    <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600 group-hover:bg-amber-600 group-hover:text-white transition-colors">
+                      <FolderOpen className="w-5 h-5" />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-black text-slate-900">{studyResourcesList.length}</div>
+                    <p className="text-[11px] text-slate-500 mt-1 font-medium">Resource guides & material</p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                    <span className="text-amber-700 font-bold bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+                      {studyResourcesList.filter((r) => r.published !== false).length} Catalogued
+                    </span>
+                    <button onClick={() => setActiveTab('resources')} className="text-purple-600 font-bold hover:underline flex items-center gap-0.5">
+                      Explore <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* FUNCTIONAL SHORTCUTS SECTION */}
+            <div className="space-y-3">
+              <h2 className="text-sm font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                <Zap className="w-4 h-4 text-purple-600" /> Quick Management Actions
+              </h2>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <button
+                  onClick={() => openBlogEditor()}
+                  className="bg-white border border-slate-200/80 p-4 rounded-2xl hover:border-purple-400 hover:shadow-md transition-all text-left group flex flex-col justify-between"
+                >
+                  <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors flex items-center justify-center mb-3">
+                    <BookOpen className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-black text-slate-900 group-hover:text-purple-700 transition-colors">Create Blog</h3>
+                    <p className="text-[11px] text-slate-500 font-medium">Publish new article</p>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => openServiceEditor()}
+                  className="bg-white border border-slate-200/80 p-4 rounded-2xl hover:border-purple-400 hover:shadow-md transition-all text-left group flex flex-col justify-between"
+                >
+                  <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors flex items-center justify-center mb-3">
+                    <Briefcase className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-black text-slate-900 group-hover:text-purple-700 transition-colors">Add Service</h3>
+                    <p className="text-[11px] text-slate-500 font-medium">Create support service</p>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => openCertEditor()}
+                  className="bg-white border border-slate-200/80 p-4 rounded-2xl hover:border-purple-400 hover:shadow-md transition-all text-left group flex flex-col justify-between"
+                >
+                  <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors flex items-center justify-center mb-3">
+                    <Award className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-black text-slate-900 group-hover:text-purple-700 transition-colors">Add Certification</h3>
+                    <p className="text-[11px] text-slate-500 font-medium">New prep program</p>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => openPlatformEditor()}
+                  className="bg-white border border-slate-200/80 p-4 rounded-2xl hover:border-purple-400 hover:shadow-md transition-all text-left group flex flex-col justify-between"
+                >
+                  <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors flex items-center justify-center mb-3">
+                    <Cpu className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-black text-slate-900 group-hover:text-purple-700 transition-colors">Add Exam Platform</h3>
+                    <p className="text-[11px] text-slate-500 font-medium">Add proctoring guide</p>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => openResourceEditor()}
+                  className="bg-white border border-slate-200/80 p-4 rounded-2xl hover:border-purple-400 hover:shadow-md transition-all text-left group flex flex-col justify-between"
+                >
+                  <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors flex items-center justify-center mb-3">
+                    <FolderOpen className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-black text-slate-900 group-hover:text-purple-700 transition-colors">Add Study Resource</h3>
+                    <p className="text-[11px] text-slate-500 font-medium">New revision material</p>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('pages')}
+                  className="bg-white border border-slate-200/80 p-4 rounded-2xl hover:border-purple-400 hover:shadow-md transition-all text-left group flex flex-col justify-between"
+                >
+                  <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors flex items-center justify-center mb-3">
+                    <FileText className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-black text-slate-900 group-hover:text-purple-700 transition-colors">Manage Pages</h3>
+                    <p className="text-[11px] text-slate-500 font-medium">SEO & Navbar settings</p>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('inquiries')}
+                  className="bg-white border border-slate-200/80 p-4 rounded-2xl hover:border-purple-400 hover:shadow-md transition-all text-left group flex flex-col justify-between"
+                >
+                  <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors flex items-center justify-center mb-3">
+                    <Inbox className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-black text-slate-900 group-hover:text-purple-700 transition-colors">View Inquiries</h3>
+                    <p className="text-[11px] text-slate-500 font-medium">Review customer leads</p>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => openMediaPickerFor('')}
+                  className="bg-white border border-slate-200/80 p-4 rounded-2xl hover:border-purple-400 hover:shadow-md transition-all text-left group flex flex-col justify-between"
+                >
+                  <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors flex items-center justify-center mb-3">
+                    <ImageIcon className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-black text-slate-900 group-hover:text-purple-700 transition-colors">Media Library</h3>
+                    <p className="text-[11px] text-slate-500 font-medium">Upload & manage images</p>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            {/* SPLIT SECTION: RECENT INQUIRIES & RECENT WEBSITE ACTIVITY */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* RECENT INQUIRIES TABLE (Spans 2 columns on lg) */}
+              <div className="lg:col-span-2 bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden flex flex-col justify-between">
+                <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                      <Inbox className="w-4 h-4 text-purple-600" /> Recent Customer Inquiries
+                    </h3>
+                    <p className="text-xs text-slate-500 font-medium">Latest submissions from potential clients</p>
+                  </div>
+
+                  <button
+                    onClick={() => setActiveTab('inquiries')}
+                    className="px-3.5 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 text-xs font-bold transition-colors inline-flex items-center gap-1"
+                  >
+                    <span>View All ({inquiriesList.length})</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                <div className="overflow-x-auto">
+                  {inquiriesList.length === 0 ? (
+                    <div className="p-8 text-center text-xs text-slate-500 space-y-2">
+                      <Inbox className="w-8 h-8 text-slate-300 mx-auto" />
+                      <p className="font-bold">No customer inquiries found.</p>
+                    </div>
+                  ) : (
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="bg-slate-50 border-b border-slate-100 text-[11px] uppercase font-bold text-slate-400">
+                          <th className="py-3 px-5">Client Name & Email</th>
+                          <th className="py-3 px-5">Subject / Service</th>
+                          <th className="py-3 px-5">Date</th>
+                          <th className="py-3 px-5">Status</th>
+                          <th className="py-3 px-5 text-right">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 text-xs">
+                        {inquiriesList.slice(0, 5).map((inq) => (
+                          <tr key={inq.id || inq.date} className="hover:bg-slate-50/80 transition-colors">
+                            <td className="py-3.5 px-5">
+                              <div className="font-bold text-slate-900">{inq.fullName}</div>
+                              <div className="text-[11px] text-slate-400 font-mono">{inq.email}</div>
+                            </td>
+                            <td className="py-3.5 px-5">
+                              <div className="font-medium text-slate-800 line-clamp-1">{inq.subject || inq.service}</div>
+                              <div className="text-[10px] text-purple-600 font-bold">{inq.service}</div>
+                            </td>
+                            <td className="py-3.5 px-5 text-slate-500 whitespace-nowrap text-[11px] font-medium">
+                              {inq.date}
+                            </td>
+                            <td className="py-3.5 px-5 whitespace-nowrap">
+                              <span
+                                className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold border ${
+                                  inq.status === 'New'
+                                    ? 'bg-amber-50 text-amber-800 border-amber-200'
+                                    : 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                                }`}
+                              >
+                                {inq.status || 'New'}
+                              </span>
+                            </td>
+                            <td className="py-3.5 px-5 text-right whitespace-nowrap">
+                              <button
+                                onClick={() => openInquiryViewer(inq)}
+                                className="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-[11px] shadow-sm inline-flex items-center gap-1 transition-colors"
+                              >
+                                <Eye className="w-3 h-3" /> View
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+
+                {inquiriesList.length > 5 && (
+                  <div className="p-3 bg-slate-50 border-t border-slate-100 text-center text-xs font-bold text-slate-500">
+                    Showing 5 of {inquiriesList.length} inquiries
+                  </div>
+                )}
               </div>
 
-              <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm space-y-2">
-                <span className="text-xs font-bold text-slate-400 uppercase">Exam Platforms</span>
-                <div className="text-3xl font-black text-purple-900">{platformsList.length}</div>
-                <span className="text-[11px] text-emerald-600 font-bold">9 Supported Softwares</span>
-              </div>
+              {/* RECENT WEBSITE ACTIVITY CARD */}
+              <div className="bg-white border border-slate-200/80 rounded-2xl shadow-sm p-6 flex flex-col justify-between space-y-4">
+                <div className="space-y-1">
+                  <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                    <Activity className="w-4 h-4 text-purple-600" /> Recent Website Activity
+                  </h3>
+                  <p className="text-xs text-slate-500 font-medium">Verified system log from live data sources</p>
+                </div>
 
-              <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm space-y-2">
-                <span className="text-xs font-bold text-slate-400 uppercase">Media Library</span>
-                <div className="text-3xl font-black text-purple-900">{mediaLibrary.length}</div>
-                <span className="text-[11px] text-emerald-600 font-bold">Uploaded Images</span>
+                <div className="space-y-3 flex-grow">
+                  {recentWebsiteActivities.length === 0 ? (
+                    <div className="p-6 text-center text-xs text-slate-400 space-y-1">
+                      <Clock className="w-6 h-6 mx-auto text-slate-300" />
+                      <p className="font-bold">No recent activity recorded.</p>
+                    </div>
+                  ) : (
+                    recentWebsiteActivities.map((act) => {
+                      const IconComp = act.icon || Clock;
+                      return (
+                        <div
+                          key={act.id}
+                          onClick={act.action}
+                          className="p-3 rounded-xl border border-slate-100 hover:border-purple-200 hover:bg-purple-50/40 cursor-pointer transition-all flex items-start gap-3 group"
+                        >
+                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${act.iconBg}`}>
+                            <IconComp className="w-4 h-4" />
+                          </div>
+                          <div className="flex-grow min-w-0">
+                            <div className="flex items-center justify-between gap-1">
+                              <h4 className="text-xs font-bold text-slate-800 truncate group-hover:text-purple-700 transition-colors">
+                                {act.title}
+                              </h4>
+                              <span className={`px-1.5 py-0.5 rounded text-[9px] font-extrabold border shrink-0 ${act.badgeColor}`}>
+                                {act.badge}
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-slate-500 truncate mt-0.5">{act.subtitle}</p>
+                            <span className="text-[10px] text-slate-400 font-mono mt-1 block">{act.timestamp}</span>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+
+                <div className="pt-3 border-t border-slate-100 text-[11px] text-slate-400 flex items-center justify-between">
+                  <span>Reliable live records</span>
+                  <span className="font-bold text-purple-600">Updated automatically</span>
+                </div>
               </div>
             </div>
           </div>
