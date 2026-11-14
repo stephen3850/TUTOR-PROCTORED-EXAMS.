@@ -54,6 +54,11 @@ import {
   Menu,
   PanelLeftClose,
   PanelLeft,
+  Filter,
+  Tag,
+  Sliders,
+  RefreshCw,
+  AlertCircle,
 } from 'lucide-react';
 
 export default function CustomAdminCmsPage() {
@@ -106,6 +111,27 @@ export default function CustomAdminCmsPage() {
   const [inquiryFilter, setInquiryFilter] = useState('All');
   const [faqCategoryFilter, setFaqCategoryFilter] = useState('All');
   const [faqLocationFilter, setFaqLocationFilter] = useState('All');
+
+  // Section-Specific Search & Filter States
+  const [blogSearchQuery, setBlogSearchQuery] = useState('');
+  const [blogCategoryFilter, setBlogCategoryFilter] = useState('All');
+
+  const [serviceSearchQuery, setServiceSearchQuery] = useState('');
+  const [serviceCategoryFilter, setServiceCategoryFilter] = useState('All');
+
+  const [certSearchQuery, setCertSearchQuery] = useState('');
+  const [certCategoryFilter, setCertCategoryFilter] = useState('All');
+
+  const [platformSearchQuery, setPlatformSearchQuery] = useState('');
+  const [resourceSearchQuery, setResourceSearchQuery] = useState('');
+  const [partnerSearchQuery, setPartnerSearchQuery] = useState('');
+  const [pageSearchQuery, setPageSearchQuery] = useState('');
+
+  const [faqSearchQuery, setFaqSearchQuery] = useState('');
+  const [faqLocationFilterState, setFaqLocationFilterState] = useState('All');
+
+  const [inquirySearchQuery, setInquirySearchQuery] = useState('');
+  const [inquiryFilterState, setInquiryFilterState] = useState('All');
 
   // Editor & View Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -1863,278 +1889,636 @@ export default function CustomAdminCmsPage() {
           </div>
         )}
 
-        {/* TAB: CERTIFICATIONS MANAGER */}
+        {/* SECTION 1: CERTIFICATIONS MANAGER */}
         {activeTab === 'certifications' && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-black text-slate-900">Certifications Manager</h1>
-                <p className="text-xs text-slate-500">Manage professional certification preparation programs, logos, and descriptions</p>
+          <div className="space-y-6 animate-in fade-in duration-300">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Award className="w-5 h-5 text-purple-600" />
+                  <h1 className="text-2xl font-black text-slate-900">Certifications Manager</h1>
+                </div>
+                <p className="text-xs text-slate-500 font-medium">
+                  Manage professional certification preparation programs, badges, descriptions, and publish status
+                </p>
               </div>
+
               <button
                 onClick={() => openCertEditor()}
-                className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md flex items-center gap-2"
+                className="px-5 py-2.5 rounded-xl bg-[#581C87] hover:bg-[#4C1D95] text-white text-xs font-bold shadow-md flex items-center gap-2 shrink-0 transition-all"
               >
                 <Plus className="w-4 h-4" />
                 <span>Add Certification</span>
               </button>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200 text-[11px] uppercase font-bold text-slate-500">
-                    <th className="py-3.5 px-6">Title</th>
-                    <th className="py-3.5 px-6">Category</th>
-                    <th className="py-3.5 px-6">Slug</th>
-                    <th className="py-3.5 px-6">Status</th>
-                    <th className="py-3.5 px-6 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 text-xs">
-                  {certificationsList.map((cert) => (
-                    <tr key={cert.slug} className="hover:bg-slate-50/80 transition-colors">
-                      <td className="py-4 px-6 font-bold text-slate-900">{cert.title}</td>
-                      <td className="py-4 px-6"><span className="px-2.5 py-1 rounded-full bg-blue-50 text-blue-800 font-bold text-[10px]">{cert.category}</span></td>
-                      <td className="py-4 px-6 font-mono text-slate-500 text-[11px]">{cert.slug}</td>
-                      <td className="py-4 px-6">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${cert.published !== false ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}`}>
-                          {cert.published !== false ? 'Published' : 'Unpublished'}
-                        </span>
-                      </td>
-                      <td className="py-4 px-6 text-right space-x-3">
-                        <button onClick={() => openCertEditor(cert)} className="text-purple-700 font-bold hover:underline inline-flex items-center gap-1">
-                          <Edit className="w-3.5 h-3.5" /> Edit
-                        </button>
-                        <button onClick={() => handleDeleteCertification(cert.slug)} className="text-rose-600 font-bold hover:underline inline-flex items-center gap-1">
-                          <Trash2 className="w-3.5 h-3.5" /> Delete
-                        </button>
-                      </td>
+            {/* Control Bar: Search & Filters */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm">
+              <div className="relative flex-grow max-w-md">
+                <input
+                  type="text"
+                  placeholder="Search certification title, category, description..."
+                  value={certSearchQuery}
+                  onChange={(e) => setCertSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50"
+                />
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+              </div>
+
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+                {['All', 'Project Management', 'Information Technology', 'Healthcare & Coding', 'Human Resources', 'Licensing & Real Estate'].map((cat) => (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setCertCategoryFilter(cat)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                      certCategoryFilter === cat
+                        ? 'bg-purple-600 text-white shadow-sm'
+                        : 'bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Table Surface */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-slate-200/80 text-[11px] uppercase font-bold text-slate-400">
+                      <th className="py-3.5 px-6">Program Title</th>
+                      <th className="py-3.5 px-6">Category</th>
+                      <th className="py-3.5 px-6">Description</th>
+                      <th className="py-3.5 px-6">Slug ID</th>
+                      <th className="py-3.5 px-6">Status</th>
+                      <th className="py-3.5 px-6 text-right">Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-xs">
+                    {certificationsList
+                      .filter((cert) => {
+                        const matchesCategory = certCategoryFilter === 'All' || cert.category === certCategoryFilter;
+                        const matchesSearch =
+                          certSearchQuery.trim() === '' ||
+                          cert.title.toLowerCase().includes(certSearchQuery.toLowerCase()) ||
+                          cert.description?.toLowerCase().includes(certSearchQuery.toLowerCase()) ||
+                          cert.category?.toLowerCase().includes(certSearchQuery.toLowerCase());
+                        return matchesCategory && matchesSearch;
+                      })
+                      .map((cert) => (
+                        <tr key={cert.slug} className="hover:bg-purple-50/30 transition-colors group">
+                          <td className="py-4 px-6 font-bold text-slate-900">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-lg bg-purple-50 border border-purple-100 flex items-center justify-center text-purple-600 font-black text-xs shrink-0">
+                                <Award className="w-4 h-4" />
+                              </div>
+                              <span className="group-hover:text-purple-700 transition-colors">{cert.title}</span>
+                            </div>
+                          </td>
+                          <td className="py-4 px-6">
+                            <span className="px-2.5 py-1 rounded-full bg-blue-50 text-blue-800 font-bold text-[10px] border border-blue-100 whitespace-nowrap">
+                              {cert.category}
+                            </span>
+                          </td>
+                          <td className="py-4 px-6 text-slate-500 max-w-xs truncate">
+                            {cert.description || 'No description provided.'}
+                          </td>
+                          <td className="py-4 px-6 font-mono text-slate-400 text-[11px]">
+                            #{cert.slug}
+                          </td>
+                          <td className="py-4 px-6 whitespace-nowrap">
+                            <span
+                              className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold border ${
+                                cert.published !== false
+                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                  : 'bg-rose-50 text-rose-700 border-rose-200'
+                              }`}
+                            >
+                              {cert.published !== false ? 'Published' : 'Unpublished'}
+                            </span>
+                          </td>
+                          <td className="py-4 px-6 text-right space-x-2 whitespace-nowrap">
+                            <button
+                              onClick={() => openCertEditor(cert)}
+                              className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 font-bold text-[11px] inline-flex items-center gap-1 transition-colors border border-purple-200"
+                            >
+                              <Edit className="w-3.5 h-3.5" /> Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteCertification(cert.slug)}
+                              className="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-[11px] inline-flex items-center gap-1 transition-colors border border-rose-200"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" /> Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {certificationsList.filter((cert) => {
+                const matchesCategory = certCategoryFilter === 'All' || cert.category === certCategoryFilter;
+                const matchesSearch =
+                  certSearchQuery.trim() === '' ||
+                  cert.title.toLowerCase().includes(certSearchQuery.toLowerCase()) ||
+                  cert.description?.toLowerCase().includes(certSearchQuery.toLowerCase());
+                return matchesCategory && matchesSearch;
+              }).length === 0 && (
+                <div className="p-12 text-center text-xs text-slate-400 space-y-2">
+                  <Award className="w-8 h-8 text-slate-300 mx-auto" />
+                  <p className="font-bold text-slate-700">No certifications found matching search or filter criteria.</p>
+                  <button
+                    onClick={() => {
+                      setCertSearchQuery('');
+                      setCertCategoryFilter('All');
+                    }}
+                    className="text-purple-600 font-bold hover:underline"
+                  >
+                    Reset Filters
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
 
-        {/* TAB: EXAM PLATFORMS MANAGER */}
+        {/* SECTION 2: EXAM PLATFORMS MANAGER */}
         {activeTab === 'platforms' && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-black text-slate-900">Exam Platforms Manager</h1>
-                <p className="text-xs text-slate-500">Manage supported assessment platforms, technical guides, and requirements</p>
+          <div className="space-y-6 animate-in fade-in duration-300">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Cpu className="w-5 h-5 text-purple-600" />
+                  <h1 className="text-2xl font-black text-slate-900">Exam Platforms Manager</h1>
+                </div>
+                <p className="text-xs text-slate-500 font-medium">
+                  Manage supported proctoring assessment software guides, technical requirements, and setup documentation
+                </p>
               </div>
+
               <button
                 onClick={() => openPlatformEditor()}
-                className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md flex items-center gap-2"
+                className="px-5 py-2.5 rounded-xl bg-[#581C87] hover:bg-[#4C1D95] text-white text-xs font-bold shadow-md flex items-center gap-2 shrink-0 transition-all"
               >
                 <Plus className="w-4 h-4" />
                 <span>Add Exam Platform</span>
               </button>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200 text-[11px] uppercase font-bold text-slate-500">
-                    <th className="py-3.5 px-6">Title</th>
-                    <th className="py-3.5 px-6">Slug</th>
-                    <th className="py-3.5 px-6">Status</th>
-                    <th className="py-3.5 px-6 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 text-xs">
-                  {platformsList.map((plat) => (
-                    <tr key={plat.slug} className="hover:bg-slate-50/80 transition-colors">
-                      <td className="py-4 px-6 font-bold text-slate-900">{plat.title}</td>
-                      <td className="py-4 px-6 font-mono text-slate-500 text-[11px]">{plat.slug}</td>
-                      <td className="py-4 px-6">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${plat.published !== false ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}`}>
-                          {plat.published !== false ? 'Published' : 'Unpublished'}
-                        </span>
-                      </td>
-                      <td className="py-4 px-6 text-right space-x-3">
-                        <button onClick={() => openPlatformEditor(plat)} className="text-purple-700 font-bold hover:underline inline-flex items-center gap-1">
-                          <Edit className="w-3.5 h-3.5" /> Edit
-                        </button>
-                        <button onClick={() => handleDeletePlatform(plat.slug)} className="text-rose-600 font-bold hover:underline inline-flex items-center gap-1">
-                          <Trash2 className="w-3.5 h-3.5" /> Delete
-                        </button>
-                      </td>
+            {/* Control Bar */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm">
+              <div className="relative max-w-md">
+                <input
+                  type="text"
+                  placeholder="Search exam platform title, description..."
+                  value={platformSearchQuery}
+                  onChange={(e) => setPlatformSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50"
+                />
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+              </div>
+            </div>
+
+            {/* Table Surface */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-slate-200/80 text-[11px] uppercase font-bold text-slate-400">
+                      <th className="py-3.5 px-6">Software Title</th>
+                      <th className="py-3.5 px-6">Description / Technical Overview</th>
+                      <th className="py-3.5 px-6">Slug ID</th>
+                      <th className="py-3.5 px-6">Status</th>
+                      <th className="py-3.5 px-6 text-right">Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-xs">
+                    {platformsList
+                      .filter((plat) => {
+                        return (
+                          platformSearchQuery.trim() === '' ||
+                          plat.title.toLowerCase().includes(platformSearchQuery.toLowerCase()) ||
+                          plat.description?.toLowerCase().includes(platformSearchQuery.toLowerCase())
+                        );
+                      })
+                      .map((plat) => (
+                        <tr key={plat.slug} className="hover:bg-purple-50/30 transition-colors group">
+                          <td className="py-4 px-6 font-bold text-slate-900">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-lg bg-teal-50 border border-teal-100 flex items-center justify-center text-teal-600 font-black text-xs shrink-0">
+                                <Cpu className="w-4 h-4" />
+                              </div>
+                              <span className="group-hover:text-purple-700 transition-colors">{plat.title}</span>
+                            </div>
+                          </td>
+                          <td className="py-4 px-6 text-slate-500 max-w-md truncate">
+                            {plat.description || 'No overview provided.'}
+                          </td>
+                          <td className="py-4 px-6 font-mono text-slate-400 text-[11px]">
+                            #{plat.slug}
+                          </td>
+                          <td className="py-4 px-6 whitespace-nowrap">
+                            <span
+                              className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold border ${
+                                plat.published !== false
+                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                  : 'bg-rose-50 text-rose-700 border-rose-200'
+                              }`}
+                            >
+                              {plat.published !== false ? 'Supported' : 'Unpublished'}
+                            </span>
+                          </td>
+                          <td className="py-4 px-6 text-right space-x-2 whitespace-nowrap">
+                            <button
+                              onClick={() => openPlatformEditor(plat)}
+                              className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 font-bold text-[11px] inline-flex items-center gap-1 transition-colors border border-purple-200"
+                            >
+                              <Edit className="w-3.5 h-3.5" /> Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeletePlatform(plat.slug)}
+                              className="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-[11px] inline-flex items-center gap-1 transition-colors border border-rose-200"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" /> Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {platformsList.filter((plat) => {
+                return (
+                  platformSearchQuery.trim() === '' ||
+                  plat.title.toLowerCase().includes(platformSearchQuery.toLowerCase()) ||
+                  plat.description?.toLowerCase().includes(platformSearchQuery.toLowerCase())
+                );
+              }).length === 0 && (
+                <div className="p-12 text-center text-xs text-slate-400 space-y-2">
+                  <Cpu className="w-8 h-8 text-slate-300 mx-auto" />
+                  <p className="font-bold text-slate-700">No exam platforms found matching query.</p>
+                  <button onClick={() => setPlatformSearchQuery('')} className="text-purple-600 font-bold hover:underline">
+                    Clear Search
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
 
-        {/* TAB: STUDY RESOURCES MANAGER */}
+        {/* SECTION 3: STUDY RESOURCES MANAGER */}
         {activeTab === 'resources' && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-black text-slate-900">Study Resources Manager</h1>
-                <p className="text-xs text-slate-500">Manage revision guides, formula sheets, and study material catalogues</p>
+          <div className="space-y-6 animate-in fade-in duration-300">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <FolderOpen className="w-5 h-5 text-purple-600" />
+                  <h1 className="text-2xl font-black text-slate-900">Study Resources Manager</h1>
+                </div>
+                <p className="text-xs text-slate-500 font-medium">
+                  Manage revision notes, study guides, formula sheets, and practice exam catalogues
+                </p>
               </div>
+
               <button
                 onClick={() => openResourceEditor()}
-                className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md flex items-center gap-2"
+                className="px-5 py-2.5 rounded-xl bg-[#581C87] hover:bg-[#4C1D95] text-white text-xs font-bold shadow-md flex items-center gap-2 shrink-0 transition-all"
               >
                 <Plus className="w-4 h-4" />
                 <span>Add Study Resource</span>
               </button>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200 text-[11px] uppercase font-bold text-slate-500">
-                    <th className="py-3.5 px-6">Title</th>
-                    <th className="py-3.5 px-6">Category</th>
-                    <th className="py-3.5 px-6">Slug</th>
-                    <th className="py-3.5 px-6">Status</th>
-                    <th className="py-3.5 px-6 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 text-xs">
-                  {studyResourcesList.map((res) => (
-                    <tr key={res.slug} className="hover:bg-slate-50/80 transition-colors">
-                      <td className="py-4 px-6 font-bold text-slate-900">{res.title}</td>
-                      <td className="py-4 px-6"><span className="px-2.5 py-1 rounded-full bg-blue-50 text-blue-800 font-bold text-[10px]">{res.category}</span></td>
-                      <td className="py-4 px-6 font-mono text-slate-500 text-[11px]">{res.slug}</td>
-                      <td className="py-4 px-6">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${res.published !== false ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}`}>
-                          {res.published !== false ? 'Published' : 'Unpublished'}
-                        </span>
-                      </td>
-                      <td className="py-4 px-6 text-right space-x-3">
-                        <button onClick={() => openResourceEditor(res)} className="text-purple-700 font-bold hover:underline inline-flex items-center gap-1">
-                          <Edit className="w-3.5 h-3.5" /> Edit
-                        </button>
-                        <button onClick={() => handleDeleteResource(res.slug)} className="text-rose-600 font-bold hover:underline inline-flex items-center gap-1">
-                          <Trash2 className="w-3.5 h-3.5" /> Delete
-                        </button>
-                      </td>
+            {/* Control Bar */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm">
+              <div className="relative max-w-md">
+                <input
+                  type="text"
+                  placeholder="Search study resource title, category, description..."
+                  value={resourceSearchQuery}
+                  onChange={(e) => setResourceSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50"
+                />
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+              </div>
+            </div>
+
+            {/* Table Surface */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-slate-200/80 text-[11px] uppercase font-bold text-slate-400">
+                      <th className="py-3.5 px-6">Resource Title</th>
+                      <th className="py-3.5 px-6">Category</th>
+                      <th className="py-3.5 px-6">Description</th>
+                      <th className="py-3.5 px-6">Slug ID</th>
+                      <th className="py-3.5 px-6">Status</th>
+                      <th className="py-3.5 px-6 text-right">Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-xs">
+                    {studyResourcesList
+                      .filter((res) => {
+                        return (
+                          resourceSearchQuery.trim() === '' ||
+                          res.title.toLowerCase().includes(resourceSearchQuery.toLowerCase()) ||
+                          res.category?.toLowerCase().includes(resourceSearchQuery.toLowerCase()) ||
+                          res.description?.toLowerCase().includes(resourceSearchQuery.toLowerCase())
+                        );
+                      })
+                      .map((res) => (
+                        <tr key={res.slug} className="hover:bg-purple-50/30 transition-colors group">
+                          <td className="py-4 px-6 font-bold text-slate-900">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-lg bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600 font-black text-xs shrink-0">
+                                <FolderOpen className="w-4 h-4" />
+                              </div>
+                              <span className="group-hover:text-purple-700 transition-colors">{res.title}</span>
+                            </div>
+                          </td>
+                          <td className="py-4 px-6">
+                            <span className="px-2.5 py-1 rounded-full bg-blue-50 text-blue-800 font-bold text-[10px] border border-blue-100 whitespace-nowrap">
+                              {res.category}
+                            </span>
+                          </td>
+                          <td className="py-4 px-6 text-slate-500 max-w-xs truncate">
+                            {res.description || 'No description provided.'}
+                          </td>
+                          <td className="py-4 px-6 font-mono text-slate-400 text-[11px]">
+                            #{res.slug}
+                          </td>
+                          <td className="py-4 px-6 whitespace-nowrap">
+                            <span
+                              className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold border ${
+                                res.published !== false
+                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                  : 'bg-rose-50 text-rose-700 border-rose-200'
+                              }`}
+                            >
+                              {res.published !== false ? 'Published' : 'Draft'}
+                            </span>
+                          </td>
+                          <td className="py-4 px-6 text-right space-x-2 whitespace-nowrap">
+                            <button
+                              onClick={() => openResourceEditor(res)}
+                              className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 font-bold text-[11px] inline-flex items-center gap-1 transition-colors border border-purple-200"
+                            >
+                              <Edit className="w-3.5 h-3.5" /> Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteResource(res.slug)}
+                              className="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-[11px] inline-flex items-center gap-1 transition-colors border border-rose-200"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" /> Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {studyResourcesList.filter((res) => {
+                return (
+                  resourceSearchQuery.trim() === '' ||
+                  res.title.toLowerCase().includes(resourceSearchQuery.toLowerCase()) ||
+                  res.category?.toLowerCase().includes(resourceSearchQuery.toLowerCase())
+                );
+              }).length === 0 && (
+                <div className="p-12 text-center text-xs text-slate-400 space-y-2">
+                  <FolderOpen className="w-8 h-8 text-slate-300 mx-auto" />
+                  <p className="font-bold text-slate-700">No study resources found matching query.</p>
+                  <button onClick={() => setResourceSearchQuery('')} className="text-purple-600 font-bold hover:underline">
+                    Clear Search
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
 
-        {/* TAB: PARTNERSHIPS & LOGOS MANAGER */}
+        {/* SECTION 4: PARTNERSHIPS & LOGOS MANAGER */}
         {activeTab === 'partnerships' && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-black text-slate-900">Partnerships & Logos Manager</h1>
-                <p className="text-xs text-slate-500">Manage partner logos, order, target links, and homepage slider visibility</p>
+          <div className="space-y-6 animate-in fade-in duration-300">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-purple-600" />
+                  <h1 className="text-2xl font-black text-slate-900">Partnerships & Logos Manager</h1>
+                </div>
+                <p className="text-xs text-slate-500 font-medium">
+                  Manage partner logos, order, target URLs, and homepage slider visibility
+                </p>
               </div>
+
               <button
                 onClick={() => openPartnershipEditor()}
-                className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md flex items-center gap-2"
+                className="px-5 py-2.5 rounded-xl bg-[#581C87] hover:bg-[#4C1D95] text-white text-xs font-bold shadow-md flex items-center gap-2 shrink-0 transition-all"
               >
                 <Plus className="w-4 h-4" />
                 <span>Add Partner Logo</span>
               </button>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-              {partnershipsList.map((partner, idx) => (
-                <div key={partner.id || idx} className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-3 flex flex-col justify-between">
-                  <div className="space-y-2">
-                    <div className="w-16 h-12 rounded-xl bg-slate-50 border border-slate-200 p-2 flex items-center justify-center mx-auto">
-                      <img src={partner.logo} alt={partner.name} className="max-h-full max-w-full object-contain" />
-                    </div>
-                    <div className="text-center">
-                      <h4 className="font-extrabold text-sm text-slate-900">{partner.name}</h4>
-                      <span className="font-mono text-[10px] text-slate-400 block truncate">{partner.url}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs font-bold">
-                    <span className={`px-2 py-0.5 rounded text-[10px] ${partner.published !== false ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}`}>
-                      {partner.published !== false ? 'Published' : 'Unpublished'}
-                    </span>
-
-                    <div className="flex items-center gap-2">
-                      <button onClick={() => openPartnershipEditor(partner)} className="text-purple-700 hover:underline">
-                        Edit
-                      </button>
-                      <button onClick={() => handleDeletePartnership(partner.id || partner.name)} className="text-rose-600 hover:underline">
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
+            {/* Control Bar */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm">
+              <div className="relative max-w-md">
+                <input
+                  type="text"
+                  placeholder="Search partner name or URL..."
+                  value={partnerSearchQuery}
+                  onChange={(e) => setPartnerSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50"
+                />
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+              </div>
             </div>
+
+            {/* Grid of Partner Logo Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {partnershipsList
+                .filter((p) => {
+                  return (
+                    partnerSearchQuery.trim() === '' ||
+                    p.name.toLowerCase().includes(partnerSearchQuery.toLowerCase()) ||
+                    p.url?.toLowerCase().includes(partnerSearchQuery.toLowerCase())
+                  );
+                })
+                .map((partner, idx) => (
+                  <div
+                    key={partner.id || idx}
+                    className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4 hover:border-purple-300 hover:shadow-md transition-all flex flex-col justify-between group"
+                  >
+                    <div className="space-y-3">
+                      <div className="w-20 h-14 rounded-xl bg-slate-50 border border-slate-200 p-2.5 flex items-center justify-center mx-auto group-hover:scale-105 transition-transform">
+                        <img src={partner.logo} alt={partner.name} className="max-h-full max-w-full object-contain" />
+                      </div>
+                      <div className="text-center space-y-1">
+                        <h4 className="font-extrabold text-sm text-slate-900 group-hover:text-purple-700 transition-colors">
+                          {partner.name}
+                        </h4>
+                        <a
+                          href={partner.url || '/'}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-mono text-[11px] text-purple-600 hover:underline block truncate"
+                        >
+                          {partner.url || '/'}
+                        </a>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs font-bold">
+                      <span
+                        className={`px-2.5 py-0.5 rounded-full text-[10px] border ${
+                          partner.published !== false
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                            : 'bg-rose-50 text-rose-700 border-rose-200'
+                        }`}
+                      >
+                        {partner.published !== false ? 'Published' : 'Unpublished'}
+                      </span>
+
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => openPartnershipEditor(partner)}
+                          className="px-2.5 py-1 rounded-lg bg-purple-50 text-purple-800 hover:bg-purple-100 text-[11px] border border-purple-200 transition-colors"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeletePartnership(partner.id || partner.name)}
+                          className="px-2.5 py-1 rounded-lg bg-rose-50 text-rose-700 hover:bg-rose-100 text-[11px] border border-rose-200 transition-colors"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+
+            {partnershipsList.filter((p) => {
+              return (
+                partnerSearchQuery.trim() === '' ||
+                p.name.toLowerCase().includes(partnerSearchQuery.toLowerCase()) ||
+                p.url?.toLowerCase().includes(partnerSearchQuery.toLowerCase())
+              );
+            }).length === 0 && (
+              <div className="p-12 text-center text-xs text-slate-400 bg-white border border-slate-200/80 rounded-2xl space-y-2">
+                <Sparkles className="w-8 h-8 text-slate-300 mx-auto" />
+                <p className="font-bold text-slate-700">No partner logos found matching search query.</p>
+                <button onClick={() => setPartnerSearchQuery('')} className="text-purple-600 font-bold hover:underline">
+                  Clear Search
+                </button>
+              </div>
+            )}
           </div>
         )}
 
-        {/* TAB 3: PAGES & NAVBAR MANAGEMENT */}
+        {/* SECTION 5: PAGES & NAVBAR MANAGEMENT */}
         {activeTab === 'pages' && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-black text-slate-900">Website Pages & Navigation Manager</h1>
-                <p className="text-xs text-slate-500">Edit titles, subtitles, hero text, SEO metadata, and top navigation bar links</p>
+          <div className="space-y-6 animate-in fade-in duration-300">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-purple-600" />
+                  <h1 className="text-2xl font-black text-slate-900">Website Pages & Navigation Manager</h1>
+                </div>
+                <p className="text-xs text-slate-500 font-medium">
+                  Configure page titles, hero text, SEO metadata, top navigation bar links, and site announcement banner
+                </p>
               </div>
 
               <button
                 onClick={openNavEditor}
-                className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md flex items-center gap-2"
+                className="px-5 py-2.5 rounded-xl bg-[#581C87] hover:bg-[#4C1D95] text-white text-xs font-bold shadow-md flex items-center gap-2 shrink-0 transition-all"
               >
                 <Navigation className="w-4 h-4" />
                 <span>Edit Navigation Bar</span>
               </button>
             </div>
 
-            <div className="bg-gradient-to-r from-[#1E1035] to-purple-900 text-white p-6 rounded-2xl shadow-md space-y-3">
+            {/* Announcement Banner Highlight */}
+            <div className="bg-gradient-to-r from-[#1E1035] via-[#2D1654] to-purple-900 text-white p-6 rounded-2xl shadow-md space-y-3 border border-purple-800/50">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-xs font-bold text-purple-300 uppercase tracking-wider">
-                  <Sparkles className="w-4 h-4 text-purple-400" /> Top Navigation & Announcement Bar
+                  <Sparkles className="w-4 h-4 text-purple-400" /> Active Top Navigation Announcement Banner
                 </div>
                 <button
                   onClick={openNavEditor}
-                  className="px-3.5 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-bold transition-all"
+                  className="px-3.5 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs font-bold transition-all border border-white/20"
                 >
                   Edit Header Navbar
                 </button>
               </div>
               <p className="text-xs text-purple-100 font-medium leading-relaxed">
-                <strong>Announcement Banner:</strong> &ldquo;{navData.topBanner?.mainAnnouncement || 'Ethical Educational Support & Proctoring Software Technical Guidance for Students Worldwide'}&rdquo;
+                <strong>Main Announcement:</strong> &ldquo;{navData.topBanner?.mainAnnouncement || 'Ethical Educational Support & Proctoring Software Technical Guidance for Students Worldwide'}&rdquo;
               </p>
             </div>
 
+            {/* Control Bar */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm">
+              <div className="relative max-w-md">
+                <input
+                  type="text"
+                  placeholder="Search page by title, route, or subtitle..."
+                  value={pageSearchQuery}
+                  onChange={(e) => setPageSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50"
+                />
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+              </div>
+            </div>
+
+            {/* Grid of Page Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {ALL_SITE_PAGES.map((pg) => {
+              {ALL_SITE_PAGES.filter((pg) => {
                 const pageInfo = pagesData[pg.key] || {};
-                const pageFaqCount = allFlattenedFaqs.filter((f) => f.pageLocation === pg.path || f.pageLocation.startsWith(pg.path)).length;
+                return (
+                  pageSearchQuery.trim() === '' ||
+                  pg.name.toLowerCase().includes(pageSearchQuery.toLowerCase()) ||
+                  pg.slug.toLowerCase().includes(pageSearchQuery.toLowerCase()) ||
+                  pageInfo.subtitle?.toLowerCase().includes(pageSearchQuery.toLowerCase())
+                );
+              }).map((pg) => {
+                const pageInfo = pagesData[pg.key] || {};
+                const pageFaqCount = allFlattenedFaqs.filter(
+                  (f) => f.pageLocation === pg.path || f.pageLocation.startsWith(pg.path)
+                ).length;
 
                 return (
                   <div
                     key={pg.key}
-                    className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4 hover:border-purple-300 transition-all flex flex-col justify-between"
+                    className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4 hover:border-purple-300 transition-all flex flex-col justify-between group"
                   >
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                       <div className="flex items-center justify-between">
-                        <span className="font-extrabold text-sm text-slate-900">{pg.name}</span>
+                        <span className="font-extrabold text-sm text-slate-900 group-hover:text-purple-700 transition-colors">
+                          {pg.name}
+                        </span>
                         <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
+                          <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
                             {pageFaqCount} FAQs
                           </span>
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-purple-700 bg-purple-50 px-2 py-0.5 rounded">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded-full border border-purple-200">
                             {pg.slug}
                           </span>
                         </div>
                       </div>
 
-                      <p className="text-xs text-slate-600 font-medium line-clamp-2">
+                      <p className="text-xs text-slate-600 font-medium line-clamp-2 leading-relaxed">
                         {pageInfo.subtitle || pageInfo.metaDescription || `Content manager for ${pg.name}`}
                       </p>
 
@@ -2146,10 +2530,10 @@ export default function CustomAdminCmsPage() {
                     <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
                       <button
                         onClick={() => {
-                          setFaqLocationFilter(pg.path);
+                          setFaqLocationFilterState(pg.path);
                           setActiveTab('faqs');
                         }}
-                        className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 text-xs font-bold inline-flex items-center gap-1 transition-colors"
+                        className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 text-xs font-bold inline-flex items-center gap-1 transition-colors border border-purple-200"
                       >
                         <HelpCircle className="w-3.5 h-3.5" /> Filter FAQs ({pageFaqCount})
                       </button>
@@ -2160,7 +2544,7 @@ export default function CustomAdminCmsPage() {
                         rel="noopener noreferrer"
                         className="px-3 py-1.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold inline-flex items-center gap-1.5 transition-colors"
                       >
-                        <Eye className="w-3.5 h-3.5 text-slate-500" /> View Page
+                        <Eye className="w-3.5 h-3.5 text-slate-500" /> View Live Page
                       </a>
 
                       <button
@@ -2177,51 +2561,71 @@ export default function CustomAdminCmsPage() {
           </div>
         )}
 
-        {/* TAB 5: FAQS & DOCUMENTS CATALOGUE */}
+        {/* SECTION 6: DOCUMENTS & FAQS CATALOGUE */}
         {activeTab === 'faqs' && (
-          <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <h1 className="text-2xl font-black text-slate-900">Documents & FAQs Catalogue</h1>
-                <p className="text-xs text-slate-500">
-                  Manage and edit all {allFlattenedFaqs.length} frequently asked questions grouped separately by website page location
+          <div className="space-y-6 animate-in fade-in duration-300">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <HelpCircle className="w-5 h-5 text-purple-600" />
+                  <h1 className="text-2xl font-black text-slate-900">Documents & FAQs Catalogue</h1>
+                </div>
+                <p className="text-xs text-slate-500 font-medium">
+                  Manage all {allFlattenedFaqs.length} frequently asked questions grouped separately by website page location
                 </p>
               </div>
 
-              <div className="flex items-center gap-3">
-                <div className="relative">
+              <button
+                onClick={() => openFaqEditor()}
+                className="px-5 py-2.5 rounded-xl bg-[#581C87] hover:bg-[#4C1D95] text-white text-xs font-bold shadow-md flex items-center gap-2 shrink-0 transition-all"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add New FAQ</span>
+              </button>
+            </div>
+
+            {/* Control Bar & Page Location Pills */}
+            <div className="space-y-3 bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="relative flex-grow max-w-md">
                   <input
                     type="text"
-                    placeholder="Search question, page URL..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-9 pr-4 py-2 rounded-xl border border-slate-200 bg-white text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    placeholder="Search question, answer content, page URL..."
+                    value={faqSearchQuery}
+                    onChange={(e) => setFaqSearchQuery(e.target.value)}
+                    className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50"
                   />
                   <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
                 </div>
 
-                <button
-                  onClick={() => openFaqEditor()}
-                  className="px-5 py-2.5 rounded-xl bg-[#581C87] hover:bg-[#4C1D95] text-white text-xs font-bold shadow-md flex items-center gap-2 shrink-0"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Add New FAQ</span>
-                </button>
+                <span className="text-xs text-slate-400 font-bold shrink-0">
+                  Showing {allFlattenedFaqs.filter((item) => {
+                    const matchesLocation =
+                      faqLocationFilterState === 'All' ||
+                      item.pageLocation === faqLocationFilterState ||
+                      item.pageLocation.startsWith(faqLocationFilterState);
+                    const matchesSearch =
+                      faqSearchQuery.trim() === '' ||
+                      item.question.toLowerCase().includes(faqSearchQuery.toLowerCase()) ||
+                      item.answer.toLowerCase().includes(faqSearchQuery.toLowerCase()) ||
+                      item.pageLocation.toLowerCase().includes(faqSearchQuery.toLowerCase());
+                    return matchesLocation && matchesSearch;
+                  }).length} FAQs
+                </span>
               </div>
-            </div>
 
-            <div className="space-y-2 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-              <span className="text-[11px] uppercase font-bold text-slate-400 tracking-wider flex items-center gap-1.5">
-                <MapPin className="w-3.5 h-3.5 text-purple-600" /> Filter FAQs by Website Page Location:
-              </span>
-              <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+              <div className="pt-2 border-t border-slate-100 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+                <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider shrink-0 flex items-center gap-1">
+                  <MapPin className="w-3 h-3 text-purple-600" /> Location:
+                </span>
                 {uniquePageLocations.map((loc) => (
                   <button
                     key={loc}
                     type="button"
-                    onClick={() => setFaqLocationFilter(loc)}
+                    onClick={() => setFaqLocationFilterState(loc)}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-                      faqLocationFilter === loc
+                      faqLocationFilterState === loc
                         ? 'bg-purple-600 text-white shadow-sm'
                         : 'bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100'
                     }`}
@@ -2232,363 +2636,708 @@ export default function CustomAdminCmsPage() {
               </div>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200 text-[11px] uppercase font-bold text-slate-500">
-                    <th className="py-3.5 px-6">#</th>
-                    <th className="py-3.5 px-6">Question</th>
-                    <th className="py-3.5 px-6">Answer Text</th>
-                    <th className="py-3.5 px-6">Category</th>
-                    <th className="py-3.5 px-6">Page Location</th>
-                    <th className="py-3.5 px-6 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 text-xs">
-                  {allFlattenedFaqs
-                    .filter((item) => {
-                      const matchesLocation =
-                        faqLocationFilter === 'All' ||
-                        item.pageLocation === faqLocationFilter ||
-                        item.pageLocation.startsWith(faqLocationFilter);
-                      const matchesCategory =
-                        faqCategoryFilter === 'All' || item.category === faqCategoryFilter;
-                      const matchesSearch =
-                        searchQuery.trim() === '' ||
-                        item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                        item.answer.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                        item.pageLocation.toLowerCase().includes(searchQuery.toLowerCase());
-                      return matchesLocation && matchesCategory && matchesSearch;
-                    })
-                    .map((item, idx) => (
-                      <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
-                        <td className="py-4 px-6 font-mono text-slate-400">
-                          {String(idx + 1).padStart(2, '0')}
-                        </td>
-                        <td
-                          onClick={() => openFaqEditor(item.category, item)}
-                          className="py-4 px-6 font-bold text-slate-900 max-w-xs leading-snug cursor-pointer hover:text-purple-700 transition-colors"
-                        >
-                          {item.question}
-                        </td>
-                        <td className="py-4 px-6 text-slate-500 max-w-sm truncate">
-                          {item.answer}
-                        </td>
-                        <td className="py-4 px-6">
-                          <span className="px-2.5 py-1 rounded-full bg-purple-50 text-purple-800 font-bold text-[10px] whitespace-nowrap">
-                            {item.category}
-                          </span>
-                        </td>
-                        <td className="py-4 px-6">
-                          <a
-                            href={item.pageLocation}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 font-mono text-[11px] text-purple-700 bg-purple-50/80 px-2.5 py-1 rounded-lg border border-purple-200 hover:underline"
-                          >
-                            <span>{item.pageLocation}</span>
-                            <ExternalLink className="w-3 h-3 text-purple-500" />
-                          </a>
-                        </td>
-                        <td className="py-4 px-6 text-right space-x-3 whitespace-nowrap">
-                          <button
+            {/* Table Surface */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-slate-200/80 text-[11px] uppercase font-bold text-slate-400">
+                      <th className="py-3.5 px-6">#</th>
+                      <th className="py-3.5 px-6">Question</th>
+                      <th className="py-3.5 px-6">Answer Text</th>
+                      <th className="py-3.5 px-6">Category</th>
+                      <th className="py-3.5 px-6">Page Location</th>
+                      <th className="py-3.5 px-6 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-xs">
+                    {allFlattenedFaqs
+                      .filter((item) => {
+                        const matchesLocation =
+                          faqLocationFilterState === 'All' ||
+                          item.pageLocation === faqLocationFilterState ||
+                          item.pageLocation.startsWith(faqLocationFilterState);
+                        const matchesSearch =
+                          faqSearchQuery.trim() === '' ||
+                          item.question.toLowerCase().includes(faqSearchQuery.toLowerCase()) ||
+                          item.answer.toLowerCase().includes(faqSearchQuery.toLowerCase()) ||
+                          item.pageLocation.toLowerCase().includes(faqSearchQuery.toLowerCase());
+                        return matchesLocation && matchesSearch;
+                      })
+                      .map((item, idx) => (
+                        <tr key={idx} className="hover:bg-purple-50/30 transition-colors group">
+                          <td className="py-4 px-6 font-mono text-slate-400">
+                            {String(idx + 1).padStart(2, '0')}
+                          </td>
+                          <td
                             onClick={() => openFaqEditor(item.category, item)}
-                            className="text-purple-700 hover:text-purple-900 font-bold transition-colors inline-flex items-center gap-1 bg-purple-50 px-2.5 py-1 rounded-lg border border-purple-200"
+                            className="py-4 px-6 font-bold text-slate-900 max-w-xs leading-snug cursor-pointer group-hover:text-purple-700 transition-colors"
                           >
-                            <Edit className="w-3.5 h-3.5" /> Edit FAQ
-                          </button>
-                          <button
-                            onClick={() => handleDeleteFaq(item.category, item.question)}
-                            className="text-rose-600 hover:text-rose-800 font-bold transition-colors inline-flex items-center gap-1"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" /> Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
+                            {item.question}
+                          </td>
+                          <td className="py-4 px-6 text-slate-500 max-w-sm truncate">
+                            {item.answer}
+                          </td>
+                          <td className="py-4 px-6">
+                            <span className="px-2.5 py-1 rounded-full bg-purple-50 text-purple-800 font-bold text-[10px] border border-purple-100 whitespace-nowrap">
+                              {item.category}
+                            </span>
+                          </td>
+                          <td className="py-4 px-6 whitespace-nowrap">
+                            <a
+                              href={item.pageLocation}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 font-mono text-[11px] text-purple-700 bg-purple-50/80 px-2.5 py-1 rounded-lg border border-purple-200 hover:underline"
+                            >
+                              <span>{item.pageLocation}</span>
+                              <ExternalLink className="w-3 h-3 text-purple-500" />
+                            </a>
+                          </td>
+                          <td className="py-4 px-6 text-right space-x-2 whitespace-nowrap">
+                            <button
+                              onClick={() => openFaqEditor(item.category, item)}
+                              className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 font-bold text-[11px] inline-flex items-center gap-1 transition-colors border border-purple-200"
+                            >
+                              <Edit className="w-3.5 h-3.5" /> Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteFaq(item.category, item.question)}
+                              className="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-[11px] inline-flex items-center gap-1 transition-colors border border-rose-200"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" /> Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {allFlattenedFaqs.filter((item) => {
+                const matchesLocation =
+                  faqLocationFilterState === 'All' ||
+                  item.pageLocation === faqLocationFilterState ||
+                  item.pageLocation.startsWith(faqLocationFilterState);
+                const matchesSearch =
+                  faqSearchQuery.trim() === '' ||
+                  item.question.toLowerCase().includes(faqSearchQuery.toLowerCase()) ||
+                  item.answer.toLowerCase().includes(faqSearchQuery.toLowerCase());
+                return matchesLocation && matchesSearch;
+              }).length === 0 && (
+                <div className="p-12 text-center text-xs text-slate-400 space-y-2">
+                  <HelpCircle className="w-8 h-8 text-slate-300 mx-auto" />
+                  <p className="font-bold text-slate-700">No FAQ questions found matching query or location filter.</p>
+                  <button
+                    onClick={() => {
+                      setFaqSearchQuery('');
+                      setFaqLocationFilterState('All');
+                    }}
+                    className="text-purple-600 font-bold hover:underline"
+                  >
+                    Reset FAQ Filters
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
 
-        {/* TAB: INQUIRIES CATALOGUE */}
+        {/* SECTION 7: CUSTOMER INQUIRIES DIRECTORY */}
         {activeTab === 'inquiries' && (
-          <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <h1 className="text-2xl font-black text-slate-900">Website Form Inquiries</h1>
-                <p className="text-xs text-slate-500">View and respond to all student and customer inquiries submitted from website forms</p>
+          <div className="space-y-6 animate-in fade-in duration-300">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Inbox className="w-5 h-5 text-purple-600" />
+                  <h1 className="text-2xl font-black text-slate-900">Customer Inquiries Directory</h1>
+                </div>
+                <p className="text-xs text-slate-500 font-medium">
+                  Review, manage, and respond to incoming customer form submissions and lead requests
+                </p>
               </div>
 
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1 bg-slate-200/60 p-1 rounded-xl">
-                  {['All', 'New', 'Responded'].map((st) => (
-                    <button
-                      key={st}
-                      type="button"
-                      onClick={() => setInquiryFilter(st)}
-                      className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                        inquiryFilter === st ? 'bg-white text-purple-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'
-                      }`}
-                    >
-                      {st}
-                    </button>
-                  ))}
-                </div>
-
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Search name, email..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-9 pr-4 py-2 rounded-xl border border-slate-200 bg-white text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-600"
-                  />
-                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
-                </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1.5 rounded-xl">
+                  Total: <strong className="text-slate-900">{inquiriesList.length}</strong>
+                </span>
+                {newInquiriesCount > 0 && (
+                  <span className="text-xs font-black text-white bg-rose-500 px-3 py-1.5 rounded-xl shadow-sm animate-pulse">
+                    {newInquiriesCount} Unread
+                  </span>
+                )}
               </div>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200 text-[11px] uppercase font-bold text-slate-500">
-                    <th className="py-3.5 px-6">Date</th>
-                    <th className="py-3.5 px-6">Customer Name</th>
-                    <th className="py-3.5 px-6">Email / Phone</th>
-                    <th className="py-3.5 px-6">Service Requested</th>
-                    <th className="py-3.5 px-6">Status</th>
-                    <th className="py-3.5 px-6 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 text-xs">
-                  {inquiriesList
-                    .filter((inq) => {
-                      const matchesStatus = inquiryFilter === 'All' || inq.status === inquiryFilter;
-                      const matchesSearch =
-                        searchQuery.trim() === '' ||
-                        inq.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                        inq.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                        inq.service.toLowerCase().includes(searchQuery.toLowerCase());
-                      return matchesStatus && matchesSearch;
-                    })
-                    .map((inq) => (
-                      <tr key={inq.id} className="hover:bg-slate-50/80 transition-colors">
-                        <td className="py-4 px-6 text-slate-500 font-mono text-[11px] whitespace-nowrap">
-                          {inq.date}
-                        </td>
-                        <td className="py-4 px-6 font-bold text-slate-900">{inq.fullName}</td>
-                        <td className="py-4 px-6 text-slate-600">
-                          <div>{inq.email}</div>
-                          <div className="text-[11px] text-slate-400">{inq.phone}</div>
-                        </td>
-                        <td className="py-4 px-6 font-semibold text-slate-700">{inq.service}</td>
-                        <td className="py-4 px-6">
-                          <span
-                            className={`px-2.5 py-1 rounded-full font-bold text-[10px] ${
-                              inq.status === 'New'
-                                ? 'bg-rose-50 text-rose-700 border border-rose-200'
-                                : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                            }`}
-                          >
-                            {inq.status}
-                          </span>
-                        </td>
-                        <td className="py-4 px-6 text-right space-x-3 whitespace-nowrap">
-                          <button
-                            onClick={() => openInquiryViewer(inq)}
-                            className="text-purple-700 hover:text-purple-900 font-bold transition-colors inline-flex items-center gap-1"
-                          >
-                            <Eye className="w-3.5 h-3.5" /> View Message
-                          </button>
-                          <button
-                            onClick={() => handleDeleteInquiry(inq.id)}
-                            className="text-rose-600 hover:text-rose-800 font-bold transition-colors inline-flex items-center gap-1"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" /> Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
+            {/* Control Bar */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm">
+              <div className="flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl">
+                {['All', 'New', 'Responded'].map((st) => (
+                  <button
+                    key={st}
+                    type="button"
+                    onClick={() => setInquiryFilterState(st)}
+                    className={`px-3.5 py-1.5 rounded-lg text-xs font-extrabold transition-all ${
+                      inquiryFilterState === st
+                        ? 'bg-white text-purple-900 shadow-sm border border-slate-200/60'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    {st === 'New' && newInquiriesCount > 0 ? (
+                      <span className="flex items-center gap-1.5">
+                        <span>New</span>
+                        <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
+                      </span>
+                    ) : (
+                      st
+                    )}
+                  </button>
+                ))}
+              </div>
+
+              <div className="relative flex-grow max-w-md">
+                <input
+                  type="text"
+                  placeholder="Search by client name, email, phone, service, subject..."
+                  value={inquirySearchQuery}
+                  onChange={(e) => setInquirySearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50"
+                />
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+              </div>
+            </div>
+
+            {/* Table Surface */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-slate-200/80 text-[11px] uppercase font-bold text-slate-400">
+                      <th className="py-3.5 px-6">Date & Time</th>
+                      <th className="py-3.5 px-6">Client Name</th>
+                      <th className="py-3.5 px-6">Email / Phone</th>
+                      <th className="py-3.5 px-6">Service Requested & Subject</th>
+                      <th className="py-3.5 px-6">Status</th>
+                      <th className="py-3.5 px-6 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-xs">
+                    {inquiriesList
+                      .filter((inq) => {
+                        const matchesStatus = inquiryFilterState === 'All' || inq.status === inquiryFilterState;
+                        const matchesSearch =
+                          inquirySearchQuery.trim() === '' ||
+                          inq.fullName.toLowerCase().includes(inquirySearchQuery.toLowerCase()) ||
+                          inq.email.toLowerCase().includes(inquirySearchQuery.toLowerCase()) ||
+                          inq.phone?.toLowerCase().includes(inquirySearchQuery.toLowerCase()) ||
+                          inq.service?.toLowerCase().includes(inquirySearchQuery.toLowerCase()) ||
+                          inq.subject?.toLowerCase().includes(inquirySearchQuery.toLowerCase());
+                        return matchesStatus && matchesSearch;
+                      })
+                      .map((inq) => (
+                        <tr
+                          key={inq.id}
+                          className={`transition-colors ${
+                            inq.status === 'New'
+                              ? 'bg-amber-50/40 hover:bg-amber-50/80 border-l-4 border-amber-500'
+                              : 'hover:bg-purple-50/30'
+                          }`}
+                        >
+                          <td className="py-4 px-6 text-slate-500 font-mono text-[11px] whitespace-nowrap">
+                            {inq.date}
+                          </td>
+                          <td className="py-4 px-6">
+                            <div className="font-extrabold text-slate-900 flex items-center gap-2">
+                              {inq.status === 'New' && <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />}
+                              <span>{inq.fullName}</span>
+                            </div>
+                          </td>
+                          <td className="py-4 px-6 text-slate-600">
+                            <div className="font-medium text-slate-800">{inq.email}</div>
+                            <div className="text-[11px] text-slate-400 font-mono">{inq.phone || 'N/A'}</div>
+                          </td>
+                          <td className="py-4 px-6 max-w-xs">
+                            <div className="font-bold text-slate-800 truncate">{inq.service}</div>
+                            <div className="text-[11px] text-purple-600 font-medium truncate">{inq.subject || inq.message}</div>
+                          </td>
+                          <td className="py-4 px-6 whitespace-nowrap">
+                            <span
+                              className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold border ${
+                                inq.status === 'New'
+                                  ? 'bg-amber-100 text-amber-900 border-amber-300'
+                                  : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                              }`}
+                            >
+                              {inq.status || 'New'}
+                            </span>
+                          </td>
+                          <td className="py-4 px-6 text-right space-x-2 whitespace-nowrap">
+                            <button
+                              onClick={() => openInquiryViewer(inq)}
+                              className="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-[11px] shadow-sm inline-flex items-center gap-1 transition-colors"
+                            >
+                              <Eye className="w-3.5 h-3.5" /> View Message
+                            </button>
+                            <button
+                              onClick={() => handleToggleInquiryStatus(inq.id)}
+                              className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] inline-flex items-center gap-1 transition-colors border border-slate-200"
+                            >
+                              <RefreshCw className="w-3.5 h-3.5" /> {inq.status === 'New' ? 'Mark Responded' : 'Mark New'}
+                            </button>
+                            <button
+                              onClick={() => handleDeleteInquiry(inq.id)}
+                              className="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-[11px] inline-flex items-center gap-1 transition-colors border border-rose-200"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" /> Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {inquiriesList.filter((inq) => {
+                const matchesStatus = inquiryFilterState === 'All' || inq.status === inquiryFilterState;
+                const matchesSearch =
+                  inquirySearchQuery.trim() === '' ||
+                  inq.fullName.toLowerCase().includes(inquirySearchQuery.toLowerCase()) ||
+                  inq.email.toLowerCase().includes(inquirySearchQuery.toLowerCase());
+                return matchesStatus && matchesSearch;
+              }).length === 0 && (
+                <div className="p-12 text-center text-xs text-slate-400 space-y-2">
+                  <Inbox className="w-8 h-8 text-slate-300 mx-auto" />
+                  <p className="font-bold text-slate-700">No customer inquiries found matching filter criteria.</p>
+                  <button
+                    onClick={() => {
+                      setInquirySearchQuery('');
+                      setInquiryFilterState('All');
+                    }}
+                    className="text-purple-600 font-bold hover:underline"
+                  >
+                    Reset Filters
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
 
-        {/* TAB 2: BLOGS CATALOGUE */}
+        {/* SECTION 8: BLOG ARTICLES CATALOGUE */}
         {activeTab === 'blogs' && (
-          <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <h1 className="text-2xl font-black text-slate-900">Blog Catalogue</h1>
-                <p className="text-xs text-slate-500">Edit, add, or delete blog posts and SEO meta descriptions</p>
+          <div className="space-y-6 animate-in fade-in duration-300">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <BookOpen className="w-5 h-5 text-purple-600" />
+                  <h1 className="text-2xl font-black text-slate-900">Blog Articles Catalogue</h1>
+                </div>
+                <p className="text-xs text-slate-500 font-medium">
+                  Create, edit, or publish educational blog articles, study guides, and SEO meta descriptions
+                </p>
               </div>
 
-              <div className="flex items-center gap-3">
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Search articles..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-9 pr-4 py-2 rounded-xl border border-slate-200 bg-white text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-600"
-                  />
-                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
-                </div>
+              <button
+                onClick={() => openBlogEditor()}
+                className="px-5 py-2.5 rounded-xl bg-[#581C87] hover:bg-[#4C1D95] text-white text-xs font-bold shadow-md flex items-center gap-2 shrink-0 transition-all"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add New Article</span>
+              </button>
+            </div>
 
-                <button
-                  onClick={() => openBlogEditor()}
-                  className="px-5 py-2.5 rounded-xl bg-[#581C87] hover:bg-[#4C1D95] text-white text-xs font-bold shadow-md flex items-center gap-2"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Add new</span>
-                </button>
+            {/* Control Bar: Search & Category Filters */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm">
+              <div className="relative flex-grow max-w-md">
+                <input
+                  type="text"
+                  placeholder="Search articles by title, category, or excerpt..."
+                  value={blogSearchQuery}
+                  onChange={(e) => setBlogSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50"
+                />
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+              </div>
+
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+                {['All', 'Examination Preparation', 'Professional Certifications', 'Study Strategies', 'Examination Software Guidance', 'Nursing Exam Preparation'].map((cat) => (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setBlogCategoryFilter(cat)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                      blogCategoryFilter === cat
+                        ? 'bg-purple-600 text-white shadow-sm'
+                        : 'bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
               </div>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200 text-[11px] uppercase font-bold text-slate-500">
-                    <th className="py-3.5 px-6">#</th>
-                    <th className="py-3.5 px-6">Title</th>
-                    <th className="py-3.5 px-6">Slug ID</th>
-                    <th className="py-3.5 px-6">Date</th>
-                    <th className="py-3.5 px-6">Category</th>
-                    <th className="py-3.5 px-6 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 text-xs">
-                  {blogArticles
-                    .filter((a) => a.title.toLowerCase().includes(searchQuery.toLowerCase()))
-                    .map((article, idx) => (
-                      <tr key={article.slug} className="hover:bg-slate-50/80 transition-colors">
-                        <td className="py-4 px-6 font-mono text-slate-400">
-                          {String(idx + 1).padStart(2, '0')}
-                        </td>
-                        <td className="py-4 px-6 font-bold text-slate-900 max-w-xs truncate">
-                          {article.title}
-                        </td>
-                        <td className="py-4 px-6 font-mono text-slate-500 text-[11px]">
-                          #{article.slug}
-                        </td>
-                        <td className="py-4 px-6 text-slate-600 whitespace-nowrap">
-                          {article.publishDate}
-                        </td>
-                        <td className="py-4 px-6">
-                          <span className="px-2.5 py-1 rounded-full bg-purple-50 text-purple-800 font-bold text-[10px]">
-                            {article.category}
-                          </span>
-                        </td>
-                        <td className="py-4 px-6 text-right space-x-3 whitespace-nowrap">
-                          <button
-                            onClick={() => openBlogEditor(article)}
-                            className="text-purple-700 hover:text-purple-900 font-bold transition-colors inline-flex items-center gap-1"
-                          >
-                            <Edit className="w-3.5 h-3.5" /> Edit
-                          </button>
-                          <button
-                            onClick={() => handleDeleteBlog(article.slug)}
-                            className="text-rose-600 hover:text-rose-800 font-bold transition-colors inline-flex items-center gap-1"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" /> Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
+            {/* Table Surface */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-slate-200/80 text-[11px] uppercase font-bold text-slate-400">
+                      <th className="py-3.5 px-6">#</th>
+                      <th className="py-3.5 px-6">Article Title</th>
+                      <th className="py-3.5 px-6">Category</th>
+                      <th className="py-3.5 px-6">Publish Date</th>
+                      <th className="py-3.5 px-6">Slug ID</th>
+                      <th className="py-3.5 px-6">Status</th>
+                      <th className="py-3.5 px-6 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-xs">
+                    {blogArticles
+                      .filter((article) => {
+                        const matchesCategory = blogCategoryFilter === 'All' || article.category === blogCategoryFilter;
+                        const matchesSearch =
+                          blogSearchQuery.trim() === '' ||
+                          article.title.toLowerCase().includes(blogSearchQuery.toLowerCase()) ||
+                          article.category?.toLowerCase().includes(blogSearchQuery.toLowerCase()) ||
+                          article.excerpt?.toLowerCase().includes(blogSearchQuery.toLowerCase());
+                        return matchesCategory && matchesSearch;
+                      })
+                      .map((article, idx) => (
+                        <tr key={article.slug} className="hover:bg-purple-50/30 transition-colors group">
+                          <td className="py-4 px-6 font-mono text-slate-400">
+                            {String(idx + 1).padStart(2, '0')}
+                          </td>
+                          <td className="py-4 px-6 font-bold text-slate-900 max-w-xs">
+                            <span className="line-clamp-1 group-hover:text-purple-700 transition-colors">{article.title}</span>
+                          </td>
+                          <td className="py-4 px-6">
+                            <span className="px-2.5 py-1 rounded-full bg-purple-50 text-purple-800 font-bold text-[10px] border border-purple-100 whitespace-nowrap">
+                              {article.category}
+                            </span>
+                          </td>
+                          <td className="py-4 px-6 text-slate-600 whitespace-nowrap font-mono text-[11px]">
+                            {article.publishDate}
+                          </td>
+                          <td className="py-4 px-6 font-mono text-slate-400 text-[11px]">
+                            #{article.slug}
+                          </td>
+                          <td className="py-4 px-6 whitespace-nowrap">
+                            <span
+                              className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold border ${
+                                article.published !== false
+                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                  : 'bg-rose-50 text-rose-700 border-rose-200'
+                              }`}
+                            >
+                              {article.published !== false ? 'Published' : 'Draft'}
+                            </span>
+                          </td>
+                          <td className="py-4 px-6 text-right space-x-2 whitespace-nowrap">
+                            <a
+                              href={`/blog/${article.slug}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="px-2.5 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-[11px] inline-flex items-center gap-1 transition-colors border border-slate-200"
+                            >
+                              <Eye className="w-3.5 h-3.5 text-slate-500" /> View
+                            </a>
+                            <button
+                              onClick={() => openBlogEditor(article)}
+                              className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 font-bold text-[11px] inline-flex items-center gap-1 transition-colors border border-purple-200"
+                            >
+                              <Edit className="w-3.5 h-3.5" /> Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteBlog(article.slug)}
+                              className="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-[11px] inline-flex items-center gap-1 transition-colors border border-rose-200"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" /> Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {blogArticles.filter((article) => {
+                const matchesCategory = blogCategoryFilter === 'All' || article.category === blogCategoryFilter;
+                const matchesSearch =
+                  blogSearchQuery.trim() === '' ||
+                  article.title.toLowerCase().includes(blogSearchQuery.toLowerCase());
+                return matchesCategory && matchesSearch;
+              }).length === 0 && (
+                <div className="p-12 text-center text-xs text-slate-400 space-y-2">
+                  <BookOpen className="w-8 h-8 text-slate-300 mx-auto" />
+                  <p className="font-bold text-slate-700">No blog articles found matching search criteria.</p>
+                  <button
+                    onClick={() => {
+                      setBlogSearchQuery('');
+                      setBlogCategoryFilter('All');
+                    }}
+                    className="text-purple-600 font-bold hover:underline"
+                  >
+                    Reset Article Filters
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
 
-        {/* TAB 4: SERVICES CATALOGUE */}
+        {/* SECTION 9: SERVICES DIRECTORY */}
         {activeTab === 'services' && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-black text-slate-900">Services Directory</h1>
-                <p className="text-xs text-slate-500">Manage learning support programs, descriptions, and hero images</p>
+          <div className="space-y-6 animate-in fade-in duration-300">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Briefcase className="w-5 h-5 text-purple-600" />
+                  <h1 className="text-2xl font-black text-slate-900">Services Directory</h1>
+                </div>
+                <p className="text-xs text-slate-500 font-medium">
+                  Manage learning support programs, descriptions, hero images, and service offerings
+                </p>
               </div>
+
               <button
                 onClick={() => openServiceEditor()}
-                className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md flex items-center gap-2"
+                className="px-5 py-2.5 rounded-xl bg-[#581C87] hover:bg-[#4C1D95] text-white text-xs font-bold shadow-md flex items-center gap-2 shrink-0 transition-all"
               >
                 <Plus className="w-4 h-4" />
                 <span>Add Service</span>
               </button>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200 text-[11px] uppercase font-bold text-slate-500">
-                    <th className="py-3.5 px-6">Title</th>
-                    <th className="py-3.5 px-6">Category</th>
-                    <th className="py-3.5 px-6">Tagline</th>
-                    <th className="py-3.5 px-6">Status</th>
-                    <th className="py-3.5 px-6 text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 text-xs">
-                  {servicesList.map((service) => (
-                    <tr key={service.slug} className="hover:bg-slate-50/80 transition-colors">
-                      <td className="py-4 px-6 font-bold text-slate-900">{service.title}</td>
-                      <td className="py-4 px-6"><span className="px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-bold text-[10px]">{service.category}</span></td>
-                      <td className="py-4 px-6 text-slate-500 max-w-sm truncate">{service.tagline || service.overview}</td>
-                      <td className="py-4 px-6">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${service.published !== false ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}`}>
-                          {service.published !== false ? 'Published' : 'Unpublished'}
-                        </span>
-                      </td>
-                      <td className="py-4 px-6 text-right space-x-3">
-                        <button onClick={() => openServiceEditor(service)} className="text-purple-700 font-bold hover:underline inline-flex items-center gap-1">
-                          <Edit className="w-3.5 h-3.5" /> Edit
-                        </button>
-                        <button onClick={() => handleDeleteService(service.slug)} className="text-rose-600 font-bold hover:underline inline-flex items-center gap-1">
-                          <Trash2 className="w-3.5 h-3.5" /> Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            {/* Control Bar: Search & Category Filters */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm">
+              <div className="relative flex-grow max-w-md">
+                <input
+                  type="text"
+                  placeholder="Search services by title, category, or tagline..."
+                  value={serviceSearchQuery}
+                  onChange={(e) => setServiceSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50"
+                />
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+              </div>
+
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+                {['All', 'Academic Support', 'Examination Support', 'Assessment Practice', 'Career Credentials', 'Academic Strategy', 'Technical Assistance'].map((cat) => (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setServiceCategoryFilter(cat)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                      serviceCategoryFilter === cat
+                        ? 'bg-purple-600 text-white shadow-sm'
+                        : 'bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
             </div>
+
+            {/* Grid of Service Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {servicesList
+                .filter((service) => {
+                  const matchesCategory = serviceCategoryFilter === 'All' || service.category === serviceCategoryFilter;
+                  const matchesSearch =
+                    serviceSearchQuery.trim() === '' ||
+                    service.title.toLowerCase().includes(serviceSearchQuery.toLowerCase()) ||
+                    service.category?.toLowerCase().includes(serviceSearchQuery.toLowerCase()) ||
+                    service.tagline?.toLowerCase().includes(serviceSearchQuery.toLowerCase());
+                  return matchesCategory && matchesSearch;
+                })
+                .map((service) => (
+                  <div
+                    key={service.slug}
+                    className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-sm hover:border-purple-300 hover:shadow-md transition-all flex flex-col justify-between group"
+                  >
+                    <div>
+                      {/* Hero Image Thumbnail */}
+                      <div className="h-36 bg-slate-100 relative overflow-hidden">
+                        <img
+                          src={service.heroImage || 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f'}
+                          alt={service.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                        <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-slate-900/80 backdrop-blur-sm text-white font-bold text-[10px] border border-white/20">
+                          {service.category}
+                        </span>
+                      </div>
+
+                      <div className="p-5 space-y-2">
+                        <h3 className="font-extrabold text-sm text-slate-900 group-hover:text-purple-700 transition-colors">
+                          {service.title}
+                        </h3>
+                        <p className="text-xs text-slate-500 font-medium line-clamp-2 leading-relaxed">
+                          {service.tagline || service.overview}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="p-4 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between text-xs font-bold">
+                      <span
+                        className={`px-2.5 py-0.5 rounded-full text-[10px] border ${
+                          service.published !== false
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                            : 'bg-rose-50 text-rose-700 border-rose-200'
+                        }`}
+                      >
+                        {service.published !== false ? 'Published' : 'Unpublished'}
+                      </span>
+
+                      <div className="flex items-center gap-2">
+                        <a
+                          href={`/services/${service.slug}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-2.5 py-1 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 text-[11px] transition-colors"
+                        >
+                          View
+                        </a>
+                        <button
+                          onClick={() => openServiceEditor(service)}
+                          className="px-2.5 py-1 rounded-xl bg-purple-50 text-purple-800 hover:bg-purple-100 text-[11px] border border-purple-200 transition-colors"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteService(service.slug)}
+                          className="px-2.5 py-1 rounded-xl bg-rose-50 text-rose-700 hover:bg-rose-100 text-[11px] border border-rose-200 transition-colors"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+
+            {servicesList.filter((service) => {
+              const matchesCategory = serviceCategoryFilter === 'All' || service.category === serviceCategoryFilter;
+              const matchesSearch =
+                serviceSearchQuery.trim() === '' ||
+                service.title.toLowerCase().includes(serviceSearchQuery.toLowerCase());
+              return matchesCategory && matchesSearch;
+            }).length === 0 && (
+              <div className="p-12 text-center text-xs text-slate-400 bg-white border border-slate-200/80 rounded-2xl space-y-2">
+                <Briefcase className="w-8 h-8 text-slate-300 mx-auto" />
+                <p className="font-bold text-slate-700">No services found matching search query.</p>
+                <button
+                  onClick={() => {
+                    setServiceSearchQuery('');
+                    setServiceCategoryFilter('All');
+                  }}
+                  className="text-purple-600 font-bold hover:underline"
+                >
+                  Reset Filters
+                </button>
+              </div>
+            )}
           </div>
         )}
 
-        {/* TAB 6: SITE SETTINGS & SEO */}
+        {/* SECTION 10: SITE SETTINGS & SEO */}
         {activeTab === 'settings' && (
-          <div className="space-y-6 max-w-3xl">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-black text-slate-900">Site Settings & SEO</h1>
-                <p className="text-xs text-slate-500">Global Website Metadata, Contact Information, and Google Analytics</p>
+          <div className="space-y-6 max-w-4xl animate-in fade-in duration-300">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Settings className="w-5 h-5 text-purple-600" />
+                  <h1 className="text-2xl font-black text-slate-900">Global Site Settings & SEO</h1>
+                </div>
+                <p className="text-xs text-slate-500 font-medium">
+                  Manage site-wide metadata, contact details, Google Analytics tracking, and global SEO defaults
+                </p>
               </div>
+
               <button
                 onClick={openSettingsEditor}
-                className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md flex items-center gap-2"
+                className="px-5 py-2.5 rounded-xl bg-[#581C87] hover:bg-[#4C1D95] text-white text-xs font-bold shadow-md flex items-center gap-2 shrink-0 transition-all"
               >
                 <Edit className="w-4 h-4" />
                 <span>Edit Settings</span>
               </button>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4 text-xs">
-              <div className="grid grid-cols-2 gap-4 border-b pb-4">
-                <div><span className="text-slate-400 font-bold uppercase block">Site Name</span> <span className="font-bold text-slate-800">{siteSettings.siteName}</span></div>
-                <div><span className="text-slate-400 font-bold uppercase block">Site URL</span> <span className="font-mono text-purple-700">{siteSettings.siteUrl}</span></div>
+            {/* Overview Surfaces */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* General Site Information */}
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
+                <div className="flex items-center justify-between border-b pb-3">
+                  <h3 className="font-extrabold text-sm text-slate-900 flex items-center gap-2">
+                    <Globe className="w-4 h-4 text-purple-600" /> General Information
+                  </h3>
+                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                    Active Production
+                  </span>
+                </div>
+
+                <div className="space-y-3 text-xs">
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">Site Name</span>
+                    <span className="font-extrabold text-slate-900">{siteSettings.siteName || 'Tutor Proctored Exams'}</span>
+                  </div>
+
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">Primary Site Domain URL</span>
+                    <span className="font-mono text-purple-700 font-bold">{siteSettings.siteUrl || 'https://tutorproctoredexams.com'}</span>
+                  </div>
+
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">Support Email Contact</span>
+                    <span className="font-mono text-slate-700">{siteSettings.contactEmail || 'support@tutorproctoredexams.com'}</span>
+                  </div>
+                </div>
               </div>
-              <div className="space-y-1 border-b pb-4">
-                <span className="text-slate-400 font-bold uppercase block">Default SEO Title</span>
-                <span className="font-bold text-slate-800">{siteSettings.defaultMetaTitle}</span>
+
+              {/* Global SEO Default Metadata */}
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
+                <div className="flex items-center justify-between border-b pb-3">
+                  <h3 className="font-extrabold text-sm text-slate-900 flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-purple-600" /> Default SEO Meta Tags
+                  </h3>
+                  <span className="text-[10px] font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded border border-purple-200">
+                    SEO Configured
+                  </span>
+                </div>
+
+                <div className="space-y-3 text-xs">
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">Default SEO Meta Title</span>
+                    <span className="font-bold text-slate-900 line-clamp-1">{siteSettings.defaultMetaTitle || 'Tutor Proctored Exams — Educational Support'}</span>
+                  </div>
+
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">Default Meta Description</span>
+                    <span className="text-slate-600 line-clamp-2 leading-relaxed">{siteSettings.defaultMetaDescription || 'Ethical Educational Support & Proctoring Software Guidance'}</span>
+                  </div>
+                </div>
               </div>
-              <div className="space-y-1">
-                <span className="text-slate-400 font-bold uppercase block">Default Meta Description</span>
-                <span className="text-slate-600 leading-relaxed">{siteSettings.defaultMetaDescription}</span>
+            </div>
+
+            {/* Bottom Edit Trigger Bar */}
+            <div className="p-6 bg-slate-900 text-white rounded-2xl shadow-md flex items-center justify-between">
+              <div className="space-y-0.5">
+                <h4 className="font-black text-sm text-white">Update Global Configuration</h4>
+                <p className="text-xs text-purple-200/80 font-medium">Modify site metadata, default title, description, and contact info</p>
               </div>
+
+              <button
+                onClick={openSettingsEditor}
+                className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold shadow-lg transition-all"
+              >
+                Edit Settings Payload
+              </button>
             </div>
           </div>
         )}
