@@ -64,6 +64,7 @@ import {
   Monitor,
   Edit3,
   ChevronsLeft,
+  Palette,
 } from 'lucide-react';
 
 export default function CustomAdminCmsPage() {
@@ -102,6 +103,16 @@ export default function CustomAdminCmsPage() {
   const [platformsList, setPlatformsList] = useState([]);
   const [studyResourcesList, setStudyResourcesList] = useState([]);
   const [partnershipsList, setPartnershipsList] = useState([]);
+
+  // Theme & Visual Appearance State
+  const [themeData, setThemeData] = useState({
+    themePreset: 'Royal Purple',
+    primaryColor: '#581C87',
+    sidebarColor: '#1E1035',
+    accentColor: '#7C3AED',
+    mode: 'dark',
+    borderRadius: 'rounded-2xl',
+  });
 
   // Media Library State
   const [mediaLibrary, setMediaLibrary] = useState([]);
@@ -254,11 +265,22 @@ export default function CustomAdminCmsPage() {
       if (partJson.success && partJson.data?.partners) {
         setPartnershipsList(partJson.data.partners);
       }
+
+      // Fetch Themes & Visual Appearance
+      const themeRes = await fetch('/api/admin/content?file=theme.json');
+      const themeJson = await themeRes.json();
+      if (themeJson.success && themeJson.data?.primaryColor) {
+        setThemeData(themeJson.data);
+      }
     } catch (err) {
       console.error('Failed to load content', err);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSaveTheme = () => {
+    saveContentFile('theme.json', themeData);
   };
 
   // Fetch Media Library Images
@@ -982,6 +1004,14 @@ export default function CustomAdminCmsPage() {
           icon: Settings,
           onClick: () => setActiveTab('settings'),
           isActive: activeTab === 'settings',
+          badge: null,
+        },
+        {
+          id: 'theme',
+          label: 'Themes & Appearance',
+          icon: Palette,
+          onClick: () => setActiveTab('theme'),
+          isActive: activeTab === 'theme',
           badge: null,
         },
       ],
@@ -3326,6 +3356,162 @@ export default function CustomAdminCmsPage() {
                 className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold shadow-lg transition-all"
               >
                 Edit Settings Payload
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* SECTION 11: THEMES & VISUAL APPEARANCE */}
+        {activeTab === 'theme' && (
+          <div className="space-y-6 max-w-4xl animate-in fade-in duration-300">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Palette className="w-5 h-5 text-purple-600" />
+                  <h1 className="text-2xl font-black text-slate-900">Themes & Visual Appearance</h1>
+                </div>
+                <p className="text-xs text-slate-500 font-medium">
+                  Customize the primary brand color palette, sidebar background, accent highlights, and UI styles
+                </p>
+              </div>
+
+              <button
+                onClick={handleSaveTheme}
+                disabled={loading}
+                className="px-5 py-2.5 rounded-xl bg-[#581C87] hover:bg-[#4C1D95] text-white text-xs font-bold shadow-md flex items-center gap-2 shrink-0 transition-all disabled:opacity-50"
+              >
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                <span>Save Theme Palette</span>
+              </button>
+            </div>
+
+            {/* PRESET PALETTE CARDS */}
+            <div className="space-y-3">
+              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                Preset Color Palettes
+              </span>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+                {[
+                  { name: 'Royal Purple', primary: '#581C87', sidebar: '#1E1035', accent: '#7C3AED' },
+                  { name: 'Navy & Indigo', primary: '#1E3A8A', sidebar: '#0F172A', accent: '#3B82F6' },
+                  { name: 'Emerald & Teal', primary: '#047857', sidebar: '#064E3B', accent: '#10B981' },
+                  { name: 'Midnight Slate', primary: '#1E293B', sidebar: '#090D16', accent: '#6366F1' },
+                  { name: 'Burgundy Crimson', primary: '#881337', sidebar: '#1C050C', accent: '#F43F5E' },
+                ].map((preset) => (
+                  <button
+                    key={preset.name}
+                    type="button"
+                    onClick={() =>
+                      setThemeData({
+                        ...themeData,
+                        themePreset: preset.name,
+                        primaryColor: preset.primary,
+                        sidebarColor: preset.sidebar,
+                        accentColor: preset.accent,
+                      })
+                    }
+                    className={`p-4 rounded-2xl border text-left flex flex-col justify-between space-y-3 transition-all cursor-pointer ${
+                      themeData.primaryColor === preset.primary
+                        ? 'bg-purple-50/80 border-purple-500 ring-2 ring-purple-500/30 shadow-md'
+                        : 'bg-white border-slate-200 hover:border-purple-300'
+                    }`}
+                  >
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-4 h-4 rounded-full border border-black/20" style={{ backgroundColor: preset.primary }} />
+                      <span className="w-4 h-4 rounded-full border border-black/20" style={{ backgroundColor: preset.sidebar }} />
+                      <span className="w-4 h-4 rounded-full border border-black/20" style={{ backgroundColor: preset.accent }} />
+                    </div>
+                    <div>
+                      <h4 className="font-extrabold text-xs text-slate-900">{preset.name}</h4>
+                      <span className="text-[10px] text-slate-500 font-mono block">{preset.primary}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* CUSTOM COLOR PICKER INPUTS */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-5">
+              <h3 className="font-extrabold text-sm text-slate-900 border-b pb-3 flex items-center gap-2">
+                <Sliders className="w-4 h-4 text-purple-600" /> Custom Palette Color Controls
+              </h3>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-xs">
+                {/* Primary Brand Color */}
+                <div className="space-y-2 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                  <label className="font-extrabold text-slate-700 block">Primary Brand Color</label>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="color"
+                      value={themeData.primaryColor || '#581C87'}
+                      onChange={(e) => setThemeData({ ...themeData, primaryColor: e.target.value })}
+                      className="w-10 h-10 rounded-lg cursor-pointer border border-slate-300 p-0.5"
+                    />
+                    <input
+                      type="text"
+                      value={themeData.primaryColor || '#581C87'}
+                      onChange={(e) => setThemeData({ ...themeData, primaryColor: e.target.value })}
+                      className="flex-grow px-3 py-2 border rounded-xl font-mono text-xs text-slate-800 bg-white"
+                    />
+                  </div>
+                </div>
+
+                {/* Sidebar Background Color */}
+                <div className="space-y-2 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                  <label className="font-extrabold text-slate-700 block">Sidebar Background Color</label>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="color"
+                      value={themeData.sidebarColor || '#1E1035'}
+                      onChange={(e) => setThemeData({ ...themeData, sidebarColor: e.target.value })}
+                      className="w-10 h-10 rounded-lg cursor-pointer border border-slate-300 p-0.5"
+                    />
+                    <input
+                      type="text"
+                      value={themeData.sidebarColor || '#1E1035'}
+                      onChange={(e) => setThemeData({ ...themeData, sidebarColor: e.target.value })}
+                      className="flex-grow px-3 py-2 border rounded-xl font-mono text-xs text-slate-800 bg-white"
+                    />
+                  </div>
+                </div>
+
+                {/* Accent Highlight Color */}
+                <div className="space-y-2 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                  <label className="font-extrabold text-slate-700 block">Accent Highlight Color</label>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="color"
+                      value={themeData.accentColor || '#7C3AED'}
+                      onChange={(e) => setThemeData({ ...themeData, accentColor: e.target.value })}
+                      className="w-10 h-10 rounded-lg cursor-pointer border border-slate-300 p-0.5"
+                    />
+                    <input
+                      type="text"
+                      value={themeData.accentColor || '#7C3AED'}
+                      onChange={(e) => setThemeData({ ...themeData, accentColor: e.target.value })}
+                      className="flex-grow px-3 py-2 border rounded-xl font-mono text-xs text-slate-800 bg-white"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* SAVE BUTTON BAR */}
+            <div className="p-6 bg-slate-900 text-white rounded-2xl shadow-md flex items-center justify-between">
+              <div className="space-y-0.5">
+                <h4 className="font-black text-sm text-white">Save Visual Theme Settings</h4>
+                <p className="text-xs text-purple-200/80 font-medium">Persist active color palette to theme.json configuration</p>
+              </div>
+
+              <button
+                onClick={handleSaveTheme}
+                disabled={loading}
+                className="px-6 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold shadow-lg transition-all flex items-center gap-2"
+              >
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                <span>Save Theme Settings</span>
               </button>
             </div>
           </div>

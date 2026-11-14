@@ -17,6 +17,7 @@ const ALLOWED_CONTENT_FILES = [
   'study-resources.json',
   'navigation.json',
   'partnerships.json',
+  'theme.json',
 ];
 
 function sanitizeFilename(requestedFile) {
