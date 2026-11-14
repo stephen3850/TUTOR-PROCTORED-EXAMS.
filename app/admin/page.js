@@ -1040,9 +1040,9 @@ export default function CustomAdminCmsPage() {
 
   // 2. LOGGED IN CMS DASHBOARD UI
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col lg:flex-row font-sans text-slate-800">
+    <div className="h-screen w-full overflow-hidden bg-[#F8FAFC] flex flex-col lg:flex-row font-sans text-slate-800">
       {/* MOBILE HEADER BAR */}
-      <div className="lg:hidden bg-[#1E1035] border-b border-purple-900/50 px-4 py-3 flex items-center justify-between text-white sticky top-0 z-40 shadow-lg">
+      <div className="lg:hidden bg-[#1E1035] border-b border-purple-900/50 px-4 py-3 flex items-center justify-between text-white sticky top-0 z-40 shadow-lg shrink-0">
         <div className="flex items-center gap-3">
           <button
             onClick={() => setIsMobileMenuOpen(true)}
@@ -1192,7 +1192,7 @@ export default function CustomAdminCmsPage() {
 
       {/* DESKTOP SIDEBAR */}
       <aside
-        className={`hidden lg:flex flex-col justify-between bg-[#1E1035] text-purple-200 shrink-0 shadow-2xl border-r border-purple-900/50 transition-all duration-300 relative z-30 ${
+        className={`hidden lg:flex flex-col justify-between bg-[#1E1035] text-purple-200 shrink-0 shadow-2xl border-r border-purple-900/50 transition-all duration-300 relative z-30 h-screen sticky top-0 overflow-y-auto ${
           isSidebarCollapsed ? 'w-20 p-3' : 'w-64 p-5'
         }`}
       >
