@@ -3417,691 +3417,1074 @@ export default function CustomAdminCmsPage() {
 
       {/* EDITING / VIEWING MODAL */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 max-w-2xl w-full shadow-2xl space-y-6 my-8">
-            <div className="flex items-center justify-between border-b pb-4">
-              <h2 className="text-lg font-black text-slate-900">
-                {editingItemType === 'blog' && (editFormData.slug ? 'Edit Article' : 'Create New Article')}
-                {editingItemType === 'service' && 'Edit Service Details'}
-                {editingItemType === 'certification' && 'Edit Certification Program'}
-                {editingItemType === 'platform' && 'Edit Exam Platform'}
-                {editingItemType === 'resource' && 'Edit Study Resource'}
-                {editingItemType === 'partnership' && 'Edit Partner Logo'}
-                {editingItemType === 'settings' && 'Edit Site Settings & SEO'}
-                {editingItemType === 'inquiry' && 'Customer Form Inquiry Details'}
-                {editingItemType === 'faq' && 'Edit / Add FAQ Item'}
-                {editingItemType === 'page' && `Edit Page Content & SEO (${editFormData.name || editFormData.pageKey})`}
-                {editingItemType === 'navigation' && 'Edit Navigation Bar & Announcement Header'}
-              </h2>
-              <button onClick={() => setIsModalOpen(false)} className="p-1 rounded-lg text-slate-400 hover:bg-slate-100">
+        <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-200">
+          <div className="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 max-w-2xl lg:max-w-3xl w-full shadow-2xl space-y-6 my-8 max-h-[90vh] flex flex-col justify-between">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b pb-4 shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-purple-50 border border-purple-100 flex items-center justify-center text-purple-600 font-black text-sm shadow-sm">
+                  {editingItemType === 'blog' && <BookOpen className="w-5 h-5" />}
+                  {editingItemType === 'service' && <Briefcase className="w-5 h-5" />}
+                  {editingItemType === 'certification' && <Award className="w-5 h-5" />}
+                  {editingItemType === 'platform' && <Cpu className="w-5 h-5" />}
+                  {editingItemType === 'resource' && <FolderOpen className="w-5 h-5" />}
+                  {editingItemType === 'partnership' && <Sparkles className="w-5 h-5" />}
+                  {editingItemType === 'settings' && <Settings className="w-5 h-5" />}
+                  {editingItemType === 'inquiry' && <Inbox className="w-5 h-5" />}
+                  {editingItemType === 'faq' && <HelpCircle className="w-5 h-5" />}
+                  {editingItemType === 'page' && <FileText className="w-5 h-5" />}
+                  {editingItemType === 'navigation' && <Navigation className="w-5 h-5" />}
+                </div>
+
+                <div>
+                  <h2 className="text-lg font-black text-slate-900 leading-tight">
+                    {editingItemType === 'blog' && (editFormData.slug ? 'Edit Blog Article' : 'Create New Article')}
+                    {editingItemType === 'service' && (editFormData.slug ? 'Edit Service Program' : 'Add New Service')}
+                    {editingItemType === 'certification' && (editFormData.slug ? 'Edit Certification Program' : 'Add Certification')}
+                    {editingItemType === 'platform' && (editFormData.slug ? 'Edit Exam Platform' : 'Add Exam Platform')}
+                    {editingItemType === 'resource' && (editFormData.slug ? 'Edit Study Resource' : 'Add Study Resource')}
+                    {editingItemType === 'partnership' && (editFormData.id ? 'Edit Partner Logo' : 'Add Partner Logo')}
+                    {editingItemType === 'settings' && 'Global Site Settings & SEO'}
+                    {editingItemType === 'inquiry' && 'Customer Form Submission Details'}
+                    {editingItemType === 'faq' && 'Edit / Add FAQ Item'}
+                    {editingItemType === 'page' && `Edit Page Content & SEO (${editFormData.name || editFormData.pageKey})`}
+                    {editingItemType === 'navigation' && 'Edit Navigation Bar & Header Announcement'}
+                  </h2>
+                  <span className="text-[10px] font-bold text-purple-600 uppercase tracking-widest block mt-0.5">
+                    CMS Executive Content Editor
+                  </span>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="p-1.5 rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors"
+                title="Close Editor"
+              >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* CERTIFICATION FORM FIELDS */}
-            {editingItemType === 'certification' && (
-              <div className="space-y-4 text-xs">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="font-bold text-slate-700 block mb-1">Certification Title</label>
-                    <input
-                      type="text"
-                      value={editFormData.title || ''}
-                      onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-xl"
-                    />
-                  </div>
-                  <div>
-                    <label className="font-bold text-slate-700 block mb-1">Category</label>
-                    <input
-                      type="text"
-                      value={editFormData.category || ''}
-                      onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-xl"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Slug ID</label>
-                  <input
-                    type="text"
-                    value={editFormData.slug || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, slug: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl font-mono text-[11px]"
-                  />
-                </div>
-
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Logo / Badge Image URL</label>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={editFormData.logo || ''}
-                      onChange={(e) => setEditFormData({ ...editFormData, logo: e.target.value })}
-                      className="flex-grow px-3 py-2 border rounded-xl font-mono text-[11px]"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => openMediaPickerFor('logo')}
-                      className="px-3 py-2 bg-purple-600 text-white font-bold rounded-xl text-xs hover:bg-purple-700"
-                    >
-                      Choose Media
-                    </button>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Program Description</label>
-                  <textarea
-                    rows={3}
-                    value={editFormData.description || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
-                  />
-                </div>
-
-                <div className="flex items-center gap-4 border-t pt-3">
-                  <label className="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
-                    <input
-                      type="checkbox"
-                      checked={editFormData.published !== false}
-                      onChange={(e) => setEditFormData({ ...editFormData, published: e.target.checked })}
-                      className="w-4 h-4 rounded text-purple-600"
-                    />
-                    <span>Published on Public Website</span>
-                  </label>
-                </div>
-              </div>
-            )}
-
-            {/* EXAM PLATFORM FORM FIELDS */}
-            {editingItemType === 'platform' && (
-              <div className="space-y-4 text-xs">
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Platform Title</label>
-                  <input
-                    type="text"
-                    value={editFormData.title || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
-                  />
-                </div>
-
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Slug ID</label>
-                  <input
-                    type="text"
-                    value={editFormData.slug || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, slug: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl font-mono text-[11px]"
-                  />
-                </div>
-
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Platform Logo Image URL</label>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={editFormData.logo || ''}
-                      onChange={(e) => setEditFormData({ ...editFormData, logo: e.target.value })}
-                      className="flex-grow px-3 py-2 border rounded-xl font-mono text-[11px]"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => openMediaPickerFor('logo')}
-                      className="px-3 py-2 bg-purple-600 text-white font-bold rounded-xl text-xs hover:bg-purple-700"
-                    >
-                      Choose Media
-                    </button>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Overview Description</label>
-                  <textarea
-                    rows={3}
-                    value={editFormData.description || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
-                  />
-                </div>
-
-                <div className="flex items-center gap-4 border-t pt-3">
-                  <label className="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
-                    <input
-                      type="checkbox"
-                      checked={editFormData.published !== false}
-                      onChange={(e) => setEditFormData({ ...editFormData, published: e.target.checked })}
-                      className="w-4 h-4 rounded text-purple-600"
-                    />
-                    <span>Published on Public Website</span>
-                  </label>
-                </div>
-              </div>
-            )}
-
-            {/* STUDY RESOURCE FORM FIELDS */}
-            {editingItemType === 'resource' && (
-              <div className="space-y-4 text-xs">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="font-bold text-slate-700 block mb-1">Resource Title</label>
-                    <input
-                      type="text"
-                      value={editFormData.title || ''}
-                      onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-xl"
-                    />
-                  </div>
-                  <div>
-                    <label className="font-bold text-slate-700 block mb-1">Category</label>
-                    <input
-                      type="text"
-                      value={editFormData.category || ''}
-                      onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-xl"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Cover Image URL</label>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={editFormData.image || ''}
-                      onChange={(e) => setEditFormData({ ...editFormData, image: e.target.value })}
-                      className="flex-grow px-3 py-2 border rounded-xl font-mono text-[11px]"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => openMediaPickerFor('image')}
-                      className="px-3 py-2 bg-purple-600 text-white font-bold rounded-xl text-xs hover:bg-purple-700"
-                    >
-                      Choose Media
-                    </button>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Description</label>
-                  <textarea
-                    rows={3}
-                    value={editFormData.description || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
-                  />
-                </div>
-
-                <div className="flex items-center gap-4 border-t pt-3">
-                  <label className="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
-                    <input
-                      type="checkbox"
-                      checked={editFormData.published !== false}
-                      onChange={(e) => setEditFormData({ ...editFormData, published: e.target.checked })}
-                      className="w-4 h-4 rounded text-purple-600"
-                    />
-                    <span>Published on Public Website</span>
-                  </label>
-                </div>
-              </div>
-            )}
-
-            {/* PARTNERSHIP FORM FIELDS */}
-            {editingItemType === 'partnership' && (
-              <div className="space-y-4 text-xs">
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Partner Name</label>
-                  <input
-                    type="text"
-                    value={editFormData.name || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
-                  />
-                </div>
-
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Partner Logo URL</label>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={editFormData.logo || ''}
-                      onChange={(e) => setEditFormData({ ...editFormData, logo: e.target.value })}
-                      className="flex-grow px-3 py-2 border rounded-xl font-mono text-[11px]"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => openMediaPickerFor('logo')}
-                      className="px-3 py-2 bg-purple-600 text-white font-bold rounded-xl text-xs hover:bg-purple-700"
-                    >
-                      Choose Media
-                    </button>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Target Web Link / URL</label>
-                  <input
-                    type="text"
-                    value={editFormData.url || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, url: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl font-mono text-[11px]"
-                  />
-                </div>
-
-                <div className="flex items-center gap-4 border-t pt-3">
-                  <label className="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
-                    <input
-                      type="checkbox"
-                      checked={editFormData.published !== false}
-                      onChange={(e) => setEditFormData({ ...editFormData, published: e.target.checked })}
-                      className="w-4 h-4 rounded text-purple-600"
-                    />
-                    <span>Published in Homepage Slider</span>
-                  </label>
-                </div>
-              </div>
-            )}
-
-            {/* PAGE CONTENT & SEO EDITOR MODAL */}
-            {editingItemType === 'page' && (
-              <div className="space-y-4 text-xs">
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Page Name / Identifier</label>
-                  <input
-                    type="text"
-                    value={editFormData.name || editFormData.pageKey || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
-                  />
-                </div>
-
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Page Headline / H1 Title</label>
-                  <input
-                    type="text"
-                    value={editFormData.title || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
-                  />
-                </div>
-
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Page Subtitle / Hero Tagline</label>
-                  <textarea
-                    rows={3}
-                    value={editFormData.subtitle || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, subtitle: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl leading-relaxed"
-                  />
-                </div>
-
-                <div className="border-t pt-3 space-y-3">
-                  <span className="font-extrabold text-[#2563EB] block text-xs">SEO Metadata Overrides</span>
-
-                  <div>
-                    <label className="font-bold text-slate-700 block mb-1">SEO Meta Title Tag</label>
-                    <input
-                      type="text"
-                      value={editFormData.metaTitle || ''}
-                      onChange={(e) => setEditFormData({ ...editFormData, metaTitle: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-xl font-medium text-slate-800"
-                    />
+            {/* Modal Body Container */}
+            <div className="space-y-5 overflow-y-auto pr-1 max-h-[calc(90vh-170px)] flex-grow scrollbar-thin scrollbar-thumb-purple-200">
+              {/* CERTIFICATION FORM FIELDS */}
+              {editingItemType === 'certification' && (
+                <div className="space-y-4 text-xs">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                        Certification Title <span className="text-rose-500 font-bold">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. PMP, CompTIA Security+, AAPC CPC"
+                        value={editFormData.title || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                        Category <span className="text-rose-500 font-bold">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Project Management, Information Technology"
+                        value={editFormData.category || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      />
+                    </div>
                   </div>
 
                   <div>
-                    <label className="font-bold text-slate-700 block mb-1">SEO Meta Description</label>
-                    <textarea
-                      rows={2}
-                      value={editFormData.metaDescription || ''}
-                      onChange={(e) => setEditFormData({ ...editFormData, metaDescription: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-xl leading-relaxed text-slate-800"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="font-bold text-slate-700 block mb-1">SEO Keywords</label>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Slug Identifier <span className="text-rose-500 font-bold">*</span>
+                    </label>
                     <input
                       type="text"
-                      value={editFormData.keywords || ''}
-                      onChange={(e) => setEditFormData({ ...editFormData, keywords: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-xl text-slate-600"
+                      placeholder="e.g. pmp, comptia, aapc"
+                      value={editFormData.slug || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, slug: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono text-purple-700 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
                     />
                   </div>
-                </div>
-              </div>
-            )}
 
-            {/* NAVIGATION BAR & ANNOUNCEMENT HEADER MODAL */}
-            {editingItemType === 'navigation' && (
-              <div className="space-y-4 text-xs">
-                <div className="space-y-3 border-b pb-4">
-                  <span className="font-extrabold text-[#2563EB] block text-xs">Top Announcement Bar Text</span>
+                  {/* Logo Image Preview & Media Picker */}
                   <div>
-                    <label className="font-bold text-slate-700 block mb-1">Main Announcement Banner Text</label>
-                    <input
-                      type="text"
-                      value={editFormData.topBanner?.mainAnnouncement || ''}
-                      onChange={(e) =>
-                        setEditFormData({
-                          ...editFormData,
-                          topBanner: { ...editFormData.topBanner, mainAnnouncement: e.target.value },
-                        })
-                      }
-                      className="w-full px-3 py-2 border rounded-xl"
-                    />
-                  </div>
-                </div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Certification Logo / Emblem Badge Image
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="/logos/pmp.svg or image URL"
+                        value={editFormData.logo || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, logo: e.target.value })}
+                        className="flex-grow px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono text-slate-700 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => openMediaPickerFor('logo')}
+                        className="px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-xs shadow-md transition-colors flex items-center gap-1.5 shrink-0"
+                      >
+                        <ImageIcon className="w-4 h-4" /> Choose Media
+                      </button>
+                    </div>
 
-                <div className="space-y-2">
-                  <span className="font-extrabold text-slate-900 block text-xs">Main Navigation Links</span>
-                  <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
-                    {(editFormData.navLinks || []).map((linkItem, idx) => (
-                      <div key={idx} className="flex items-center gap-2 p-2 bg-slate-50 border rounded-xl">
-                        <input
-                          type="text"
-                          value={linkItem.label}
-                          onChange={(e) => {
-                            const updatedLinks = [...editFormData.navLinks];
-                            updatedLinks[idx].label = e.target.value;
-                            setEditFormData({ ...editFormData, navLinks: updatedLinks });
-                          }}
-                          className="flex-grow px-2 py-1 border rounded text-xs font-bold text-slate-800"
+                    {editFormData.logo && (
+                      <div className="flex items-center gap-3 p-2.5 bg-slate-50 rounded-xl border border-slate-200 mt-2">
+                        <img
+                          src={editFormData.logo}
+                          alt="Preview"
+                          className="w-10 h-10 rounded-lg object-contain bg-white border p-1"
                         />
-                        <span className="font-mono text-[10px] text-slate-400">{linkItem.href}</span>
+                        <div className="flex-grow min-w-0">
+                          <span className="font-mono text-[10px] text-slate-600 truncate block">{editFormData.logo}</span>
+                          <span className="text-[9px] font-bold text-emerald-600">Logo Image Selected</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setEditFormData({ ...editFormData, logo: '' })}
+                          className="text-[10px] text-rose-600 font-bold hover:underline"
+                        >
+                          Clear
+                        </button>
                       </div>
-                    ))}
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Program Overview Description
+                    </label>
+                    <textarea
+                      rows={3}
+                      placeholder="Enter detailed description of certification prep..."
+                      value={editFormData.description || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-800 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600 leading-relaxed"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-3 border-t pt-3">
+                    <label className="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
+                      <input
+                        type="checkbox"
+                        checked={editFormData.published !== false}
+                        onChange={(e) => setEditFormData({ ...editFormData, published: e.target.checked })}
+                        className="w-4 h-4 rounded text-purple-600 focus:ring-purple-500"
+                      />
+                      <span>Published on Public Website</span>
+                    </label>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* FAQ EDITOR MODAL */}
-            {editingItemType === 'faq' && (
-              <div className="space-y-4 text-xs">
-                <div className="grid grid-cols-2 gap-4">
+              {/* EXAM PLATFORM FORM FIELDS */}
+              {editingItemType === 'platform' && (
+                <div className="space-y-4 text-xs">
                   <div>
-                    <label className="font-bold text-slate-700 block mb-1">FAQ Category</label>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Software Platform Title <span className="text-rose-500 font-bold">*</span>
+                    </label>
                     <input
                       type="text"
-                      placeholder="e.g. General Questions, Tutoring, Professional Certifications"
-                      value={editFormData.category || ''}
-                      onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-xl font-medium"
+                      placeholder="e.g. Respondus LockDown Browser, Examplify"
+                      value={editFormData.title || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      required
                     />
                   </div>
 
                   <div>
-                    <label className="font-bold text-slate-700 block mb-1">Target Page Location</label>
-                    <select
-                      value={editFormData.pageLocation || '/faq'}
-                      onChange={(e) => setEditFormData({ ...editFormData, pageLocation: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-xl font-mono text-[11px] bg-white text-slate-800"
-                    >
-                      <option value="/">Homepage (/)</option>
-                      <option value="/about">About Us (/about)</option>
-                      <option value="/services">Services Directory (/services)</option>
-                      <option value="/services/one-on-one-tutoring">1-on-1 Tutoring Service (/services/one-on-one-tutoring)</option>
-                      <option value="/services/academic-exam-preparation">Academic Exam Prep (/services/academic-exam-preparation)</option>
-                      <option value="/services/practice-questions-mock-tests">Practice Questions (/services/practice-questions-mock-tests)</option>
-                      <option value="/services/software-technical-guidance">Software Technical Guidance (/services/software-technical-guidance)</option>
-                      <option value="/exam-platforms">Exam Platforms (/exam-platforms)</option>
-                      <option value="/exam-platforms/respondus-lockdown-browser">Respondus LockDown Browser (/exam-platforms/respondus-lockdown-browser)</option>
-                      <option value="/certifications">Certifications (/certifications)</option>
-                      <option value="/certifications/pmp">PMP Certification (/certifications/pmp)</option>
-                      <option value="/certifications/comptia">CompTIA Certifications (/certifications/comptia)</option>
-                      <option value="/study-resources">Study Resources (/study-resources)</option>
-                      <option value="/faq">Master FAQ Page (/faq)</option>
-                      <option value="/contact">Contact Page (/contact)</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Question Text</label>
-                  <input
-                    type="text"
-                    placeholder="Enter the question..."
-                    value={editFormData.question || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, question: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl font-bold text-slate-900"
-                  />
-                </div>
-
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Answer / Response Text</label>
-                  <textarea
-                    rows={4}
-                    placeholder="Enter the complete answer text..."
-                    value={editFormData.answer || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, answer: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl leading-relaxed text-slate-800"
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* INQUIRY VIEWER MODAL */}
-            {editingItemType === 'inquiry' && (
-              <div className="space-y-5 text-xs">
-                <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
-                  <div>
-                    <span className="text-slate-400 font-bold uppercase block">Customer Name</span>
-                    <span className="font-bold text-slate-900 text-sm">{editFormData.fullName}</span>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 font-bold uppercase block">Submission Date</span>
-                    <span className="font-mono text-slate-700">{editFormData.date}</span>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 font-bold uppercase block">Email Address</span>
-                    <a href={`mailto:${editFormData.email}`} className="font-bold text-purple-700 hover:underline">{editFormData.email}</a>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 font-bold uppercase block">Phone / WhatsApp</span>
-                    <span className="font-semibold text-slate-800">{editFormData.phone || 'N/A'}</span>
-                  </div>
-                </div>
-
-                <div>
-                  <span className="text-slate-400 font-bold uppercase block mb-1">Service Requested</span>
-                  <span className="inline-block bg-purple-100 text-purple-900 font-extrabold px-3 py-1 rounded-lg text-xs">
-                    {editFormData.service}
-                  </span>
-                </div>
-
-                <div className="space-y-1">
-                  <span className="text-slate-400 font-bold uppercase block">Message & Learning Goals</span>
-                  <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 text-slate-800 leading-relaxed whitespace-pre-wrap font-sans text-xs">
-                    {editFormData.message}
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between pt-4 border-t">
-                  <button
-                    type="button"
-                    onClick={() => handleToggleInquiryStatus(editFormData.id)}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
-                      editFormData.status === 'New'
-                        ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
-                        : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
-                    }`}
-                  >
-                    {editFormData.status === 'New' ? 'Mark as Responded' : 'Mark as New'}
-                  </button>
-
-                  <a
-                    href={`mailto:${editFormData.email}?subject=RE: ${encodeURIComponent(editFormData.service)} Inquiry`}
-                    className="px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-md inline-flex items-center gap-2"
-                  >
-                    <Mail className="w-4 h-4" />
-                    <span>Reply via Email</span>
-                  </a>
-                </div>
-              </div>
-            )}
-
-            {/* BLOG FORM FIELDS */}
-            {editingItemType === 'blog' && (
-              <div className="space-y-4 text-xs">
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Article Title</label>
-                  <input
-                    type="text"
-                    value={editFormData.title || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="font-bold text-slate-700 block mb-1">Category</label>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Slug Identifier <span className="text-rose-500 font-bold">*</span>
+                    </label>
                     <input
                       type="text"
-                      value={editFormData.category || ''}
-                      onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-xl"
+                      placeholder="e.g. respondus-lockdown-browser, examplify"
+                      value={editFormData.slug || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, slug: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono text-purple-700 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
                     />
                   </div>
+
+                  {/* Logo Image Preview & Media Picker */}
                   <div>
-                    <label className="font-bold text-slate-700 block mb-1">Publish Date</label>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Platform Logo Image URL
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="/logos/respondus.svg or image URL"
+                        value={editFormData.logo || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, logo: e.target.value })}
+                        className="flex-grow px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono text-slate-700 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => openMediaPickerFor('logo')}
+                        className="px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-xs shadow-md transition-colors flex items-center gap-1.5 shrink-0"
+                      >
+                        <ImageIcon className="w-4 h-4" /> Choose Media
+                      </button>
+                    </div>
+
+                    {editFormData.logo && (
+                      <div className="flex items-center gap-3 p-2.5 bg-slate-50 rounded-xl border border-slate-200 mt-2">
+                        <img
+                          src={editFormData.logo}
+                          alt="Preview"
+                          className="w-10 h-10 rounded-lg object-contain bg-white border p-1"
+                        />
+                        <div className="flex-grow min-w-0">
+                          <span className="font-mono text-[10px] text-slate-600 truncate block">{editFormData.logo}</span>
+                          <span className="text-[9px] font-bold text-emerald-600">Logo Image Selected</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setEditFormData({ ...editFormData, logo: '' })}
+                          className="text-[10px] text-rose-600 font-bold hover:underline"
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Technical Overview & Description
+                    </label>
+                    <textarea
+                      rows={3}
+                      placeholder="Enter software technical overview and setup guidance..."
+                      value={editFormData.description || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-800 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600 leading-relaxed"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-3 border-t pt-3">
+                    <label className="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
+                      <input
+                        type="checkbox"
+                        checked={editFormData.published !== false}
+                        onChange={(e) => setEditFormData({ ...editFormData, published: e.target.checked })}
+                        className="w-4 h-4 rounded text-purple-600 focus:ring-purple-500"
+                      />
+                      <span>Published on Public Website</span>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {/* STUDY RESOURCE FORM FIELDS */}
+              {editingItemType === 'resource' && (
+                <div className="space-y-4 text-xs">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                        Resource Title <span className="text-rose-500 font-bold">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. PMP Certification Prep Study Materials"
+                        value={editFormData.title || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                        Category <span className="text-rose-500 font-bold">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Project Management, Information Technology"
+                        value={editFormData.category || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Slug Identifier <span className="text-rose-500 font-bold">*</span>
+                    </label>
                     <input
-                      type="date"
-                      value={editFormData.publishDate || ''}
-                      onChange={(e) => setEditFormData({ ...editFormData, publishDate: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-xl"
+                      type="text"
+                      placeholder="e.g. pmp, comptia, aapc"
+                      value={editFormData.slug || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, slug: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono text-purple-700 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    />
+                  </div>
+
+                  {/* Cover Image Preview & Media Picker */}
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Cover Image URL
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="https://images.unsplash.com/... or image URL"
+                        value={editFormData.image || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, image: e.target.value })}
+                        className="flex-grow px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono text-slate-700 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => openMediaPickerFor('image')}
+                        className="px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-xs shadow-md transition-colors flex items-center gap-1.5 shrink-0"
+                      >
+                        <ImageIcon className="w-4 h-4" /> Choose Media
+                      </button>
+                    </div>
+
+                    {editFormData.image && (
+                      <div className="flex items-center gap-3 p-2.5 bg-slate-50 rounded-xl border border-slate-200 mt-2">
+                        <img
+                          src={editFormData.image}
+                          alt="Preview"
+                          className="w-12 h-12 rounded-lg object-cover bg-white border p-0.5"
+                        />
+                        <div className="flex-grow min-w-0">
+                          <span className="font-mono text-[10px] text-slate-600 truncate block">{editFormData.image}</span>
+                          <span className="text-[9px] font-bold text-emerald-600">Cover Image Loaded</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setEditFormData({ ...editFormData, image: '' })}
+                          className="text-[10px] text-rose-600 font-bold hover:underline"
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Description & Revision Material Overview
+                    </label>
+                    <textarea
+                      rows={3}
+                      placeholder="Enter revision materials breakdown..."
+                      value={editFormData.description || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-800 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600 leading-relaxed"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-3 border-t pt-3">
+                    <label className="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
+                      <input
+                        type="checkbox"
+                        checked={editFormData.published !== false}
+                        onChange={(e) => setEditFormData({ ...editFormData, published: e.target.checked })}
+                        className="w-4 h-4 rounded text-purple-600 focus:ring-purple-500"
+                      />
+                      <span>Published on Public Website</span>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {/* PARTNERSHIP FORM FIELDS */}
+              {editingItemType === 'partnership' && (
+                <div className="space-y-4 text-xs">
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Partner Institution Name <span className="text-rose-500 font-bold">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. PMI, CompTIA, AAPC"
+                      value={editFormData.name || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      required
+                    />
+                  </div>
+
+                  {/* Logo Image Preview & Media Picker */}
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Partner Logo URL <span className="text-rose-500 font-bold">*</span>
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="/logos/pmp.svg or image URL"
+                        value={editFormData.logo || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, logo: e.target.value })}
+                        className="flex-grow px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono text-slate-700 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => openMediaPickerFor('logo')}
+                        className="px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-xs shadow-md transition-colors flex items-center gap-1.5 shrink-0"
+                      >
+                        <ImageIcon className="w-4 h-4" /> Choose Media
+                      </button>
+                    </div>
+
+                    {editFormData.logo && (
+                      <div className="flex items-center gap-3 p-2.5 bg-slate-50 rounded-xl border border-slate-200 mt-2">
+                        <img
+                          src={editFormData.logo}
+                          alt="Preview"
+                          className="w-12 h-10 rounded-lg object-contain bg-white border p-1"
+                        />
+                        <div className="flex-grow min-w-0">
+                          <span className="font-mono text-[10px] text-slate-600 truncate block">{editFormData.logo}</span>
+                          <span className="text-[9px] font-bold text-emerald-600">Logo Image Selected</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setEditFormData({ ...editFormData, logo: '' })}
+                          className="text-[10px] text-rose-600 font-bold hover:underline"
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Target Web Link / URL
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. https://pmi.org or /certifications"
+                      value={editFormData.url || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, url: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono text-purple-700 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-3 border-t pt-3">
+                    <label className="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
+                      <input
+                        type="checkbox"
+                        checked={editFormData.published !== false}
+                        onChange={(e) => setEditFormData({ ...editFormData, published: e.target.checked })}
+                        className="w-4 h-4 rounded text-purple-600 focus:ring-purple-500"
+                      />
+                      <span>Published in Homepage Slider</span>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {/* PAGE CONTENT & SEO EDITOR MODAL */}
+              {editingItemType === 'page' && (
+                <div className="space-y-4 text-xs">
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Page Display Name / Title
+                    </label>
+                    <input
+                      type="text"
+                      value={editFormData.name || editFormData.pageKey || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Page Hero Headline (H1 Title)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Professional Educational Support & Proctoring Guidance"
+                      value={editFormData.title || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Page Subtitle / Hero Tagline
+                    </label>
+                    <textarea
+                      rows={3}
+                      placeholder="Enter hero section subtitle description..."
+                      value={editFormData.subtitle || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, subtitle: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-800 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600 leading-relaxed"
+                    />
+                  </div>
+
+                  <div className="border-t pt-4 space-y-3 bg-purple-50/40 p-4 rounded-2xl border border-purple-100">
+                    <span className="font-extrabold text-purple-900 block text-xs flex items-center gap-1.5">
+                      <Sparkles className="w-4 h-4 text-purple-600" /> SEO Metadata Overrides
+                    </span>
+
+                    <div>
+                      <label className="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider block mb-1">
+                        SEO Meta Title Tag
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Meta title for Google search results"
+                        value={editFormData.metaTitle || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, metaTitle: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider block mb-1">
+                        SEO Meta Description
+                      </label>
+                      <textarea
+                        rows={2}
+                        placeholder="Meta description for search engine snippets"
+                        value={editFormData.metaDescription || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, metaDescription: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs leading-relaxed text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider block mb-1">
+                        SEO Keywords (comma-separated)
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="proctored exams, tutoring, certification prep"
+                        value={editFormData.keywords || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, keywords: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* NAVIGATION BAR & ANNOUNCEMENT HEADER MODAL */}
+              {editingItemType === 'navigation' && (
+                <div className="space-y-4 text-xs">
+                  <div className="space-y-3 bg-purple-50/50 p-4 rounded-2xl border border-purple-100">
+                    <span className="font-extrabold text-purple-900 block text-xs flex items-center gap-1.5">
+                      <Sparkles className="w-4 h-4 text-purple-600" /> Top Announcement Bar Banner
+                    </span>
+                    <div>
+                      <label className="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider block mb-1">
+                        Main Announcement Banner Text
+                      </label>
+                      <input
+                        type="text"
+                        value={editFormData.topBanner?.mainAnnouncement || ''}
+                        onChange={(e) =>
+                          setEditFormData({
+                            ...editFormData,
+                            topBanner: { ...editFormData.topBanner, mainAnnouncement: e.target.value },
+                          })
+                        }
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <span className="font-extrabold text-slate-900 block text-xs">Header Navbar Links</span>
+                    <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                      {(editFormData.navLinks || []).map((linkItem, idx) => (
+                        <div key={idx} className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                          <input
+                            type="text"
+                            value={linkItem.label}
+                            onChange={(e) => {
+                              const updatedLinks = [...editFormData.navLinks];
+                              updatedLinks[idx].label = e.target.value;
+                              setEditFormData({ ...editFormData, navLinks: updatedLinks });
+                            }}
+                            className="flex-grow px-3 py-1.5 border border-slate-200 rounded-lg text-xs font-bold text-slate-900 bg-white"
+                          />
+                          <span className="font-mono text-[11px] text-purple-700 font-bold bg-purple-50 px-2.5 py-1 rounded-md border border-purple-200">
+                            {linkItem.href}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* FAQ EDITOR MODAL */}
+              {editingItemType === 'faq' && (
+                <div className="space-y-4 text-xs">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                        FAQ Category <span className="text-rose-500 font-bold">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. General Questions, Tutoring, Professional Certifications"
+                        value={editFormData.category || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                        Target Website Page Location
+                      </label>
+                      <select
+                        value={editFormData.pageLocation || '/faq'}
+                        onChange={(e) => setEditFormData({ ...editFormData, pageLocation: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono font-bold bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      >
+                        <option value="/">Homepage (/)</option>
+                        <option value="/about">About Us (/about)</option>
+                        <option value="/services">Services Directory (/services)</option>
+                        <option value="/services/one-on-one-tutoring">1-on-1 Tutoring Service (/services/one-on-one-tutoring)</option>
+                        <option value="/services/academic-exam-preparation">Academic Exam Prep (/services/academic-exam-preparation)</option>
+                        <option value="/services/practice-questions-mock-tests">Practice Questions (/services/practice-questions-mock-tests)</option>
+                        <option value="/services/software-technical-guidance">Software Technical Guidance (/services/software-technical-guidance)</option>
+                        <option value="/exam-platforms">Exam Platforms (/exam-platforms)</option>
+                        <option value="/exam-platforms/respondus-lockdown-browser">Respondus LockDown Browser (/exam-platforms/respondus-lockdown-browser)</option>
+                        <option value="/certifications">Certifications (/certifications)</option>
+                        <option value="/certifications/pmp">PMP Certification (/certifications/pmp)</option>
+                        <option value="/certifications/comptia">CompTIA Certifications (/certifications/comptia)</option>
+                        <option value="/study-resources">Study Resources (/study-resources)</option>
+                        <option value="/faq">Master FAQ Page (/faq)</option>
+                        <option value="/contact">Contact Page (/contact)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Question Text <span className="text-rose-500 font-bold">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Enter the complete question text..."
+                      value={editFormData.question || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, question: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Answer / Response Text <span className="text-rose-500 font-bold">*</span>
+                    </label>
+                    <textarea
+                      rows={4}
+                      placeholder="Enter the complete detailed answer text..."
+                      value={editFormData.answer || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, answer: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium leading-relaxed text-slate-800 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      required
                     />
                   </div>
                 </div>
+              )}
 
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Cover Image URL</label>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={editFormData.heroImage || editFormData.image || ''}
-                      onChange={(e) => setEditFormData({ ...editFormData, heroImage: e.target.value })}
-                      className="flex-grow px-3 py-2 border rounded-xl font-mono text-[11px]"
-                    />
+              {/* INQUIRY VIEWER MODAL */}
+              {editingItemType === 'inquiry' && (
+                <div className="space-y-5 text-xs">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200/80">
+                    <div>
+                      <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block mb-0.5">
+                        Client Full Name
+                      </span>
+                      <span className="font-extrabold text-slate-900 text-sm flex items-center gap-1.5">
+                        {editFormData.status === 'New' && <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />}
+                        <span>{editFormData.fullName}</span>
+                      </span>
+                    </div>
+
+                    <div>
+                      <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block mb-0.5">
+                        Submission Timestamp
+                      </span>
+                      <span className="font-mono text-slate-700 font-medium">{editFormData.date}</span>
+                    </div>
+
+                    <div>
+                      <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block mb-0.5">
+                        Email Address
+                      </span>
+                      <a href={`mailto:${editFormData.email}`} className="font-bold text-purple-700 hover:underline">
+                        {editFormData.email}
+                      </a>
+                    </div>
+
+                    <div>
+                      <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block mb-0.5">
+                        Phone / WhatsApp
+                      </span>
+                      <span className="font-mono text-slate-800 font-medium">{editFormData.phone || 'N/A'}</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block mb-1.5">
+                      Service Program Requested
+                    </span>
+                    <span className="inline-block bg-purple-100 text-purple-900 font-extrabold px-3 py-1 rounded-xl text-xs border border-purple-200">
+                      {editFormData.service}
+                    </span>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">
+                      Message & Learning Goals
+                    </span>
+                    <div className="p-4 bg-slate-50/80 rounded-2xl border border-slate-200 text-slate-800 leading-relaxed whitespace-pre-wrap font-sans text-xs">
+                      {editFormData.message}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t">
                     <button
                       type="button"
-                      onClick={() => openMediaPickerFor('heroImage')}
-                      className="px-3 py-2 bg-purple-600 text-white font-bold rounded-xl text-xs hover:bg-purple-700"
+                      onClick={() => handleToggleInquiryStatus(editFormData.id)}
+                      className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                        editFormData.status === 'New'
+                          ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm'
+                          : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
+                      }`}
                     >
-                      Choose Media
+                      {editFormData.status === 'New' ? 'Mark as Responded' : 'Mark as New'}
                     </button>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteInquiry(editFormData.id)}
+                        className="px-4 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold border border-rose-200 transition-colors"
+                      >
+                        Delete Inquiry
+                      </button>
+
+                      <a
+                        href={`mailto:${editFormData.email}?subject=RE: ${encodeURIComponent(editFormData.service)} Inquiry`}
+                        className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-md inline-flex items-center gap-2 transition-colors"
+                      >
+                        <Mail className="w-4 h-4" />
+                        <span>Reply via Email</span>
+                      </a>
+                    </div>
                   </div>
                 </div>
+              )}
 
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Article Excerpt</label>
-                  <textarea
-                    rows={3}
-                    value={editFormData.excerpt || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, excerpt: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* SERVICE FORM FIELDS */}
-            {editingItemType === 'service' && (
-              <div className="space-y-4 text-xs">
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Service Title</label>
-                  <input
-                    type="text"
-                    value={editFormData.title || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
-                  />
-                </div>
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Hero Image URL</label>
-                  <div className="flex gap-2">
+              {/* BLOG FORM FIELDS */}
+              {editingItemType === 'blog' && (
+                <div className="space-y-4 text-xs">
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Article Title <span className="text-rose-500 font-bold">*</span>
+                    </label>
                     <input
                       type="text"
-                      value={editFormData.heroImage || ''}
-                      onChange={(e) => setEditFormData({ ...editFormData, heroImage: e.target.value })}
-                      className="flex-grow px-3 py-2 border rounded-xl font-mono text-[11px]"
+                      placeholder="e.g. How to Prepare for a Proctored Online Examination"
+                      value={editFormData.title || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      required
                     />
-                    <button
-                      type="button"
-                      onClick={() => openMediaPickerFor('heroImage')}
-                      className="px-3 py-2 bg-purple-600 text-white font-bold rounded-xl text-xs hover:bg-purple-700"
-                    >
-                      Choose Media
-                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                        Category <span className="text-rose-500 font-bold">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Examination Preparation, Professional Certifications"
+                        value={editFormData.category || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                        Publication Date
+                      </label>
+                      <input
+                        type="date"
+                        value={editFormData.publishDate || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, publishDate: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Cover Image Preview & Media Picker */}
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Cover Image URL
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="https://images.unsplash.com/... or image URL"
+                        value={editFormData.heroImage || editFormData.image || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, heroImage: e.target.value, image: e.target.value })}
+                        className="flex-grow px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono text-slate-700 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => openMediaPickerFor('heroImage')}
+                        className="px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-xs shadow-md transition-colors flex items-center gap-1.5 shrink-0"
+                      >
+                        <ImageIcon className="w-4 h-4" /> Choose Media
+                      </button>
+                    </div>
+
+                    {(editFormData.heroImage || editFormData.image) && (
+                      <div className="flex items-center gap-3 p-2.5 bg-slate-50 rounded-xl border border-slate-200 mt-2">
+                        <img
+                          src={editFormData.heroImage || editFormData.image}
+                          alt="Preview"
+                          className="w-12 h-12 rounded-lg object-cover bg-white border p-0.5"
+                        />
+                        <div className="flex-grow min-w-0">
+                          <span className="font-mono text-[10px] text-slate-600 truncate block">
+                            {editFormData.heroImage || editFormData.image}
+                          </span>
+                          <span className="text-[9px] font-bold text-emerald-600">Cover Image Loaded</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setEditFormData({ ...editFormData, heroImage: '', image: '' })}
+                          className="text-[10px] text-rose-600 font-bold hover:underline"
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Article Excerpt / Summary
+                    </label>
+                    <textarea
+                      rows={3}
+                      placeholder="Enter short summary excerpt for article cards..."
+                      value={editFormData.excerpt || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, excerpt: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-800 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600 leading-relaxed"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-3 border-t pt-3">
+                    <label className="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
+                      <input
+                        type="checkbox"
+                        checked={editFormData.published !== false}
+                        onChange={(e) => setEditFormData({ ...editFormData, published: e.target.checked })}
+                        className="w-4 h-4 rounded text-purple-600 focus:ring-purple-500"
+                      />
+                      <span>Published on Public Website</span>
+                    </label>
                   </div>
                 </div>
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Tagline</label>
-                  <input
-                    type="text"
-                    value={editFormData.tagline || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, tagline: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
-                  />
-                </div>
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Overview Description</label>
-                  <textarea
-                    rows={4}
-                    value={editFormData.overview || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, overview: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
-                  />
-                </div>
-              </div>
-            )}
+              )}
 
-            {/* SETTINGS FORM FIELDS */}
-            {editingItemType === 'settings' && (
-              <div className="space-y-4 text-xs">
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Website Name</label>
-                  <input
-                    type="text"
-                    value={editFormData.siteName || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, siteName: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
-                  />
-                </div>
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Default SEO Meta Title</label>
-                  <input
-                    type="text"
-                    value={editFormData.defaultMetaTitle || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, defaultMetaTitle: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
-                  />
-                </div>
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Default Meta Description</label>
-                  <textarea
-                    rows={3}
-                    value={editFormData.defaultMetaDescription || ''}
-                    onChange={(e) => setEditFormData({ ...editFormData, defaultMetaDescription: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
-                  />
-                </div>
-              </div>
-            )}
+              {/* SERVICE FORM FIELDS */}
+              {editingItemType === 'service' && (
+                <div className="space-y-4 text-xs">
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Service Program Title <span className="text-rose-500 font-bold">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. 1-on-1 Online Tutoring, Academic Exam Preparation"
+                      value={editFormData.title || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      required
+                    />
+                  </div>
 
-            {/* MODAL ACTION BUTTONS */}
-            <div className="flex items-center justify-end gap-3 pt-4 border-t">
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Category <span className="text-rose-500 font-bold">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Academic Support, Examination Support"
+                      value={editFormData.category || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    />
+                  </div>
+
+                  {/* Hero Image Preview & Media Picker */}
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Hero Image URL
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="https://images.unsplash.com/... or image URL"
+                        value={editFormData.heroImage || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, heroImage: e.target.value })}
+                        className="flex-grow px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono text-slate-700 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => openMediaPickerFor('heroImage')}
+                        className="px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-xs shadow-md transition-colors flex items-center gap-1.5 shrink-0"
+                      >
+                        <ImageIcon className="w-4 h-4" /> Choose Media
+                      </button>
+                    </div>
+
+                    {editFormData.heroImage && (
+                      <div className="flex items-center gap-3 p-2.5 bg-slate-50 rounded-xl border border-slate-200 mt-2">
+                        <img
+                          src={editFormData.heroImage}
+                          alt="Preview"
+                          className="w-12 h-12 rounded-lg object-cover bg-white border p-0.5"
+                        />
+                        <div className="flex-grow min-w-0">
+                          <span className="font-mono text-[10px] text-slate-600 truncate block">{editFormData.heroImage}</span>
+                          <span className="text-[9px] font-bold text-emerald-600">Hero Image Loaded</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setEditFormData({ ...editFormData, heroImage: '' })}
+                          className="text-[10px] text-rose-600 font-bold hover:underline"
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Service Tagline / Short Summary
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Enter short tagline summary..."
+                      value={editFormData.tagline || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, tagline: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Overview Description
+                    </label>
+                    <textarea
+                      rows={4}
+                      placeholder="Enter comprehensive overview description..."
+                      value={editFormData.overview || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, overview: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-800 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600 leading-relaxed"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-3 border-t pt-3">
+                    <label className="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
+                      <input
+                        type="checkbox"
+                        checked={editFormData.published !== false}
+                        onChange={(e) => setEditFormData({ ...editFormData, published: e.target.checked })}
+                        className="w-4 h-4 rounded text-purple-600 focus:ring-purple-500"
+                      />
+                      <span>Published on Public Website</span>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {/* SETTINGS FORM FIELDS */}
+              {editingItemType === 'settings' && (
+                <div className="space-y-4 text-xs">
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Website Brand Name <span className="text-rose-500 font-bold">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={editFormData.siteName || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, siteName: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Primary Website Domain URL
+                    </label>
+                    <input
+                      type="text"
+                      value={editFormData.siteUrl || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, siteUrl: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono text-purple-700 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Default Global SEO Meta Title
+                    </label>
+                    <input
+                      type="text"
+                      value={editFormData.defaultMetaTitle || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, defaultMetaTitle: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-900 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-1.5">
+                      Default Global Meta Description
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={editFormData.defaultMetaDescription || ''}
+                      onChange={(e) => setEditFormData({ ...editFormData, defaultMetaDescription: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-800 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600 leading-relaxed"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Action Buttons Footer */}
+            <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 shrink-0">
               <button
+                type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="px-4 py-2 rounded-xl border text-xs font-bold text-slate-600 hover:bg-slate-50"
+                className="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors"
               >
-                Close
+                Cancel
               </button>
 
               {editingItemType !== 'inquiry' && (
                 <button
+                  type="button"
                   onClick={() => {
                     if (editingItemType === 'blog') handleSaveBlog();
                     if (editingItemType === 'service') handleSaveService();
@@ -4115,10 +4498,19 @@ export default function CustomAdminCmsPage() {
                     if (editingItemType === 'navigation') handleSaveNavigation();
                   }}
                   disabled={loading}
-                  className="px-6 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md flex items-center gap-2"
+                  className="px-6 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md flex items-center gap-2 transition-colors disabled:opacity-50"
                 >
-                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                  <span>Save Changes</span>
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Saving Changes...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-4 h-4" />
+                      <span>Save Changes</span>
+                    </>
+                  )}
                 </button>
               )}
             </div>
