@@ -1372,6 +1372,31 @@ export default function CustomAdminCmsPage() {
 
       {/* MAIN CONTENT AREA */}
       <main className="flex-grow p-4 sm:p-6 lg:p-8 space-y-6 overflow-y-auto">
+        {/* TOP RIGHT USER & NOTIFICATION HEADER BAR */}
+        <div className="flex items-center justify-end gap-3 pb-1 border-b border-slate-200/50">
+          <button
+            onClick={() => setActiveTab('inquiries')}
+            className="p-2 rounded-xl text-slate-500 hover:bg-slate-100 hover:text-purple-700 relative transition-colors"
+            title="Notifications & Inquiries"
+          >
+            <Bell className="w-5 h-5" />
+            {newInquiriesCount > 0 && (
+              <span className="absolute top-1 right-1 w-4 h-4 bg-rose-500 text-white font-black text-[9px] rounded-full flex items-center justify-center shadow-xs">
+                {newInquiriesCount}
+              </span>
+            )}
+          </button>
+          <span className="w-px h-5 bg-slate-200" />
+          <div className="flex items-center gap-2 cursor-pointer group">
+            <div className="w-8 h-8 rounded-full bg-[#581C87] text-white font-extrabold text-xs flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+              AD
+            </div>
+            <span className="text-xs font-bold text-slate-700 hidden sm:inline group-hover:text-purple-700 transition-colors">
+              Admin User
+            </span>
+          </div>
+        </div>
+
         {saveStatus && (
           <div className="p-4 bg-emerald-50 border border-emerald-300 text-emerald-900 rounded-xl text-xs font-bold flex items-center justify-between shadow-sm animate-in fade-in">
             <span className="flex items-center gap-2">
@@ -1386,27 +1411,28 @@ export default function CustomAdminCmsPage() {
         {activeTab === 'dashboard' && (
           <div className="space-y-8 animate-in fade-in duration-300">
             {/* WELCOME HEADER BANNER */}
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#1E1035] via-[#2D1654] to-[#581C87] text-white p-6 sm:p-8 shadow-xl border border-purple-900/50">
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#1B0D38] via-[#2D1258] to-[#581C87] text-white p-6 sm:p-8 shadow-xl border border-purple-900/50">
               <div className="absolute -right-10 -bottom-10 w-64 h-64 rounded-full bg-purple-500/10 blur-3xl pointer-events-none" />
               <div className="absolute right-40 -top-10 w-48 h-48 rounded-full bg-indigo-500/10 blur-2xl pointer-events-none" />
 
               <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <span className="px-3 py-1 rounded-full bg-purple-500/20 border border-purple-400/30 text-[11px] font-bold text-purple-200 uppercase tracking-widest flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-purple-300" /> Executive Control Center
-                    </span>
-                    <span className="text-xs text-purple-300/80 font-medium hidden sm:inline">
-                      • System Status: <span className="text-emerald-400 font-bold">Operational</span>
+                  <div className="flex items-center gap-2.5">
+                    <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+                      Welcome back, Admin!
+                    </h1>
+                    <span className="px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-xs font-bold text-emerald-300 flex items-center gap-1.5 shrink-0">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                      <span>Operational</span>
                     </span>
                   </div>
 
-                  <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
-                    Welcome Back, CMS Administrator 👋
-                  </h1>
+                  <p className="text-xs sm:text-sm text-purple-200/90 font-medium">
+                    Manage your Tutor Proctored Exams website with confidence.
+                  </p>
 
-                  <p className="text-xs sm:text-sm text-purple-200/90 font-medium flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-purple-300 shrink-0" />
+                  <p className="text-xs text-purple-300/80 font-medium flex items-center gap-2 pt-1">
+                    <Calendar className="w-3.5 h-3.5 text-purple-300 shrink-0" />
                     <span>
                       {new Date().toLocaleDateString('en-US', {
                         weekday: 'long',
@@ -1422,7 +1448,7 @@ export default function CustomAdminCmsPage() {
                 <div className="flex flex-wrap items-center gap-3 shrink-0">
                   <button
                     onClick={() => openBlogEditor()}
-                    className="px-4 py-2.5 rounded-xl bg-purple-500 hover:bg-purple-400 text-white text-xs font-bold shadow-lg shadow-purple-900/50 flex items-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                    className="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold shadow-lg shadow-purple-950/60 flex items-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98]"
                   >
                     <Plus className="w-4 h-4" />
                     <span>Add Article</span>
@@ -1430,15 +1456,20 @@ export default function CustomAdminCmsPage() {
 
                   <button
                     onClick={() => setActiveTab('inquiries')}
-                    className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-bold flex items-center gap-2 transition-all"
+                    className="px-4 py-2.5 rounded-xl bg-purple-900/60 hover:bg-purple-800 border border-purple-700/50 text-white text-xs font-bold flex items-center gap-2 transition-all"
                   >
                     <Inbox className="w-4 h-4 text-purple-300" />
-                    <span>Inquiries ({newInquiriesCount} New)</span>
+                    <span>Inquiries</span>
+                    {newInquiriesCount > 0 && (
+                      <span className="bg-rose-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-xs">
+                        {newInquiriesCount}
+                      </span>
+                    )}
                   </button>
 
                   <button
                     onClick={() => openMediaPickerFor('')}
-                    className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-bold flex items-center gap-2 transition-all"
+                    className="px-4 py-2.5 rounded-xl bg-purple-900/60 hover:bg-purple-800 border border-purple-700/50 text-white text-xs font-bold flex items-center gap-2 transition-all"
                   >
                     <ImageIcon className="w-4 h-4 text-purple-300" />
                     <span>Media Library</span>
@@ -1447,442 +1478,395 @@ export default function CustomAdminCmsPage() {
               </div>
             </div>
 
-            {/* REAL-DATA STATISTICS GRID */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <h2 className="text-sm font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
-                  <BarChart3 className="w-4 h-4 text-purple-600" /> Live Content Metrics & System Data
-                </h2>
-                <span className="text-[11px] text-slate-400 font-medium">Real-time CMS JSON Stats</span>
+            {/* REAL-DATA STATISTICS GRID (8 Cards, 2x4 Layout) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
+              {/* 1. Total Inquiries */}
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 transition-all space-y-3 group flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Inquiries</span>
+                  <div className="w-10 h-10 rounded-xl bg-[#E0F2FE] text-[#0284C7] flex items-center justify-center font-bold">
+                    <Inbox className="w-5 h-5" />
+                  </div>
+                </div>
+                <div>
+                  <div className="text-3xl font-black text-slate-900">{inquiriesList.length}</div>
+                </div>
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-end text-xs font-bold">
+                  <button onClick={() => setActiveTab('inquiries')} className="text-[#6D28D9] hover:underline inline-flex items-center gap-1">
+                    <span>View All</span> <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
-                {/* 1. Total Inquiries */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 transition-all space-y-3 group">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Inquiries</span>
-                    <div className="w-10 h-10 rounded-xl bg-purple-50 border border-purple-100 flex items-center justify-center text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors">
-                      <Inbox className="w-5 h-5" />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-3xl font-black text-slate-900">{inquiriesList.length}</div>
-                    <p className="text-[11px] text-slate-500 mt-1 font-medium">Customer contact submissions</p>
-                  </div>
-                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
-                    <span className="text-amber-700 font-bold bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
-                      {newInquiriesCount} Unread / New
-                    </span>
-                    <button onClick={() => setActiveTab('inquiries')} className="text-purple-600 font-bold hover:underline flex items-center gap-0.5">
-                      View <ArrowRight className="w-3 h-3" />
-                    </button>
+              {/* 2. New Inquiries */}
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 transition-all space-y-3 group flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">New Inquiries</span>
+                  <div className="w-10 h-10 rounded-xl bg-[#FEF3C7] text-[#D97706] flex items-center justify-center font-bold">
+                    <Mail className="w-5 h-5" />
                   </div>
                 </div>
+                <div>
+                  <div className="text-3xl font-black text-slate-900">{newInquiriesCount}</div>
+                </div>
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-end text-xs font-bold">
+                  <button onClick={() => setActiveTab('inquiries')} className="text-[#6D28D9] hover:underline inline-flex items-center gap-1">
+                    <span>View New</span> <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
 
-                {/* 2. New Inquiries */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 transition-all space-y-3 group">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">New Inquiries</span>
-                    <div className="w-10 h-10 rounded-xl bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600 group-hover:bg-rose-600 group-hover:text-white transition-colors">
-                      <Mail className="w-5 h-5" />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-3xl font-black text-slate-900">{newInquiriesCount}</div>
-                    <p className="text-[11px] text-slate-500 mt-1 font-medium">Awaiting administrator response</p>
-                  </div>
-                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
-                    <span className="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                      {inquiriesList.length - newInquiriesCount} Responded
-                    </span>
-                    <button onClick={() => setActiveTab('inquiries')} className="text-purple-600 font-bold hover:underline flex items-center gap-0.5">
-                      Review <ArrowRight className="w-3 h-3" />
-                    </button>
+              {/* 3. Published Blogs */}
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 transition-all space-y-3 group flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Published Blogs</span>
+                  <div className="w-10 h-10 rounded-xl bg-[#DBEAFE] text-[#2563EB] flex items-center justify-center font-bold">
+                    <FileText className="w-5 h-5" />
                   </div>
                 </div>
-
-                {/* 3. Published Blogs */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 transition-all space-y-3 group">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Published Blogs</span>
-                    <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                      <BookOpen className="w-5 h-5" />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-3xl font-black text-slate-900">
-                      {blogArticles.filter((a) => a.published !== false).length}
-                    </div>
-                    <p className="text-[11px] text-slate-500 mt-1 font-medium">Live articles on site</p>
-                  </div>
-                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
-                    <span className="text-blue-700 font-bold bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
-                      {blogArticles.length} Total Articles
-                    </span>
-                    <button onClick={() => setActiveTab('blogs')} className="text-purple-600 font-bold hover:underline flex items-center gap-0.5">
-                      Manage <ArrowRight className="w-3 h-3" />
-                    </button>
+                <div>
+                  <div className="text-3xl font-black text-slate-900">
+                    {blogArticles.filter((a) => a.published !== false).length}
                   </div>
                 </div>
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-end text-xs font-bold">
+                  <button onClick={() => setActiveTab('blogs')} className="text-[#6D28D9] hover:underline inline-flex items-center gap-1">
+                    <span>Manage</span> <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
 
-                {/* 4. Services */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 transition-all space-y-3 group">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Services</span>
-                    <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                      <Briefcase className="w-5 h-5" />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-3xl font-black text-slate-900">{servicesList.length}</div>
-                    <p className="text-[11px] text-slate-500 mt-1 font-medium">Educational support offerings</p>
-                  </div>
-                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
-                    <span className="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                      {servicesList.filter((s) => s.published !== false).length} Active Services
-                    </span>
-                    <button onClick={() => setActiveTab('services')} className="text-purple-600 font-bold hover:underline flex items-center gap-0.5">
-                      Configure <ArrowRight className="w-3 h-3" />
-                    </button>
+              {/* 4. Services */}
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 transition-all space-y-3 group flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Services</span>
+                  <div className="w-10 h-10 rounded-xl bg-[#F3E8FF] text-[#9333EA] flex items-center justify-center font-bold">
+                    <GraduationCap className="w-5 h-5" />
                   </div>
                 </div>
+                <div>
+                  <div className="text-3xl font-black text-slate-900">{servicesList.length}</div>
+                </div>
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-end text-xs font-bold">
+                  <button onClick={() => setActiveTab('services')} className="text-[#6D28D9] hover:underline inline-flex items-center gap-1">
+                    <span>Manage</span> <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
 
-                {/* 5. Website Pages */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 transition-all space-y-3 group">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Website Pages</span>
-                    <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-                      <FileText className="w-5 h-5" />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-3xl font-black text-slate-900">{ALL_SITE_PAGES.length}</div>
-                    <p className="text-[11px] text-slate-500 mt-1 font-medium">Configured page routes</p>
-                  </div>
-                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
-                    <span className="text-indigo-700 font-bold bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-200">
-                      Navbar Enabled
-                    </span>
-                    <button onClick={() => setActiveTab('pages')} className="text-purple-600 font-bold hover:underline flex items-center gap-0.5">
-                      Edit Pages <ArrowRight className="w-3 h-3" />
-                    </button>
+              {/* 5. Website Pages */}
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 transition-all space-y-3 group flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Website Pages</span>
+                  <div className="w-10 h-10 rounded-xl bg-[#DBEAFE] text-[#2563EB] flex items-center justify-center font-bold">
+                    <Globe className="w-5 h-5" />
                   </div>
                 </div>
+                <div>
+                  <div className="text-3xl font-black text-slate-900">{ALL_SITE_PAGES.length}</div>
+                </div>
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-bold">
+                  <span className="text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full text-[10px] font-extrabold flex items-center gap-1">
+                    SEO OK <Check className="w-3 h-3" />
+                  </span>
+                  <button onClick={() => setActiveTab('pages')} className="text-[#6D28D9] hover:underline inline-flex items-center gap-1">
+                    <span>Manage</span> <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
 
-                {/* 6. Certifications */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 transition-all space-y-3 group">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Certifications</span>
-                    <div className="w-10 h-10 rounded-xl bg-violet-50 border border-violet-100 flex items-center justify-center text-violet-600 group-hover:bg-violet-600 group-hover:text-white transition-colors">
-                      <Award className="w-5 h-5" />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-3xl font-black text-slate-900">{certificationsList.length}</div>
-                    <p className="text-[11px] text-slate-500 mt-1 font-medium">Prep programs catalogued</p>
-                  </div>
-                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
-                    <span className="text-violet-700 font-bold bg-violet-50 px-2 py-0.5 rounded-full border border-violet-200">
-                      {certificationsList.filter((c) => c.published !== false).length} Active Programs
-                    </span>
-                    <button onClick={() => setActiveTab('certifications')} className="text-purple-600 font-bold hover:underline flex items-center gap-0.5">
-                      Manage <ArrowRight className="w-3 h-3" />
-                    </button>
+              {/* 6. Certifications */}
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 transition-all space-y-3 group flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Certifications</span>
+                  <div className="w-10 h-10 rounded-xl bg-[#F3E8FF] text-[#9333EA] flex items-center justify-center font-bold">
+                    <Award className="w-5 h-5" />
                   </div>
                 </div>
+                <div>
+                  <div className="text-3xl font-black text-slate-900">{certificationsList.length}</div>
+                </div>
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-end text-xs font-bold">
+                  <button onClick={() => setActiveTab('certifications')} className="text-[#6D28D9] hover:underline inline-flex items-center gap-1">
+                    <span>Manage</span> <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
 
-                {/* 7. Exam Platforms */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 transition-all space-y-3 group">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Exam Platforms</span>
-                    <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-100 flex items-center justify-center text-teal-600 group-hover:bg-teal-600 group-hover:text-white transition-colors">
-                      <Cpu className="w-5 h-5" />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-3xl font-black text-slate-900">{platformsList.length}</div>
-                    <p className="text-[11px] text-slate-500 mt-1 font-medium">Proctoring software guides</p>
-                  </div>
-                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
-                    <span className="text-teal-700 font-bold bg-teal-50 px-2 py-0.5 rounded-full border border-teal-200">
-                      {platformsList.filter((p) => p.published !== false).length} Supported
-                    </span>
-                    <button onClick={() => setActiveTab('platforms')} className="text-purple-600 font-bold hover:underline flex items-center gap-0.5">
-                      View <ArrowRight className="w-3 h-3" />
-                    </button>
+              {/* 7. Exam Platforms */}
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 transition-all space-y-3 group flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Exam Platforms</span>
+                  <div className="w-10 h-10 rounded-xl bg-[#FCE7F3] text-[#DB2777] flex items-center justify-center font-bold">
+                    <Monitor className="w-5 h-5" />
                   </div>
                 </div>
+                <div>
+                  <div className="text-3xl font-black text-slate-900">{platformsList.length}</div>
+                </div>
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-end text-xs font-bold">
+                  <button onClick={() => setActiveTab('platforms')} className="text-[#6D28D9] hover:underline inline-flex items-center gap-1">
+                    <span>Manage</span> <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
 
-                {/* 8. Study Resources */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 transition-all space-y-3 group">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Study Resources</span>
-                    <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600 group-hover:bg-amber-600 group-hover:text-white transition-colors">
-                      <FolderOpen className="w-5 h-5" />
-                    </div>
+              {/* 8. Study Resources */}
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 transition-all space-y-3 group flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Study Resources</span>
+                  <div className="w-10 h-10 rounded-xl bg-[#F3E8FF] text-[#7C3AED] flex items-center justify-center font-bold">
+                    <BookOpen className="w-5 h-5" />
                   </div>
-                  <div>
-                    <div className="text-3xl font-black text-slate-900">{studyResourcesList.length}</div>
-                    <p className="text-[11px] text-slate-500 mt-1 font-medium">Resource guides & material</p>
-                  </div>
-                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
-                    <span className="text-amber-700 font-bold bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
-                      {studyResourcesList.filter((r) => r.published !== false).length} Catalogued
-                    </span>
-                    <button onClick={() => setActiveTab('resources')} className="text-purple-600 font-bold hover:underline flex items-center gap-0.5">
-                      Explore <ArrowRight className="w-3 h-3" />
-                    </button>
-                  </div>
+                </div>
+                <div>
+                  <div className="text-3xl font-black text-slate-900">{studyResourcesList.length}</div>
+                </div>
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-end text-xs font-bold">
+                  <button onClick={() => setActiveTab('resources')} className="text-[#6D28D9] hover:underline inline-flex items-center gap-1">
+                    <span>Manage</span> <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               </div>
             </div>
 
-            {/* FUNCTIONAL SHORTCUTS SECTION */}
-            <div className="space-y-3">
-              <h2 className="text-sm font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
-                <Zap className="w-4 h-4 text-purple-600" /> Quick Management Actions
-              </h2>
+            {/* SPLIT SECTION 1: QUICK ACTIONS GRID & RECENT INQUIRIES TABLE */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              {/* QUICK ACTIONS GRID (Spans 5 cols on lg) */}
+              <div className="lg:col-span-5 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
+                <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-[#7C3AED]" /> Quick Actions
+                </h3>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <button
-                  onClick={() => openBlogEditor()}
-                  className="bg-white border border-slate-200/80 p-4 rounded-2xl hover:border-purple-400 hover:shadow-md transition-all text-left group flex flex-col justify-between"
-                >
-                  <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors flex items-center justify-center mb-3">
-                    <BookOpen className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h3 className="text-xs font-black text-slate-900 group-hover:text-purple-700 transition-colors">Create Blog</h3>
-                    <p className="text-[11px] text-slate-500 font-medium">Publish new article</p>
-                  </div>
-                </button>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <button
+                    onClick={() => openBlogEditor()}
+                    className="bg-[#F5F3FF] hover:bg-[#EDE9FE] border border-purple-100 rounded-2xl p-3.5 flex flex-col items-center justify-center text-center gap-2 transition-all group cursor-pointer"
+                  >
+                    <div className="w-8 h-8 rounded-xl bg-purple-200/60 text-[#6D28D9] flex items-center justify-center group-hover:bg-[#6D28D9] group-hover:text-white transition-colors">
+                      <Edit3 className="w-4 h-4" />
+                    </div>
+                    <span className="text-[11px] font-extrabold text-slate-900 leading-tight">Create Blog Article</span>
+                  </button>
 
-                <button
-                  onClick={() => openServiceEditor()}
-                  className="bg-white border border-slate-200/80 p-4 rounded-2xl hover:border-purple-400 hover:shadow-md transition-all text-left group flex flex-col justify-between"
-                >
-                  <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors flex items-center justify-center mb-3">
-                    <Briefcase className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h3 className="text-xs font-black text-slate-900 group-hover:text-purple-700 transition-colors">Add Service</h3>
-                    <p className="text-[11px] text-slate-500 font-medium">Create support service</p>
-                  </div>
-                </button>
+                  <button
+                    onClick={() => openServiceEditor()}
+                    className="bg-[#F5F3FF] hover:bg-[#EDE9FE] border border-purple-100 rounded-2xl p-3.5 flex flex-col items-center justify-center text-center gap-2 transition-all group cursor-pointer"
+                  >
+                    <div className="w-8 h-8 rounded-xl bg-purple-200/60 text-[#6D28D9] flex items-center justify-center group-hover:bg-[#6D28D9] group-hover:text-white transition-colors">
+                      <Plus className="w-4 h-4" />
+                    </div>
+                    <span className="text-[11px] font-extrabold text-slate-900 leading-tight">Add Service</span>
+                  </button>
 
-                <button
-                  onClick={() => openCertEditor()}
-                  className="bg-white border border-slate-200/80 p-4 rounded-2xl hover:border-purple-400 hover:shadow-md transition-all text-left group flex flex-col justify-between"
-                >
-                  <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors flex items-center justify-center mb-3">
-                    <Award className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h3 className="text-xs font-black text-slate-900 group-hover:text-purple-700 transition-colors">Add Certification</h3>
-                    <p className="text-[11px] text-slate-500 font-medium">New prep program</p>
-                  </div>
-                </button>
+                  <button
+                    onClick={() => openCertEditor()}
+                    className="bg-[#F5F3FF] hover:bg-[#EDE9FE] border border-purple-100 rounded-2xl p-3.5 flex flex-col items-center justify-center text-center gap-2 transition-all group cursor-pointer"
+                  >
+                    <div className="w-8 h-8 rounded-xl bg-purple-200/60 text-[#6D28D9] flex items-center justify-center group-hover:bg-[#6D28D9] group-hover:text-white transition-colors">
+                      <Award className="w-4 h-4" />
+                    </div>
+                    <span className="text-[11px] font-extrabold text-slate-900 leading-tight">Add Certification</span>
+                  </button>
 
-                <button
-                  onClick={() => openPlatformEditor()}
-                  className="bg-white border border-slate-200/80 p-4 rounded-2xl hover:border-purple-400 hover:shadow-md transition-all text-left group flex flex-col justify-between"
-                >
-                  <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors flex items-center justify-center mb-3">
-                    <Cpu className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h3 className="text-xs font-black text-slate-900 group-hover:text-purple-700 transition-colors">Add Exam Platform</h3>
-                    <p className="text-[11px] text-slate-500 font-medium">Add proctoring guide</p>
-                  </div>
-                </button>
+                  <button
+                    onClick={() => openPlatformEditor()}
+                    className="bg-[#F5F3FF] hover:bg-[#EDE9FE] border border-purple-100 rounded-2xl p-3.5 flex flex-col items-center justify-center text-center gap-2 transition-all group cursor-pointer"
+                  >
+                    <div className="w-8 h-8 rounded-xl bg-purple-200/60 text-[#6D28D9] flex items-center justify-center group-hover:bg-[#6D28D9] group-hover:text-white transition-colors">
+                      <Monitor className="w-4 h-4" />
+                    </div>
+                    <span className="text-[11px] font-extrabold text-slate-900 leading-tight">Add Exam Platform</span>
+                  </button>
 
-                <button
-                  onClick={() => openResourceEditor()}
-                  className="bg-white border border-slate-200/80 p-4 rounded-2xl hover:border-purple-400 hover:shadow-md transition-all text-left group flex flex-col justify-between"
-                >
-                  <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors flex items-center justify-center mb-3">
-                    <FolderOpen className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h3 className="text-xs font-black text-slate-900 group-hover:text-purple-700 transition-colors">Add Study Resource</h3>
-                    <p className="text-[11px] text-slate-500 font-medium">New revision material</p>
-                  </div>
-                </button>
+                  <button
+                    onClick={() => openResourceEditor()}
+                    className="bg-[#F5F3FF] hover:bg-[#EDE9FE] border border-purple-100 rounded-2xl p-3.5 flex flex-col items-center justify-center text-center gap-2 transition-all group cursor-pointer"
+                  >
+                    <div className="w-8 h-8 rounded-xl bg-purple-200/60 text-[#6D28D9] flex items-center justify-center group-hover:bg-[#6D28D9] group-hover:text-white transition-colors">
+                      <BookOpen className="w-4 h-4" />
+                    </div>
+                    <span className="text-[11px] font-extrabold text-slate-900 leading-tight">Add Study Resource</span>
+                  </button>
 
-                <button
-                  onClick={() => setActiveTab('pages')}
-                  className="bg-white border border-slate-200/80 p-4 rounded-2xl hover:border-purple-400 hover:shadow-md transition-all text-left group flex flex-col justify-between"
-                >
-                  <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors flex items-center justify-center mb-3">
-                    <FileText className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h3 className="text-xs font-black text-slate-900 group-hover:text-purple-700 transition-colors">Manage Pages</h3>
-                    <p className="text-[11px] text-slate-500 font-medium">SEO & Navbar settings</p>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => setActiveTab('inquiries')}
-                  className="bg-white border border-slate-200/80 p-4 rounded-2xl hover:border-purple-400 hover:shadow-md transition-all text-left group flex flex-col justify-between"
-                >
-                  <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors flex items-center justify-center mb-3">
-                    <Inbox className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h3 className="text-xs font-black text-slate-900 group-hover:text-purple-700 transition-colors">View Inquiries</h3>
-                    <p className="text-[11px] text-slate-500 font-medium">Review customer leads</p>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => openMediaPickerFor('')}
-                  className="bg-white border border-slate-200/80 p-4 rounded-2xl hover:border-purple-400 hover:shadow-md transition-all text-left group flex flex-col justify-between"
-                >
-                  <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors flex items-center justify-center mb-3">
-                    <ImageIcon className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h3 className="text-xs font-black text-slate-900 group-hover:text-purple-700 transition-colors">Media Library</h3>
-                    <p className="text-[11px] text-slate-500 font-medium">Upload & manage images</p>
-                  </div>
-                </button>
-              </div>
-            </div>
-
-            {/* SPLIT SECTION: RECENT INQUIRIES & RECENT WEBSITE ACTIVITY */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* RECENT INQUIRIES TABLE (Spans 2 columns on lg) */}
-              <div className="lg:col-span-2 bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden flex flex-col justify-between">
-                <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
-                      <Inbox className="w-4 h-4 text-purple-600" /> Recent Customer Inquiries
-                    </h3>
-                    <p className="text-xs text-slate-500 font-medium">Latest submissions from potential clients</p>
-                  </div>
+                  <button
+                    onClick={() => setActiveTab('pages')}
+                    className="bg-[#F5F3FF] hover:bg-[#EDE9FE] border border-purple-100 rounded-2xl p-3.5 flex flex-col items-center justify-center text-center gap-2 transition-all group cursor-pointer"
+                  >
+                    <div className="w-8 h-8 rounded-xl bg-purple-200/60 text-[#6D28D9] flex items-center justify-center group-hover:bg-[#6D28D9] group-hover:text-white transition-colors">
+                      <FileText className="w-4 h-4" />
+                    </div>
+                    <span className="text-[11px] font-extrabold text-slate-900 leading-tight">Manage Pages</span>
+                  </button>
 
                   <button
                     onClick={() => setActiveTab('inquiries')}
-                    className="px-3.5 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 text-xs font-bold transition-colors inline-flex items-center gap-1"
+                    className="bg-[#F5F3FF] hover:bg-[#EDE9FE] border border-purple-100 rounded-2xl p-3.5 flex flex-col items-center justify-center text-center gap-2 transition-all group cursor-pointer"
                   >
-                    <span>View All ({inquiriesList.length})</span>
+                    <div className="w-8 h-8 rounded-xl bg-purple-200/60 text-[#6D28D9] flex items-center justify-center group-hover:bg-[#6D28D9] group-hover:text-white transition-colors">
+                      <Mail className="w-4 h-4" />
+                    </div>
+                    <span className="text-[11px] font-extrabold text-slate-900 leading-tight">View Inquiries</span>
+                  </button>
+
+                  <button
+                    onClick={() => openMediaPickerFor('')}
+                    className="bg-[#F5F3FF] hover:bg-[#EDE9FE] border border-purple-100 rounded-2xl p-3.5 flex flex-col items-center justify-center text-center gap-2 transition-all group cursor-pointer"
+                  >
+                    <div className="w-8 h-8 rounded-xl bg-purple-200/60 text-[#6D28D9] flex items-center justify-center group-hover:bg-[#6D28D9] group-hover:text-white transition-colors">
+                      <ImageIcon className="w-4 h-4" />
+                    </div>
+                    <span className="text-[11px] font-extrabold text-slate-900 leading-tight">Open Media Library</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* RECENT INQUIRIES TABLE (Spans 7 cols on lg) */}
+              <div className="lg:col-span-7 bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden flex flex-col justify-between">
+                <div className="p-5 border-b border-slate-100 flex items-center justify-between">
+                  <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                    <Mail className="w-4 h-4 text-[#7C3AED]" /> Recent Inquiries
+                  </h3>
+
+                  <button
+                    onClick={() => setActiveTab('inquiries')}
+                    className="px-3.5 py-1.5 rounded-full bg-[#F3E8FF] hover:bg-[#E9D5FF] text-[#6D28D9] text-xs font-bold transition-colors inline-flex items-center gap-1"
+                  >
+                    <span>View All</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
 
                 <div className="overflow-x-auto">
-                  {inquiriesList.length === 0 ? (
-                    <div className="p-8 text-center text-xs text-slate-500 space-y-2">
-                      <Inbox className="w-8 h-8 text-slate-300 mx-auto" />
-                      <p className="font-bold">No customer inquiries found.</p>
-                    </div>
-                  ) : (
-                    <table className="w-full text-left border-collapse">
-                      <thead>
-                        <tr className="bg-slate-50 border-b border-slate-100 text-[11px] uppercase font-bold text-slate-400">
-                          <th className="py-3 px-5">Client Name & Email</th>
-                          <th className="py-3 px-5">Subject / Service</th>
-                          <th className="py-3 px-5">Date</th>
-                          <th className="py-3 px-5">Status</th>
-                          <th className="py-3 px-5 text-right">Action</th>
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-slate-50/80 border-b border-slate-100 text-[11px] uppercase font-extrabold text-slate-400">
+                        <th className="py-3 px-5">Customer</th>
+                        <th className="py-3 px-5">Service</th>
+                        <th className="py-3 px-5">Date</th>
+                        <th className="py-3 px-5">Status</th>
+                        <th className="py-3 px-5 text-right">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 text-xs">
+                      {inquiriesList.slice(0, 4).map((inq) => (
+                        <tr key={inq.id || inq.date} className="hover:bg-purple-50/20 transition-colors">
+                          <td className="py-3.5 px-5 font-bold text-slate-900 whitespace-nowrap">
+                            {inq.fullName}
+                          </td>
+                          <td className="py-3.5 px-5 font-medium text-slate-700 whitespace-nowrap">
+                            {inq.service}
+                          </td>
+                          <td className="py-3.5 px-5 text-slate-500 font-medium whitespace-nowrap text-[11px]">
+                            {inq.date}
+                          </td>
+                          <td className="py-3.5 px-5 whitespace-nowrap">
+                            <span
+                              className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold flex items-center gap-1 w-fit ${
+                                inq.status === 'New'
+                                  ? 'bg-rose-100 text-rose-800 border border-rose-200'
+                                  : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                              }`}
+                            >
+                              <span className={`w-1.5 h-1.5 rounded-full ${inq.status === 'New' ? 'bg-rose-600' : 'bg-emerald-600'}`} />
+                              <span>{inq.status || 'New'}</span>
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-5 text-right whitespace-nowrap">
+                            <button
+                              onClick={() => openInquiryViewer(inq)}
+                              className="px-3.5 py-1.5 rounded-xl bg-[#581C87] hover:bg-[#4C1D95] text-white font-bold text-xs shadow-xs inline-flex items-center gap-1 transition-colors"
+                            >
+                              View
+                            </button>
+                          </td>
                         </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-100 text-xs">
-                        {inquiriesList.slice(0, 5).map((inq) => (
-                          <tr key={inq.id || inq.date} className="hover:bg-slate-50/80 transition-colors">
-                            <td className="py-3.5 px-5">
-                              <div className="font-bold text-slate-900">{inq.fullName}</div>
-                              <div className="text-[11px] text-slate-400 font-mono">{inq.email}</div>
-                            </td>
-                            <td className="py-3.5 px-5">
-                              <div className="font-medium text-slate-800 line-clamp-1">{inq.subject || inq.service}</div>
-                              <div className="text-[10px] text-purple-600 font-bold">{inq.service}</div>
-                            </td>
-                            <td className="py-3.5 px-5 text-slate-500 whitespace-nowrap text-[11px] font-medium">
-                              {inq.date}
-                            </td>
-                            <td className="py-3.5 px-5 whitespace-nowrap">
-                              <span
-                                className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold border ${
-                                  inq.status === 'New'
-                                    ? 'bg-amber-50 text-amber-800 border-amber-200'
-                                    : 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                                }`}
-                              >
-                                {inq.status || 'New'}
-                              </span>
-                            </td>
-                            <td className="py-3.5 px-5 text-right whitespace-nowrap">
-                              <button
-                                onClick={() => openInquiryViewer(inq)}
-                                className="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-[11px] shadow-sm inline-flex items-center gap-1 transition-colors"
-                              >
-                                <Eye className="w-3 h-3" /> View
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  )}
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            {/* SPLIT SECTION 2: RECENT ACTIVITY & "YOUR CMS IS ALL SET!" BANNER */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              {/* RECENT ACTIVITY (Spans 5 cols on lg) */}
+              <div className="lg:col-span-5 bg-white border border-slate-200/80 rounded-2xl shadow-sm p-6 flex flex-col justify-between space-y-4">
+                <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                  <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-[#7C3AED]" /> Recent Activity
+                  </h3>
+                  <span className="text-[10px] font-extrabold text-purple-700 bg-purple-50 border border-purple-200 px-2.5 py-1 rounded-full">
+                    Live Activity Feed
+                  </span>
                 </div>
 
-                {inquiriesList.length > 5 && (
-                  <div className="p-3 bg-slate-50 border-t border-slate-100 text-center text-xs font-bold text-slate-500">
-                    Showing 5 of {inquiriesList.length} inquiries
-                  </div>
-                )}
+                <div className="space-y-3.5 flex-grow">
+                  {recentWebsiteActivities.slice(0, 3).map((act) => {
+                    const IconComp = act.icon || Clock;
+                    return (
+                      <div
+                        key={act.id}
+                        onClick={act.action}
+                        className="p-3 rounded-xl border border-slate-100 hover:border-purple-200 hover:bg-purple-50/40 cursor-pointer transition-all flex items-start gap-3 group"
+                      >
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${act.iconBg}`}>
+                          <IconComp className="w-4 h-4" />
+                        </div>
+                        <div className="flex-grow min-w-0">
+                          <div className="flex items-center justify-between gap-1">
+                            <h4 className="text-xs font-bold text-slate-800 truncate group-hover:text-purple-700 transition-colors">
+                              {act.title}
+                            </h4>
+                          </div>
+                          <span className="text-[10px] text-slate-400 font-mono mt-0.5 block">{act.timestamp}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
 
-              {/* RECENT WEBSITE ACTIVITY CARD */}
-              <div className="bg-white border border-slate-200/80 rounded-2xl shadow-sm p-6 flex flex-col justify-between space-y-4">
-                <div className="space-y-1">
-                  <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
-                    <Activity className="w-4 h-4 text-purple-600" /> Recent Website Activity
-                  </h3>
-                  <p className="text-xs text-slate-500 font-medium">Verified system log from live data sources</p>
+              {/* "YOUR CMS IS ALL SET!" BANNER (Spans 7 cols on lg) */}
+              <div className="lg:col-span-7 bg-gradient-to-r from-[#2E0B54] via-[#4C1D95] to-[#6D28D9] rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
+                <div className="space-y-4 max-w-md relative z-10">
+                  <div className="w-12 h-12 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-400 flex items-center justify-center shadow-inner">
+                    <Check className="w-6 h-6 stroke-[3]" />
+                  </div>
+
+                  <div className="space-y-1">
+                    <h3 className="text-2xl font-black text-white tracking-tight">Your CMS is all set!</h3>
+                    <p className="text-xs text-purple-200/90 font-medium leading-relaxed">
+                      Everything is running smoothly and ready to help you manage your content.
+                    </p>
+                  </div>
+
+                  <a
+                    href="/"
+                    target="_blank"
+                    className="inline-flex items-center gap-2 bg-white hover:bg-slate-100 text-[#581C87] font-black text-xs px-5 py-2.5 rounded-full shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    <span>Visit Your Website</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </a>
                 </div>
 
-                <div className="space-y-3 flex-grow">
-                  {recentWebsiteActivities.length === 0 ? (
-                    <div className="p-6 text-center text-xs text-slate-400 space-y-1">
-                      <Clock className="w-6 h-6 mx-auto text-slate-300" />
-                      <p className="font-bold">No recent activity recorded.</p>
+                {/* Laptop Website Preview Mockup Illustration */}
+                <div className="relative z-10 w-48 sm:w-64 shrink-0">
+                  <div className="bg-slate-900 p-2 rounded-t-xl border-t-2 border-x-2 border-slate-700 shadow-2xl">
+                    <div className="bg-white rounded-lg p-3 text-center space-y-2 border border-slate-200">
+                      <div className="w-8 h-8 rounded-full bg-[#581C87] text-white flex items-center justify-center mx-auto shadow-sm">
+                        <GraduationCap className="w-4 h-4" />
+                      </div>
+                      <div className="text-[10px] font-black text-slate-900 tracking-tight uppercase leading-tight">
+                        TUTOR PROCTORED EXAMS
+                      </div>
+                      <div className="h-1 w-12 bg-purple-600 rounded-full mx-auto" />
                     </div>
-                  ) : (
-                    recentWebsiteActivities.map((act) => {
-                      const IconComp = act.icon || Clock;
-                      return (
-                        <div
-                          key={act.id}
-                          onClick={act.action}
-                          className="p-3 rounded-xl border border-slate-100 hover:border-purple-200 hover:bg-purple-50/40 cursor-pointer transition-all flex items-start gap-3 group"
-                        >
-                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${act.iconBg}`}>
-                            <IconComp className="w-4 h-4" />
-                          </div>
-                          <div className="flex-grow min-w-0">
-                            <div className="flex items-center justify-between gap-1">
-                              <h4 className="text-xs font-bold text-slate-800 truncate group-hover:text-purple-700 transition-colors">
-                                {act.title}
-                              </h4>
-                              <span className={`px-1.5 py-0.5 rounded text-[9px] font-extrabold border shrink-0 ${act.badgeColor}`}>
-                                {act.badge}
-                              </span>
-                            </div>
-                            <p className="text-[11px] text-slate-500 truncate mt-0.5">{act.subtitle}</p>
-                            <span className="text-[10px] text-slate-400 font-mono mt-1 block">{act.timestamp}</span>
-                          </div>
-                        </div>
-                      );
-                    })
-                  )}
-                </div>
-
-                <div className="pt-3 border-t border-slate-100 text-[11px] text-slate-400 flex items-center justify-between">
-                  <span>Reliable live records</span>
-                  <span className="font-bold text-purple-600">Updated automatically</span>
+                  </div>
+                  <div className="bg-slate-800 h-3 rounded-b-xl border-b border-slate-600 shadow-md flex items-center justify-center">
+                    <div className="w-8 h-1 bg-slate-600 rounded-full" />
+                  </div>
                 </div>
               </div>
             </div>
