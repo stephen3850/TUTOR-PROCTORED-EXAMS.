@@ -58,6 +58,7 @@ import {
   Tag,
   Sliders,
   RefreshCw,
+  Bell,
   AlertCircle,
 } from 'lucide-react';
 
