@@ -1,16 +1,19 @@
 import { NextResponse } from 'next/server';
-import certsData from '@/content/certifications.json';
-import { CERTIFICATIONS_DATA } from '@/lib/data/certificationsData';
+import { getCertificationsContent } from '@/lib/contentLoader';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function GET() {
   try {
-    const certs = certsData.certifications || Object.values(CERTIFICATIONS_DATA);
+    const certs = getCertificationsContent();
     return NextResponse.json({
       success: true,
       count: certs.length,
-      data: certs
+      data: certs,
     });
   } catch (error) {
+    console.error('[API Certifications Error]:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch certifications' },
       { status: 500 }

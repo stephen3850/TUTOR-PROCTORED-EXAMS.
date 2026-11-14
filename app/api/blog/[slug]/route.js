@@ -1,20 +1,16 @@
 import { NextResponse } from 'next/server';
-import { BLOG_ARTICLES } from '@/lib/data/blogData';
-import blogData from '@/content/blog.json';
+import { getBlogBySlug } from '@/lib/contentLoader';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function GET(request, { params }) {
   try {
     const { slug } = params;
-    const fullArticle = BLOG_ARTICLES[slug];
+    const article = getBlogBySlug(slug);
 
-    if (fullArticle) {
-      return NextResponse.json({ success: true, data: fullArticle });
-    }
-
-    const jsonArticle = (blogData.articles || []).find(a => a.slug === slug);
-
-    if (jsonArticle) {
-      return NextResponse.json({ success: true, data: jsonArticle });
+    if (article) {
+      return NextResponse.json({ success: true, data: article });
     }
 
     return NextResponse.json(

@@ -1,16 +1,19 @@
 import { NextResponse } from 'next/server';
-import resourcesData from '@/content/study-resources.json';
-import { STUDY_RESOURCES_DATA } from '@/lib/data/studyResourcesData';
+import { getStudyResourcesContent } from '@/lib/contentLoader';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function GET() {
   try {
-    const resources = resourcesData.resources || Object.values(STUDY_RESOURCES_DATA);
+    const resources = getStudyResourcesContent();
     return NextResponse.json({
       success: true,
       count: resources.length,
-      data: resources
+      data: resources,
     });
   } catch (error) {
+    console.error('[API Study Resources Error]:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch study resources' },
       { status: 500 }

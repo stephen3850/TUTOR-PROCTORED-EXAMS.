@@ -1,16 +1,19 @@
 import { NextResponse } from 'next/server';
-import platformsData from '@/content/platforms.json';
-import { PLATFORMS_DATA } from '@/lib/data/platformsData';
+import { getPlatformsContent } from '@/lib/contentLoader';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function GET() {
   try {
-    const platforms = platformsData.platforms || Object.values(PLATFORMS_DATA);
+    const platforms = getPlatformsContent();
     return NextResponse.json({
       success: true,
       count: platforms.length,
-      data: platforms
+      data: platforms,
     });
   } catch (error) {
+    console.error('[API Platforms Error]:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch exam platforms' },
       { status: 500 }

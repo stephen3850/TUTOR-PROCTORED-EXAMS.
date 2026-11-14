@@ -1,20 +1,16 @@
 import { NextResponse } from 'next/server';
-import { SERVICES_DATA } from '@/lib/data/servicesData';
-import servicesData from '@/content/services.json';
+import { getServiceBySlug } from '@/lib/contentLoader';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function GET(request, { params }) {
   try {
     const { slug } = params;
-    const fullService = SERVICES_DATA[slug];
+    const service = getServiceBySlug(slug);
 
-    if (fullService) {
-      return NextResponse.json({ success: true, data: fullService });
-    }
-
-    const jsonService = (servicesData.services || []).find(s => s.slug === slug);
-
-    if (jsonService) {
-      return NextResponse.json({ success: true, data: jsonService });
+    if (service) {
+      return NextResponse.json({ success: true, data: service });
     }
 
     return NextResponse.json(
