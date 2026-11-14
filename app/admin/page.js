@@ -60,6 +60,10 @@ import {
   RefreshCw,
   Bell,
   AlertCircle,
+  GraduationCap,
+  Monitor,
+  Edit3,
+  ChevronsLeft,
 } from 'lucide-react';
 
 export default function CustomAdminCmsPage() {
