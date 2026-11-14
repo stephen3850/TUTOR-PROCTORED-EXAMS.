@@ -49,6 +49,11 @@ import {
   TrendingUp,
   Zap,
   BarChart3,
+  ChevronDown,
+  ChevronRight,
+  Menu,
+  PanelLeftClose,
+  PanelLeft,
 } from 'lucide-react';
 
 export default function CustomAdminCmsPage() {
@@ -59,6 +64,21 @@ export default function CustomAdminCmsPage() {
 
   // Active Navigation Tab
   const [activeTab, setActiveTab] = useState('dashboard');
+
+  // Sidebar & Navigation Layout States
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [expandedGroups, setExpandedGroups] = useState({
+    OVERVIEW: true,
+    WEBSITE: true,
+    CONTENT: true,
+    CUSTOMER: true,
+    CONFIG: true,
+  });
+
+  const toggleGroup = (groupKey) => {
+    setExpandedGroups((prev) => ({ ...prev, [groupKey]: !prev[groupKey] }));
+  };
 
   // Content States
   const [blogArticles, setBlogArticles] = useState([]);
@@ -797,6 +817,146 @@ export default function CustomAdminCmsPage() {
     { key: 'contact', slug: '/contact', name: 'Contact Page', path: '/contact' },
   ];
 
+  // Grouped Navigation Definition
+  const NAV_GROUPS = [
+    {
+      key: 'OVERVIEW',
+      title: 'OVERVIEW',
+      items: [
+        {
+          id: 'dashboard',
+          label: 'Dashboard',
+          icon: LayoutDashboard,
+          onClick: () => setActiveTab('dashboard'),
+          isActive: activeTab === 'dashboard',
+          badge: null,
+        },
+      ],
+    },
+    {
+      key: 'WEBSITE',
+      title: 'WEBSITE MANAGEMENT',
+      items: [
+        {
+          id: 'pages',
+          label: 'Pages & Navbar',
+          icon: FileText,
+          onClick: () => setActiveTab('pages'),
+          isActive: activeTab === 'pages',
+          badge: ALL_SITE_PAGES.length,
+          badgeColor: 'bg-purple-900/60 text-purple-300',
+        },
+        {
+          id: 'services',
+          label: 'Services',
+          icon: Briefcase,
+          onClick: () => setActiveTab('services'),
+          isActive: activeTab === 'services',
+          badge: servicesList.length,
+          badgeColor: 'bg-purple-900/60 text-purple-300',
+        },
+        {
+          id: 'certifications',
+          label: 'Certifications',
+          icon: Award,
+          onClick: () => setActiveTab('certifications'),
+          isActive: activeTab === 'certifications',
+          badge: certificationsList.length,
+          badgeColor: 'bg-purple-900/60 text-purple-300',
+        },
+        {
+          id: 'platforms',
+          label: 'Exam Platforms',
+          icon: Cpu,
+          onClick: () => setActiveTab('platforms'),
+          isActive: activeTab === 'platforms',
+          badge: platformsList.length,
+          badgeColor: 'bg-purple-900/60 text-purple-300',
+        },
+        {
+          id: 'resources',
+          label: 'Study Resources',
+          icon: FolderOpen,
+          onClick: () => setActiveTab('resources'),
+          isActive: activeTab === 'resources',
+          badge: studyResourcesList.length,
+          badgeColor: 'bg-purple-900/60 text-purple-300',
+        },
+        {
+          id: 'partnerships',
+          label: 'Partnerships & Logos',
+          icon: Sparkles,
+          onClick: () => setActiveTab('partnerships'),
+          isActive: activeTab === 'partnerships',
+          badge: partnershipsList.length,
+          badgeColor: 'bg-purple-900/60 text-purple-300',
+        },
+      ],
+    },
+    {
+      key: 'CONTENT',
+      title: 'CONTENT MANAGEMENT',
+      items: [
+        {
+          id: 'blogs',
+          label: 'Blogs',
+          icon: BookOpen,
+          onClick: () => setActiveTab('blogs'),
+          isActive: activeTab === 'blogs',
+          badge: blogArticles.length,
+          badgeColor: 'bg-purple-900/60 text-purple-300',
+        },
+        {
+          id: 'faqs',
+          label: 'Documents & FAQs',
+          icon: HelpCircle,
+          onClick: () => setActiveTab('faqs'),
+          isActive: activeTab === 'faqs',
+          badge: allFlattenedFaqs.length,
+          badgeColor: 'bg-purple-900/60 text-purple-300',
+        },
+        {
+          id: 'media',
+          label: 'Media Library',
+          icon: ImageIcon,
+          onClick: () => openMediaPickerFor(''),
+          isActive: false,
+          badge: mediaLibrary.length,
+          badgeColor: 'bg-purple-900/60 text-purple-300',
+        },
+      ],
+    },
+    {
+      key: 'CUSTOMER',
+      title: 'CUSTOMER MANAGEMENT',
+      items: [
+        {
+          id: 'inquiries',
+          label: 'Inquiries',
+          icon: Inbox,
+          onClick: () => setActiveTab('inquiries'),
+          isActive: activeTab === 'inquiries',
+          badge: newInquiriesCount > 0 ? `${newInquiriesCount} New` : inquiriesList.length,
+          badgeColor: newInquiriesCount > 0 ? 'bg-rose-500 text-white font-black animate-pulse' : 'bg-purple-900/60 text-purple-300',
+        },
+      ],
+    },
+    {
+      key: 'CONFIG',
+      title: 'CONFIGURATION',
+      items: [
+        {
+          id: 'settings',
+          label: 'Site Settings & SEO',
+          icon: Settings,
+          onClick: () => setActiveTab('settings'),
+          isActive: activeTab === 'settings',
+          badge: null,
+        },
+      ],
+    },
+  ];
+
   // 1. LOGIN SCREEN
   if (!isAuthenticated) {
     return (
@@ -849,216 +1009,343 @@ export default function CustomAdminCmsPage() {
 
   // 2. LOGGED IN CMS DASHBOARD UI
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex font-sans text-slate-800">
-      {/* DARK PURPLE SIDEBAR */}
-      <aside className="w-64 bg-[#1E1035] text-purple-200 shrink-0 flex flex-col justify-between p-6 shadow-xl">
-        <div className="space-y-8">
-          {/* Logo / Header */}
-          <div className="space-y-1">
-            <h2 className="text-lg font-black text-white tracking-tight leading-none">
-              TUTOR PROCTORED EXAMS
-            </h2>
-            <span className="text-[10px] uppercase font-bold text-purple-400 tracking-wider block">
-              CMS Control Panel
-            </span>
+    <div className="min-h-screen bg-[#F8FAFC] flex flex-col lg:flex-row font-sans text-slate-800">
+      {/* MOBILE HEADER BAR */}
+      <div className="lg:hidden bg-[#1E1035] border-b border-purple-900/50 px-4 py-3 flex items-center justify-between text-white sticky top-0 z-40 shadow-lg">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setIsMobileMenuOpen(true)}
+            className="p-2 rounded-xl bg-purple-900/50 border border-purple-800 text-purple-200 hover:text-white transition-colors"
+            aria-label="Open Navigation Drawer"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-purple-600/30 border border-purple-500/40 flex items-center justify-center text-purple-300">
+              <ShieldCheck className="w-4 h-4" />
+            </div>
+            <div>
+              <span className="font-black text-xs tracking-tight text-white block leading-none">TUTOR PROCTORED EXAMS</span>
+              <span className="text-[9px] uppercase font-bold text-purple-400 tracking-wider">CMS Control Panel</span>
+            </div>
+          </div>
+        </div>
+
+        <span className="text-[10px] uppercase font-extrabold px-2.5 py-1 rounded-full bg-purple-600/40 border border-purple-500/30 text-purple-200">
+          {activeTab}
+        </span>
+      </div>
+
+      {/* MOBILE SLIDE-OUT DRAWER */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden flex">
+          {/* Backdrop Overlay */}
+          <div
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200"
+          />
+
+          {/* Drawer Body */}
+          <aside className="relative w-80 max-w-[85vw] bg-[#1E1035] text-purple-200 flex flex-col justify-between p-5 shadow-2xl border-r border-purple-800/50 z-10 animate-in slide-in-from-left duration-300">
+            <div className="space-y-6">
+              {/* Drawer Header */}
+              <div className="flex items-center justify-between pb-4 border-b border-purple-900/50">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-purple-600/30 border border-purple-500/40 flex items-center justify-center text-purple-300 shadow-md">
+                    <ShieldCheck className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-xs font-black text-white tracking-tight leading-none uppercase">
+                      Tutor Proctored Exams
+                    </h2>
+                    <span className="text-[9px] uppercase font-bold text-purple-400 tracking-wider block mt-0.5">
+                      CMS Control Panel
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="p-1.5 rounded-lg bg-purple-900/40 text-purple-300 hover:text-white"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Drawer Navigation Links */}
+              <nav className="space-y-4 overflow-y-auto max-h-[calc(100vh-250px)] pr-1">
+                {NAV_GROUPS.map((group) => (
+                  <div key={group.key} className="space-y-1.5">
+                    <span className="text-[9px] font-black tracking-widest text-purple-400 uppercase px-2">
+                      {group.title}
+                    </span>
+
+                    <div className="space-y-1">
+                      {group.items.map((item) => {
+                        const IconComponent = item.icon;
+                        return (
+                          <button
+                            key={item.id}
+                            type="button"
+                            onClick={() => {
+                              item.onClick();
+                              setIsMobileMenuOpen(false);
+                            }}
+                            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-bold text-xs transition-all ${
+                              item.isActive
+                                ? 'bg-[#581C87] text-white shadow-lg shadow-purple-950/60 font-extrabold border-l-4 border-purple-400'
+                                : 'hover:bg-purple-900/40 text-purple-200 hover:text-white'
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <IconComponent className="w-4 h-4 shrink-0 text-purple-300" />
+                              <span>{item.label}</span>
+                            </div>
+
+                            {item.badge !== null && item.badge !== undefined && (
+                              <span
+                                className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                                  item.badgeColor || 'bg-purple-900/60 text-purple-300'
+                                }`}
+                              >
+                                {item.badge}
+                              </span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </nav>
+            </div>
+
+            {/* Mobile Drawer Profile & Bottom Actions */}
+            <div className="pt-4 border-t border-purple-900/50 space-y-3">
+              <div className="p-2.5 rounded-xl bg-purple-950/60 border border-purple-900/60 flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-purple-600/40 border border-purple-400/40 flex items-center justify-center font-black text-white text-xs shrink-0 shadow-sm">
+                  AD
+                </div>
+                <div className="min-w-0 flex-grow">
+                  <div className="text-xs font-bold text-white truncate flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                    <span>Admin User</span>
+                  </div>
+                  <span className="text-[10px] text-purple-300/80 font-medium truncate block">Super Administrator</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between gap-2 text-xs font-bold pt-1">
+                <a
+                  href="/"
+                  target="_blank"
+                  className="flex items-center gap-1.5 text-purple-300 hover:text-white transition-colors"
+                >
+                  <Globe className="w-3.5 h-3.5" />
+                  <span>Live Site</span>
+                </a>
+
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="flex items-center gap-1.5 text-rose-300 hover:text-rose-200 transition-colors"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span>Sign Out</span>
+                </button>
+              </div>
+            </div>
+          </aside>
+        </div>
+      )}
+
+      {/* DESKTOP SIDEBAR */}
+      <aside
+        className={`hidden lg:flex flex-col justify-between bg-[#1E1035] text-purple-200 shrink-0 shadow-2xl border-r border-purple-900/50 transition-all duration-300 relative z-30 ${
+          isSidebarCollapsed ? 'w-20 p-3' : 'w-64 p-5'
+        }`}
+      >
+        <div className="space-y-6">
+          {/* Desktop Sidebar Logo & Toggle Header */}
+          <div className="flex items-center justify-between pb-3 border-b border-purple-900/50">
+            {!isSidebarCollapsed && (
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-9 h-9 rounded-xl bg-purple-600/30 border border-purple-500/40 flex items-center justify-center text-purple-300 shadow-md shrink-0">
+                  <ShieldCheck className="w-5 h-5" />
+                </div>
+                <div className="min-w-0">
+                  <h2 className="text-xs font-black text-white tracking-tight leading-none uppercase truncate">
+                    TUTOR PROCTORED EXAMS
+                  </h2>
+                  <span className="text-[9px] uppercase font-bold text-purple-400 tracking-wider block mt-0.5 truncate">
+                    CMS Control Panel
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {isSidebarCollapsed && (
+              <div className="w-9 h-9 rounded-xl bg-purple-600/30 border border-purple-500/40 flex items-center justify-center text-purple-300 shadow-md mx-auto">
+                <ShieldCheck className="w-5 h-5" />
+              </div>
+            )}
+
+            <button
+              onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+              className="p-1.5 rounded-lg bg-purple-900/40 hover:bg-purple-800/60 text-purple-300 hover:text-white transition-colors shrink-0 ml-1"
+              title={isSidebarCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
+            >
+              {isSidebarCollapsed ? <PanelLeft className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
+            </button>
           </div>
 
-          {/* Navigation Links */}
-          <nav className="space-y-1.5 overflow-y-auto max-h-[calc(100vh-220px)] pr-1">
-            <button
-              type="button"
-              onClick={() => setActiveTab('dashboard')}
-              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold text-xs transition-all ${
-                activeTab === 'dashboard'
-                  ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50'
-                  : 'hover:bg-purple-900/40 text-purple-300 hover:text-white'
-              }`}
-            >
-              <LayoutDashboard className="w-4 h-4" />
-              <span>Dashboard</span>
-            </button>
+          {/* Desktop Navigation Grouped Items */}
+          <nav className="space-y-4 overflow-y-auto max-h-[calc(100vh-230px)] pr-1 scrollbar-thin scrollbar-thumb-purple-900">
+            {NAV_GROUPS.map((group) => (
+              <div key={group.key} className="space-y-1.5">
+                {/* Section Header */}
+                {!isSidebarCollapsed ? (
+                  <button
+                    type="button"
+                    onClick={() => toggleGroup(group.key)}
+                    className="w-full flex items-center justify-between px-2 py-1 text-[9px] font-black tracking-widest text-purple-400 uppercase hover:text-purple-200 transition-colors"
+                  >
+                    <span>{group.title}</span>
+                    {expandedGroups[group.key] ? (
+                      <ChevronDown className="w-3 h-3 text-purple-400" />
+                    ) : (
+                      <ChevronRight className="w-3 h-3 text-purple-400" />
+                    )}
+                  </button>
+                ) : (
+                  <div className="h-px bg-purple-900/60 my-2" />
+                )}
 
-            {/* INQUIRIES TAB */}
-            <button
-              type="button"
-              onClick={() => setActiveTab('inquiries')}
-              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-bold text-xs transition-all ${
-                activeTab === 'inquiries'
-                  ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50'
-                  : 'hover:bg-purple-900/40 text-purple-300 hover:text-white'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <Inbox className="w-4 h-4" />
-                <span>Inquiries</span>
+                {/* Section Items */}
+                {(expandedGroups[group.key] || isSidebarCollapsed) && (
+                  <div className="space-y-1">
+                    {group.items.map((item) => {
+                      const IconComponent = item.icon;
+                      return (
+                        <div key={item.id} className="relative group">
+                          <button
+                            type="button"
+                            onClick={item.onClick}
+                            className={`w-full flex items-center ${
+                              isSidebarCollapsed ? 'justify-center p-2.5' : 'justify-between px-3 py-2.5'
+                            } rounded-xl font-bold text-xs transition-all ${
+                              item.isActive
+                                ? 'bg-[#581C87] text-white shadow-lg shadow-purple-950/60 font-extrabold border-l-4 border-purple-400'
+                                : 'hover:bg-purple-900/40 text-purple-200 hover:text-white'
+                            }`}
+                          >
+                            <div className="flex items-center gap-3 min-w-0">
+                              <IconComponent className="w-4 h-4 shrink-0 text-purple-300" />
+                              {!isSidebarCollapsed && <span className="truncate">{item.label}</span>}
+                            </div>
+
+                            {!isSidebarCollapsed && item.badge !== null && item.badge !== undefined && (
+                              <span
+                                className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                                  item.badgeColor || 'bg-purple-900/60 text-purple-300'
+                                }`}
+                              >
+                                {item.badge}
+                              </span>
+                            )}
+                          </button>
+
+                          {/* Hover Tooltip in Collapsed Mode */}
+                          {isSidebarCollapsed && (
+                            <span className="absolute left-full ml-3 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-[#130924] text-white text-xs font-bold rounded-lg shadow-2xl opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap border border-purple-800 z-50 transition-opacity flex items-center gap-2">
+                              <span>{item.label}</span>
+                              {item.badge !== null && item.badge !== undefined && (
+                                <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-600 text-white font-extrabold">
+                                  {item.badge}
+                                </span>
+                              )}
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
-              {newInquiriesCount > 0 ? (
-                <span className="bg-rose-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full">
-                  {newInquiriesCount}
-                </span>
-              ) : (
-                <span className="text-[10px] text-purple-400 font-bold">{inquiriesList.length}</span>
-              )}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveTab('blogs')}
-              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold text-xs transition-all ${
-                activeTab === 'blogs'
-                  ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50'
-                  : 'hover:bg-purple-900/40 text-purple-300 hover:text-white'
-              }`}
-            >
-              <BookOpen className="w-4 h-4" />
-              <span>Blogs ({blogArticles.length})</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveTab('pages')}
-              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold text-xs transition-all ${
-                activeTab === 'pages'
-                  ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50'
-                  : 'hover:bg-purple-900/40 text-purple-300 hover:text-white'
-              }`}
-            >
-              <FileText className="w-4 h-4" />
-              <span>Pages & Navbar</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveTab('services')}
-              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold text-xs transition-all ${
-                activeTab === 'services'
-                  ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50'
-                  : 'hover:bg-purple-900/40 text-purple-300 hover:text-white'
-              }`}
-            >
-              <Briefcase className="w-4 h-4" />
-              <span>Services ({servicesList.length})</span>
-            </button>
-
-            {/* CERTIFICATIONS MANAGER TAB */}
-            <button
-              type="button"
-              onClick={() => setActiveTab('certifications')}
-              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold text-xs transition-all ${
-                activeTab === 'certifications'
-                  ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50'
-                  : 'hover:bg-purple-900/40 text-purple-300 hover:text-white'
-              }`}
-            >
-              <Award className="w-4 h-4" />
-              <span>Certifications ({certificationsList.length})</span>
-            </button>
-
-            {/* EXAM PLATFORMS MANAGER TAB */}
-            <button
-              type="button"
-              onClick={() => setActiveTab('platforms')}
-              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold text-xs transition-all ${
-                activeTab === 'platforms'
-                  ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50'
-                  : 'hover:bg-purple-900/40 text-purple-300 hover:text-white'
-              }`}
-            >
-              <Cpu className="w-4 h-4" />
-              <span>Exam Platforms ({platformsList.length})</span>
-            </button>
-
-            {/* STUDY RESOURCES MANAGER TAB */}
-            <button
-              type="button"
-              onClick={() => setActiveTab('resources')}
-              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold text-xs transition-all ${
-                activeTab === 'resources'
-                  ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50'
-                  : 'hover:bg-purple-900/40 text-purple-300 hover:text-white'
-              }`}
-            >
-              <FolderOpen className="w-4 h-4" />
-              <span>Study Resources ({studyResourcesList.length})</span>
-            </button>
-
-            {/* PARTNERSHIPS & LOGOS TAB */}
-            <button
-              type="button"
-              onClick={() => setActiveTab('partnerships')}
-              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold text-xs transition-all ${
-                activeTab === 'partnerships'
-                  ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50'
-                  : 'hover:bg-purple-900/40 text-purple-300 hover:text-white'
-              }`}
-            >
-              <Sparkles className="w-4 h-4" />
-              <span>Partners & Logos ({partnershipsList.length})</span>
-            </button>
-
-            {/* DOCUMENTS & FAQS TAB */}
-            <button
-              type="button"
-              onClick={() => setActiveTab('faqs')}
-              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold text-xs transition-all ${
-                activeTab === 'faqs'
-                  ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50'
-                  : 'hover:bg-purple-900/40 text-purple-300 hover:text-white'
-              }`}
-            >
-              <HelpCircle className="w-4 h-4" />
-              <span>Documents & FAQs ({allFlattenedFaqs.length})</span>
-            </button>
-
-            {/* MEDIA LIBRARY BUTTON */}
-            <button
-              type="button"
-              onClick={() => openMediaPickerFor('')}
-              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold text-xs text-purple-300 hover:bg-purple-900/40 hover:text-white transition-all"
-            >
-              <ImageIcon className="w-4 h-4" />
-              <span>Media Library ({mediaLibrary.length})</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveTab('settings')}
-              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold text-xs transition-all ${
-                activeTab === 'settings'
-                  ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/50'
-                  : 'hover:bg-purple-900/40 text-purple-300 hover:text-white'
-              }`}
-            >
-              <Settings className="w-4 h-4" />
-              <span>Site Settings & SEO</span>
-            </button>
+            ))}
           </nav>
         </div>
 
-        {/* Footer Actions */}
-        <div className="space-y-3 pt-6 border-t border-purple-900/40">
-          <a
-            href="/"
-            target="_blank"
-            className="flex items-center gap-2 text-xs font-bold text-purple-300 hover:text-white transition-colors"
-          >
-            <Globe className="w-4 h-4" />
-            <span>View Live Website</span>
-          </a>
+        {/* Desktop Sidebar Administrator Profile & Bottom Actions */}
+        <div className="pt-4 border-t border-purple-900/50 space-y-3">
+          {!isSidebarCollapsed ? (
+            <>
+              {/* Profile Card */}
+              <div className="p-2.5 rounded-xl bg-purple-950/60 border border-purple-900/60 flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-purple-600/40 border border-purple-400/40 flex items-center justify-center font-black text-white text-xs shrink-0 shadow-sm">
+                  AD
+                </div>
+                <div className="min-w-0 flex-grow">
+                  <div className="text-xs font-bold text-white truncate flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                    <span>Admin User</span>
+                  </div>
+                  <span className="text-[10px] text-purple-300/80 font-medium truncate block">Super Administrator</span>
+                </div>
+              </div>
 
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 text-xs font-bold transition-colors"
-          >
-            <LogOut className="w-4 h-4" />
-            <span>Sign Out</span>
-          </button>
+              <div className="flex items-center justify-between text-xs font-bold pt-1">
+                <a
+                  href="/"
+                  target="_blank"
+                  className="flex items-center gap-1.5 text-purple-300 hover:text-white transition-colors"
+                >
+                  <Globe className="w-3.5 h-3.5" />
+                  <span>Live Site</span>
+                </a>
+
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="flex items-center gap-1.5 text-rose-300 hover:text-rose-200 transition-colors"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span>Sign Out</span>
+                </button>
+              </div>
+            </>
+          ) : (
+            <div className="flex flex-col items-center gap-3">
+              <a
+                href="/"
+                target="_blank"
+                className="p-2 rounded-xl bg-purple-900/40 text-purple-300 hover:text-white hover:bg-purple-800/60 transition-colors group relative"
+                title="View Live Website"
+              >
+                <Globe className="w-4 h-4" />
+                <span className="absolute left-full ml-3 top-1/2 -translate-y-1/2 px-2.5 py-1 bg-[#130924] text-white text-xs font-bold rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap border border-purple-800 z-50">
+                  Live Website
+                </span>
+              </a>
+
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="p-2 rounded-xl bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 transition-colors group relative"
+                title="Sign Out"
+              >
+                <LogOut className="w-4 h-4" />
+                <span className="absolute left-full ml-3 top-1/2 -translate-y-1/2 px-2.5 py-1 bg-[#130924] text-white text-xs font-bold rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap border border-purple-800 z-50">
+                  Sign Out
+                </span>
+              </button>
+            </div>
+          )}
         </div>
       </aside>
 
       {/* MAIN CONTENT AREA */}
-      <main className="flex-grow p-8 space-y-6 overflow-y-auto">
+      <main className="flex-grow p-4 sm:p-6 lg:p-8 space-y-6 overflow-y-auto">
         {saveStatus && (
           <div className="p-4 bg-emerald-50 border border-emerald-300 text-emerald-900 rounded-xl text-xs font-bold flex items-center justify-between shadow-sm animate-in fade-in">
             <span className="flex items-center gap-2">
